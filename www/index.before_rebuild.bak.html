@@ -1,0 +1,1813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover,maximum-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#0a0a0a">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Ajon — Make Money UG</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{background:#0a0a0a;color:#fff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;font-size:15px;line-height:1.45;overflow:hidden;-webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;overscroll-behavior:none;}
+input,textarea{user-select:text;-webkit-user-select:text;}
+#app{display:flex;flex-direction:column;height:100vh;height:100dvh;max-width:560px;margin:0 auto;background:#0a0a0a;position:relative;overflow:hidden;}
+header{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 16px;background:#0a0a0a;border-bottom:1px solid rgba(0,200,83,.35);position:relative;z-index:5;padding-top:calc(12px + env(safe-area-inset-top));}
+.logo-mark{font-size:24px;line-height:1;filter:drop-shadow(0 0 8px rgba(0,200,83,.6));}
+.logo{font-size:22px;font-weight:900;color:#00c853;letter-spacing:2px;line-height:1;text-shadow:0 0 14px rgba(0,200,83,.45);}
+.sub{font-size:10.5px;color:#8f8f8f;letter-spacing:.4px;margin-top:3px;font-weight:600;}
+.hdr-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.user-badge{display:flex;align-items:center;gap:4px;background:linear-gradient(135deg,#003d14,#001f0a);border:1px solid rgba(0,200,83,.5);border-radius:999px;padding:4px 9px;font-size:10.5px;font-weight:800;color:#00c853;letter-spacing:.3px;white-space:nowrap;}
+.user-badge .pulse{width:5px;height:5px;background:#00c853;border-radius:50%;animation:userPulse 1.6s ease-in-out infinite;}
+@keyframes userPulse{0%,100%{opacity:.4;transform:scale(.85);}50%{opacity:1;transform:scale(1.2);}}
+.netdot{width:10px;height:10px;border-radius:50%;background:#ff3d00;transition:.3s;}
+.netdot.on{background:#00c853;}
+nav.tabs{flex:0 0 auto;display:flex;gap:1px;background:#0a0a0a;border-bottom:1px solid #00c853;padding:6px 3px;position:relative;z-index:6;}
+.tab-btn{flex:1;background:transparent;border:0;color:#8a8a8a;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 1px;border-radius:11px;font-size:8.5px;font-weight:700;cursor:pointer;min-width:0;}
+.tab-btn .ico{font-size:17px;line-height:1;}
+.tab-btn.active{background:#00c853;color:#000;}
+main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;position:relative;}
+.panel{display:none;padding-bottom:24px;animation:fade .25s ease;}
+.panel.active{display:block;}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.search{position:sticky;top:0;z-index:8;background:#0a0a0a;padding:12px 16px 8px;}
+.search input{width:100%;padding:12px 14px;border-radius:12px;background:#1a1a1a;color:#fff;border:1px solid #00c853;font-size:14px;font-family:inherit;outline:none;}
+.search input::placeholder{color:#7a7a7a;}
+.search .count{font-size:11.5px;color:#8f8f8f;margin-top:8px;padding-left:2px;font-weight:600;}
+.cat-bar{display:flex;gap:8px;padding:8px 16px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;}
+.cat-bar::-webkit-scrollbar{display:none;}
+.cat-chip{flex:0 0 auto;padding:7px 14px;border-radius:999px;background:#1a1a1a;border:1px solid rgba(0,200,83,.4);color:#c8c8c8;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;}
+.cat-chip.active{background:#00c853;color:#000;border-color:#00c853;}
+.card{background:#1a1a1a;border-left:4px solid #00c853;border-radius:12px;padding:14px;margin:12px 16px;box-shadow:0 6px 18px rgba(0,0,0,.55);animation:slideUp .35s ease both;}
+.card.locked{border-left-color:#444;opacity:.75;}
+@keyframes slideUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.imgwrap{position:relative;border-radius:12px;overflow:hidden;background:linear-gradient(135deg,#0f2a17,#1a1a1a);height:160px;margin-bottom:12px;}
+.emoji-hero{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:78px;line-height:1;filter:drop-shadow(0 0 12px rgba(0,200,83,.35));}
+.tut-img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;}
+.badge{position:absolute;top:10px;right:10px;background:#00c853;color:#000;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;box-shadow:0 2px 10px rgba(0,200,83,.5);z-index:3;}
+.badge.lock{background:#444;color:#ddd;}
+.fav{position:absolute;bottom:10px;right:10px;width:38px;height:38px;background:rgba(0,0,0,.62);border:0;border-radius:50%;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:3;}
+.fav.pop{animation:pop .45s ease;}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.5)}70%{transform:scale(.85)}100%{transform:scale(1)}}
+.card-title{font-size:16px;font-weight:800;margin:4px 0 8px;color:#fff;}
+.chip{display:inline-block;font-size:11px;font-weight:700;color:#00c853;background:rgba(0,200,83,.12);border:1px solid rgba(0,200,83,.4);padding:3px 9px;border-radius:999px;margin-bottom:10px;}
+.cost{font-size:12.5px;color:#b5b5b5;font-weight:600;display:block;margin-bottom:4px;}
+.profit{background:#003d14;color:#00c853;border-radius:12px;padding:11px 13px;font-weight:800;font-size:14px;margin:10px 0;border:1px solid rgba(0,200,83,.35);}
+.btn{display:block;width:100%;background:linear-gradient(135deg,#00c853,#009624);color:#fff;font-weight:700;font-size:15px;border:0;border-radius:12px;padding:13px 18px;font-family:inherit;cursor:pointer;box-shadow:0 6px 16px rgba(0,200,83,.25);}
+.btn:active{transform:scale(.97);}
+.btn:disabled{opacity:.45;box-shadow:none;}
+.btn.grey{background:linear-gradient(135deg,#555,#333);box-shadow:none;}
+.dolist,.dontlist{margin:10px 0;border-radius:12px;padding:10px 12px;background:#111;}
+.dolist{border-left:4px solid #00c853;}
+.dontlist{border-left:4px solid #ff3d00;}
+.dolist h4,.dontlist h4{font-size:13px;margin-bottom:6px;letter-spacing:.5px;}
+.dolist h4{color:#00c853;}
+.dontlist h4{color:#ff3d00;}
+.dolist ul,.dontlist ul{list-style:none;}
+.dolist li,.dontlist li{font-size:13.5px;color:#dcdcdc;padding:4px 0 4px 18px;position:relative;}
+.dolist li:before{content:"✔";position:absolute;left:0;top:4px;color:#00c853;font-size:11px;}
+.dontlist li:before{content:"✖";position:absolute;left:0;top:4px;color:#ff3d00;font-size:11px;}
+.failbox{background:#1a1a1a;border-left:4px solid #ff3d00;border-radius:12px;padding:11px 13px;font-size:13px;color:#e6e6e6;margin:10px 0;}
+.failbox strong{color:#ff3d00;display:block;margin-bottom:6px;font-size:12.5px;letter-spacing:.4px;}
+.fail-item{font-size:12.5px;color:#dcdcdc;margin-bottom:6px;padding-left:14px;position:relative;}
+.fail-item:before{content:"→";position:absolute;left:0;color:#00c853;}
+.fail-item strong{display:inline;color:#ff3d00;margin:0;}
+.muted{color:#8f8f8f;font-size:12.5px;}
+.note{background:#003d14;color:#00c853;border-radius:10px;padding:10px 12px;font-size:12.5px;margin-top:10px;font-weight:600;line-height:1.5;}
+.empty{text-align:center;padding:40px 24px;color:#9a9a9a;font-size:14px;}
+.empty .bigicon{font-size:46px;margin-bottom:12px;line-height:1;}
+.empty h3{color:#fff;font-size:17px;margin-bottom:6px;font-weight:800;}
+.typing{display:flex;gap:6px;align-items:center;padding:6px 0;}
+.typing span{width:10px;height:10px;border-radius:50%;background:#00c853;display:inline-block;animation:bounce 1.4s infinite ease-in-out;}
+.typing span:nth-child(2){animation-delay:.18s;}
+.typing span:nth-child(3){animation-delay:.36s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);opacity:.45;}30%{transform:translateY(-8px);opacity:1;}}
+.typing-label{font-size:12.5px;color:#00c853;font-weight:700;margin-top:4px;}
+.typed{font-size:14px;color:#dcdcdc;min-height:22px;white-space:pre-wrap;}
+.typed.cursor::after{content:"▍";color:#00c853;margin-left:1px;animation:blink .7s steps(1,end) infinite;}
+@keyframes blink{50%{opacity:0;}}
+.ai-top{display:flex;align-items:center;gap:8px;padding:12px 16px 0;flex-wrap:wrap;}
+.status-pill{font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:rgba(0,200,83,.12);color:#00c853;border:1px solid rgba(0,200,83,.4);}
+.brain-pill{font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;background:linear-gradient(135deg,#00c853,#009624);color:#000;border:1px solid #00c853;}
+.ai-input-row{padding:12px 16px 8px;}
+.ai-input-row input{width:100%;padding:13px 14px;border-radius:12px;background:#1a1a1a;color:#fff;border:1px solid #00c853;font-family:inherit;font-size:14px;outline:none;}
+.ai-input-row input::placeholder{color:#7a7a7a;}
+.ai-btn-row{padding:0 16px;}
+.notes-editor{padding:14px 16px 6px;}
+.notes-editor input,.notes-editor textarea{width:100%;background:#1a1a1a;color:#fff;border:1px solid #00c853;border-radius:12px;padding:12px 14px;font-family:inherit;font-size:14px;outline:none;margin-bottom:10px;}
+.notes-editor textarea{min-height:110px;resize:vertical;line-height:1.5;}
+.notes-editor input::placeholder,.notes-editor textarea::placeholder{color:#7a7a7a;}
+.notes-list{padding:6px 16px 20px;}
+.note-item{background:#1a1a1a;border-left:4px solid #00c853;border-radius:12px;padding:12px 14px;padding-right:64px;margin-bottom:10px;cursor:pointer;position:relative;}
+.note-item h4{color:#00c853;font-size:14.5px;margin-bottom:3px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.note-item .date{font-size:11px;color:#7a7a7a;margin-bottom:6px;font-weight:600;}
+.note-item p{font-size:13px;color:#dcdcdc;white-space:pre-wrap;word-break:break-word;}
+.note-delete{position:absolute;top:12px;right:12px;background:rgba(255,61,0,.15);color:#ff3d00;border:1px solid rgba(255,61,0,.4);border-radius:8px;padding:5px 9px;font-size:11px;font-weight:800;cursor:pointer;}
+.note-empty{text-align:center;padding:30px 20px;color:#8f8f8f;font-size:13px;}
+.note-empty .bigicon{font-size:40px;margin-bottom:10px;display:block;}
+.note-modal{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100;background:rgba(0,0,0,.85);display:none;align-items:center;justify-content:center;padding:20px;}
+.note-modal.open{display:flex;}
+.note-modal-inner{background:#1a1a1a;border:1px solid #00c853;border-radius:16px;max-width:520px;width:100%;max-height:82vh;overflow-y:auto;padding:16px;}
+.note-modal-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(0,200,83,.3);}
+.note-modal-head h3{color:#00c853;font-size:16px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.note-modal-head button{background:transparent;border:0;color:#fff;font-size:22px;cursor:pointer;padding:2px 8px;}
+#noteModalBody{color:#dcdcdc;font-size:14px;white-space:pre-wrap;word-break:break-word;line-height:1.55;}
+#noteModalBody .date{color:#7a7a7a;font-size:11.5px;font-weight:600;display:block;margin-bottom:12px;}
+#detailSheet{position:fixed;top:0;left:0;right:0;bottom:0;z-index:50;max-width:560px;margin:0 auto;background:#0a0a0a;overflow-y:auto;transform:translateY(100%);transition:transform .3s cubic-bezier(.2,.8,.2,1);pointer-events:none;}
+#detailSheet.open{transform:translateY(0);pointer-events:auto;}
+.sheet-head{position:sticky;top:0;z-index:2;display:flex;align-items:center;gap:8px;background:rgba(10,10,10,.96);padding:12px 16px;border-bottom:1px solid rgba(0,200,83,.35);}
+.back-btn{width:36px;height:36px;border-radius:10px;flex:0 0 auto;background:#1a1a1a;border:1px solid rgba(0,200,83,.4);color:#00c853;font-size:16px;cursor:pointer;}
+.sheet-title{font-size:14.5px;font-weight:800;color:#fff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+.speak-btn{width:38px;height:38px;border-radius:10px;flex:0 0 auto;background:linear-gradient(135deg,#00c853,#009624);border:0;color:#fff;font-size:16px;cursor:pointer;}
+.step{background:#141414;border-left:4px solid #00c853;border-radius:12px;padding:12px;margin:10px 16px;}
+.step-head{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.step-num{width:24px;height:24px;border-radius:50%;background:#00c853;color:#000;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+.step-title{font-size:11.5px;font-weight:800;color:#00c853;letter-spacing:.6px;text-transform:uppercase;}
+.step-text{font-size:13.5px;color:#dcdcdc;white-space:pre-wrap;}
+.sheet-body{padding:14px 16px 40px;}
+.sheet-body .card{margin-left:0;margin-right:0;}
+.sheet-body .step{margin-left:0;margin-right:0;}
+.mat-box{background:#111;border-left:3px solid #00c853;border-radius:10px;padding:10px 12px;margin:8px 0;}
+.mat-box h4{color:#00c853;font-size:12px;letter-spacing:.5px;margin-bottom:6px;font-weight:800;}
+.mat-item{display:flex;justify-content:space-between;gap:8px;padding:4px 0;border-bottom:1px dashed rgba(0,200,83,.15);font-size:12.5px;}
+.mat-item:last-child{border-bottom:0;}
+.mat-item .mi-name{color:#dcdcdc;flex:1;}
+.mat-item .mi-cost{color:#00c853;font-weight:700;white-space:nowrap;}
+.mat-item .mi-where{color:#8f8f8f;font-size:11px;display:block;margin-top:1px;}
+.market-box{background:#0a1a0e;border-left:3px solid #00c853;border-radius:10px;padding:10px 12px;margin:8px 0;}
+.market-box h4{color:#00c853;font-size:12px;letter-spacing:.5px;margin-bottom:6px;font-weight:800;}
+.market-item{font-size:12.5px;color:#dcdcdc;padding:5px 0;border-bottom:1px dashed rgba(0,200,83,.15);}
+.market-item:last-child{border-bottom:0;}
+.market-item strong{color:#00c853;display:block;font-size:11.5px;margin-bottom:2px;}
+.start-today{background:linear-gradient(135deg,#003d14,#001f0a);border:1px solid #00c853;border-radius:12px;padding:12px;margin:12px 0;color:#00c853;font-size:13px;font-weight:700;line-height:1.5;}
+.start-today strong{display:block;font-size:11.5px;letter-spacing:.5px;margin-bottom:4px;opacity:.85;}
+.free-bar{background:linear-gradient(135deg,#003d14,#001f0a);border-radius:12px;padding:12px;margin:0 16px 12px;border:1px solid rgba(0,200,83,.4);text-align:center;font-size:12.5px;color:#00c853;font-weight:700;line-height:1.5;}
+.free-bar strong{display:block;font-size:13.5px;margin-bottom:3px;}
+.trial-bar{background:linear-gradient(135deg,#003d14,#001f0a);border-bottom:1px solid #00c853;padding:8px 16px;text-align:center;font-size:12.5px;color:#00c853;font-weight:700;position:sticky;top:0;z-index:9;}
+.trial-bar .time{font-weight:900;font-size:14px;letter-spacing:1px;}
+.creator-card{background:linear-gradient(135deg,#0f2a17,#1a1a1a);border-left:4px solid #00c853;border-radius:12px;padding:18px 16px;margin:12px 16px 24px;text-align:center;}
+.creator-card .creator-logo{font-size:26px;font-weight:900;color:#00c853;letter-spacing:3px;margin-bottom:6px;}
+.creator-card .creator-name{font-size:12.5px;color:#dcdcdc;letter-spacing:.3px;margin-bottom:6px;font-weight:700;line-height:1.5;}
+.creator-card .creator-tel{display:inline-block;font-size:13.5px;color:#00c853;font-weight:800;letter-spacing:.5px;margin:6px 0 12px;text-decoration:none;background:rgba(0,200,83,.1);padding:8px 14px;border-radius:999px;border:1px solid rgba(0,200,83,.4);}
+.creator-card .mission{font-size:14.5px;color:#00c853;font-weight:800;line-height:1.55;margin-bottom:14px;padding:0 8px;font-style:italic;}
+.creator-card .creator-copy{font-size:10.5px;color:#7a7a7a;letter-spacing:.4px;font-weight:600;}
+.creator-card .creator-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,83,.4),transparent);margin:12px 0;}
+.paywall-wrap{padding:16px;display:flex;flex-direction:column;align-items:center;}
+.paywall-card{background:#0f0f0f;border:1px solid rgba(0,200,83,.4);border-radius:18px;padding:22px 18px;width:100%;max-width:440px;text-align:center;margin-bottom:14px;}
+.paywall-title{font-size:22px;font-weight:900;color:#00c853;letter-spacing:.4px;margin-bottom:8px;}
+.paywall-lock{font-size:46px;line-height:1;margin-bottom:8px;}
+.paywall-sub{font-size:12.5px;color:#8f8f8f;margin-bottom:16px;letter-spacing:.4px;font-weight:600;}
+.paywall-instructions{background:linear-gradient(135deg,#001a0a,#003d14);border:1px solid rgba(0,200,83,.35);border-radius:12px;padding:14px 12px;text-align:left;margin-bottom:16px;font-size:13px;color:#e6e6e6;line-height:1.7;}
+.paywall-instructions .line{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;}
+.paywall-instructions .line:last-child{margin-bottom:0;}
+.paywall-instructions .ic{color:#00c853;font-weight:900;flex:0 0 auto;}
+.paywall-instructions strong{color:#00c853;font-weight:800;}
+.paywall-instructions .num{color:#fff;font-weight:800;letter-spacing:.5px;}
+.paywall-hint{font-size:11.5px;color:#7a7a7a;margin-top:-6px;margin-bottom:14px;font-weight:600;line-height:1.5;}
+.paywall-input-row{margin-bottom:12px;}
+#txInput{width:100%;padding:14px;border-radius:12px;background:#0a0a0a;color:#fff;border:1px solid #00c853;font-family:ui-monospace,Menlo,monospace;font-size:15px;outline:none;text-align:center;letter-spacing:2px;}
+#txInput::placeholder{color:#5f5f5f;letter-spacing:.5px;font-family:inherit;font-size:13px;}
+#verifyBtn{display:block;width:100%;background:linear-gradient(135deg,#00c853,#009624);color:#fff;font-weight:800;font-size:15.5px;border:0;border-radius:12px;padding:15px 18px;font-family:inherit;cursor:pointer;letter-spacing:.3px;}
+#statusMsg{margin-top:14px;font-size:13px;font-weight:700;line-height:1.55;min-height:20px;padding:0 4px;}
+#statusMsg.ok{color:#00c853;}
+#statusMsg.err{color:#ff3d00;}
+.paywall-active-card{background:linear-gradient(135deg,#003d14,#001f0a);border:1px solid #00c853;border-radius:18px;padding:22px 18px;text-align:center;width:100%;max-width:440px;}
+.paywall-active-card h3{color:#00c853;font-size:19px;font-weight:900;margin-bottom:8px;}
+.paywall-active-card .num{font-size:34px;font-weight:900;color:#00c853;letter-spacing:2px;margin:10px 0 4px;}
+.paywall-active-card .lbl{font-size:11px;color:#8f8f8f;font-weight:700;letter-spacing:1.5px;margin-bottom:12px;}
+.paywall-active-card .exp{font-size:12.5px;color:#c8c8c8;font-weight:600;}
+.paywall-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(0,200,83,.4),transparent);margin:14px 0;}
+.paywall-perks{text-align:left;font-size:13px;color:#dcdcdc;line-height:1.8;}
+.paywall-perks .pr{display:flex;gap:8px;align-items:flex-start;}
+.paywall-perks .pr .tick{color:#00c853;font-weight:900;flex:0 0 auto;}
+.paywall-faq{margin-top:16px;background:#111;border-radius:12px;padding:12px 14px;font-size:12px;color:#b5b5b5;line-height:1.6;text-align:left;}
+.paywall-faq strong{color:#00c853;display:block;margin-bottom:4px;font-size:11.5px;letter-spacing:.5px;}
+#splashScreen{position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:radial-gradient(circle at 50% 40%,#0f2a17 0%,#0a0a0a 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;transition:opacity .6s ease,visibility .6s ease;}
+#splashScreen.hide{opacity:0;visibility:hidden;pointer-events:none;}
+.splash-logo{font-size:64px;line-height:1;margin-bottom:14px;animation:splashPulse 1.6s ease-in-out infinite;}
+@keyframes splashPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+.splash-title{font-size:44px;font-weight:900;color:#00c853;letter-spacing:8px;line-height:1;margin-bottom:8px;}
+.splash-sub{font-size:11.5px;color:#8f8f8f;letter-spacing:3px;text-transform:uppercase;margin-bottom:40px;font-weight:700;}
+.splash-welcome{font-size:26px;font-weight:900;color:#fff;letter-spacing:1px;margin-bottom:8px;}
+.splash-tagline{font-size:20px;font-weight:800;color:#00c853;letter-spacing:.5px;margin-bottom:44px;}
+.splash-loader{width:180px;height:4px;background:rgba(0,200,83,.15);border-radius:999px;overflow:hidden;}
+.splash-bar{height:100%;width:0;background:linear-gradient(90deg,#00c853,#009624);border-radius:999px;animation:splashLoad 2.3s ease forwards .8s;}
+@keyframes splashLoad{to{width:100%;}}
+.splash-footer{position:absolute;bottom:calc(28px + env(safe-area-inset-bottom));font-size:10.5px;color:#5a5a5a;letter-spacing:2px;font-weight:700;}
+.coming-soon{text-align:center;padding:60px 24px;color:#8f8f8f;}
+.coming-soon .bigicon{font-size:56px;margin-bottom:16px;display:block;}
+.coming-soon h3{color:#fff;font-size:18px;margin-bottom:8px;font-weight:800;}
+.coming-soon p{font-size:13px;line-height:1.6;}
+.load-sentinel{padding:20px;text-align:center;color:#00c853;font-size:13px;font-weight:700;}
+
+/* ============ Assistant Live Chat v3 ============ */
+#panel-chat.active { display: flex; flex-direction: column; height: 100%; padding-bottom: 0; }
+
+.chat-header-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #0a2a14, #0a0a0a);
+  border-bottom: 1px solid rgba(0,200,83,.4);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.chat-avatars { position: relative; width: 52px; height: 38px; flex: 0 0 auto; }
+.chat-ava {
+  position: absolute;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #1a1a1a;
+  border: 2px solid #00c853;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.chat-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ajon-ava { left: 0; top: 0; z-index: 2; }
+.pasie-ava { left: 16px; top: 2px; z-index: 1; border-color: #0a7a3a; }
+.chat-header-info { flex: 1; min-width: 0; }
+.chat-title { font-size: 13.5px; font-weight: 800; color: #fff; letter-spacing: .3px; display: flex; align-items: center; gap: 6px; }
+.live-pulse { color: #ff3d00; font-size: 10px; animation: blinkDot 1.4s infinite; }
+@keyframes blinkDot { 50% { opacity: .3; } }
+.chat-subtitle { font-size: 11px; color: #8f8f8f; font-weight: 600; margin-top: 2px; }
+.chat-hdr-btn {
+  flex: 0 0 auto;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(0,200,83,.4);
+  border-radius: 10px;
+  color: #00c853;
+  font-size: 15px;
+  padding: 7px 11px;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1;
+}
+.chat-hdr-btn:active { background: rgba(0,200,83,.2); }
+#soundToggleBtn { margin-right: 4px; }
+
+#assistMsgs {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 12px 20px;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.bubble-row {
+  display: flex;
+  gap: 8px;
+  animation: slideUp .3s ease both;
+  max-width: 100%;
+}
+.bubble-row.ajon { justify-content: flex-start; }
+.bubble-row.pasie { justify-content: flex-end; flex-direction: row-reverse; }
+.bubble-avatar {
+  flex: 0 0 auto;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 1.5px solid #00c853;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  overflow: hidden;
+}
+.bubble-row.pasie .bubble-avatar { border-color: #0a7a3a; }
+.avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar-emoji { font-size: 18px; line-height: 1; }
+
+.bubble-body { max-width: 78%; min-width: 0; }
+.bubble-name {
+  font-size: 10.5px; font-weight: 800; color: #00c853;
+  letter-spacing: .3px; margin-bottom: 3px; padding-left: 4px;
+}
+.bubble-row.pasie .bubble-name { text-align: right; padding-right: 4px; color: #4cd964; }
+.bubble {
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-word;
+  position: relative;
+  min-height: 20px;
+}
+.bubble.ajon {
+  background: #142e1c;
+  color: #e6f7ea;
+  border-left: 3px solid #00c853;
+  border-top-left-radius: 4px;
+}
+.bubble.pasie {
+  background: #1a3a24;
+  color: #d6f0dc;
+  border-right: 3px solid #4cd964;
+  border-top-right-radius: 4px;
+}
+.bubble.typing-cursor::after {
+  content: "\25CD";
+  color: #00c853;
+  margin-left: 1px;
+  animation: blinkCur .7s steps(1,end) infinite;
+  font-weight: 400;
+}
+@keyframes blinkCur { 50% { opacity: 0; } }
+
+.bubble-typing {
+  display: inline-flex;
+  gap: 4px;
+  padding: 12px 14px;
+  align-items: center;
+}
+.bubble-typing .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #00c853;
+  display: inline-block;
+  animation: bounceDot 1.2s infinite ease-in-out;
+}
+.bubble-typing .dot:nth-child(2) { animation-delay: .2s; }
+.bubble-typing .dot:nth-child(3) { animation-delay: .4s; }
+@keyframes bounceDot { 0%,60%,100% { transform: translateY(0); opacity: .4;} 30% { transform: translateY(-4px); opacity: 1;} }
+.typing-mini {
+  font-size: 9.5px;
+  color: #8f8f8f;
+  font-style: italic;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+
+/* ========== Step 1c: distinct bubbles + tighter grouping ========== */
+.bubble.ajon {
+  background: #1a3a24 !important;
+  color: #e6f7ea !important;
+  border-left: 3px solid #00c853 !important;
+}
+.bubble.pasie {
+  background: #006b4f !important;
+  color: #ffffff !important;
+  border-right: 3px solid #00ff99 !important;
+}
+.bubble-row.pasie .bubble-name { color: #00ff99 !important; }
+.bubble-row.ajon .bubble-name { color: #00c853 !important; }
+.bubble { font-size: 14px; line-height: 1.55; }
+.bubble-row { margin-bottom: 2px; }
+
+
+/* ========== Step 1c: distinct bubbles + tighter grouping ========== */
+.bubble.ajon {
+  background: #1a3a24 !important;
+  color: #e6f7ea !important;
+  border-left: 3px solid #00c853 !important;
+}
+.bubble.pasie {
+  background: #006b4f !important;
+  color: #ffffff !important;
+  border-right: 3px solid #00ff99 !important;
+}
+.bubble-row.pasie .bubble-name { color: #00ff99 !important; }
+.bubble-row.ajon .bubble-name { color: #00c853 !important; }
+.bubble { font-size: 14px; line-height: 1.55; }
+.bubble-row { margin-bottom: 2px; }
+
+</style>
+</head>
+<body>
+
+<div id="splashScreen">
+  <div class="splash-logo">💰</div>
+  <div class="splash-title">AJON</div>
+  <div class="splash-sub">500+ Ways To Make Money</div>
+  <div class="splash-welcome">Welcome</div>
+  <div class="splash-tagline">Start Your Business Now</div>
+  <div class="splash-loader"><div class="splash-bar"></div></div>
+  <div class="splash-footer">MADE BY AJON INNO</div>
+</div>
+
+<div id="app">
+  <header>
+    <div class="logo-mark">💰</div>
+    <div>
+      <div class="logo">AJON</div>
+      <div class="sub">500+ Ways To Make Money</div>
+    </div>
+    <div class="hdr-right">
+      <div class="user-badge" title="Active users"><span class="pulse"></span><span>👥</span><span id="userBadge">1.0k</span></div>
+      <div class="netdot" id="netDot"></div>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-tab="tutorials" onclick="showTab('tutorials')"><span class="ico">📚</span><span>Tutorials</span></button>
+    <button class="tab-btn" data-tab="video" onclick="showTab('video')"><span class="ico">🔓</span><span>Unlock</span></button>
+    <button class="tab-btn" data-tab="ai" onclick="showTab('ai')"><span class="ico">🧠</span><span>Helper</span></button>
+    <button class="tab-btn" data-tab="notes" onclick="showTab('notes')"><span class="ico">📝</span><span>Notes</span></button>
+    <button class="tab-btn" data-tab="chat" onclick="showTab('chat')"><span class="ico">💬</span><span>Assist</span></button>
+  </nav>
+
+  <main id="main">
+    <div id="trialBar"></div>
+
+    <section class="panel active" id="panel-tutorials">
+      <div class="search">
+        <input id="searchInput" type="search" placeholder="🔍 Search 500+ business ideas..." autocomplete="off" spellcheck="false">
+        <div class="count" id="tutCount"></div>
+      </div>
+      <div class="cat-bar" id="catBar"></div>
+      <div id="tutList"></div>
+      <div id="loadSentinel" class="load-sentinel" style="display:none;">Loading more...</div>
+    </section>
+
+    <section class="panel" id="panel-video"><div id="videoArea"></div></section>
+
+    <section class="panel" id="panel-ai">
+      <div class="ai-top">
+        <span class="brain-pill">🧠 Your Helper</span>
+        <span class="status-pill" id="aiStatus">🟢 Checking...</span>
+      </div>
+      <div class="ai-input-row">
+        <input id="aiInput" type="text" placeholder="Ask: how do I make candy?" autocomplete="off">
+      </div>
+      <div class="ai-btn-row">
+        <button class="btn" onclick="askAI()">🧠 Ask Your Helper</button>
+      </div>
+      <div id="aires"></div>
+    </section>
+
+    <section class="panel" id="panel-notes">
+      <div class="notes-editor">
+        <input id="noteTitle" type="text" placeholder="📝 Note title..." autocomplete="off">
+        <textarea id="noteBody" placeholder="Write your idea, customer contact, or reminder..."></textarea>
+        <button class="btn" onclick="saveNote()">💾 Save Note</button>
+      </div>
+      <div class="notes-list" id="notesList"></div>
+      <div id="creatorSlot"></div>
+    </section>
+
+    <section class="panel" id="panel-chat">
+      <div class="chat-header-bar">
+        <div class="chat-avatars">
+          <span class="chat-ava ajon-ava"><img src="images/ajon-avatar.webp" alt="" onerror="this.style.display='none';this.parentNode.textContent='🧑🏾‍🏫';"></span>
+          <span class="chat-ava pasie-ava"><img src="images/pesie-avatar.webp" alt="" onerror="this.style.display='none';this.parentNode.textContent='🧑🏾‍🌾';"></span>
+        </div>
+        <div class="chat-header-info">
+          <div class="chat-title">Mr Ajon <span class="live-pulse">●</span> Live</div>
+          <div class="chat-subtitle">Teaching Pesie from Busia</div>
+        </div>
+        <button id="soundToggleBtn" class="chat-hdr-btn" onclick="toggleAssistSound()" title="Sound on/off">🔊</button>
+        <button class="chat-hdr-btn" onclick="clearAssistantChat()" title="Clear chat">🗑️</button>
+      </div>
+      <div class="chat-msgs" id="assistMsgs"></div>
+    </section>
+  </main>
+</div>
+
+<div id="detailSheet" role="dialog" aria-modal="true"></div>
+
+<div class="note-modal" id="noteModal">
+  <div class="note-modal-inner">
+    <div class="note-modal-head">
+      <h3 id="noteModalTitle"></h3>
+      <button onclick="closeNoteModal()" aria-label="Close">✕</button>
+    </div>
+    <div id="noteModalBody"></div>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   AJON v2 — 500 businesses, lazy loading, real Ugandan markets
+   ===================================================================== */
+
+var AUTO_IMAGES = true;
+var IMAGE_MAP = {};
+
+function slugify(s) {
+  return String(s).toLowerCase().replace(/[^a-z0-9\s-]/g, "").replace(/\s+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+}
+function imagePathFor(t) {
+  if (t.img) return t.img;
+  if (IMAGE_MAP[t.t]) return IMAGE_MAP[t.t];
+  if (AUTO_IMAGES) return "images/" + slugify(t.t) + ".webp";
+  return null;
+}
+function onImgError(img) {
+  try {
+    var emoji = img.getAttribute("data-emoji") || "💰";
+    var div = document.createElement("div");
+    div.className = "emoji-hero";
+    div.textContent = emoji;
+    img.parentNode.replaceChild(div, img);
+  } catch (e) {}
+}
+function imgHTML(t) {
+  var src = imagePathFor(t);
+  var emoji = t.emoji || "💰";
+  if (src) {
+    return '<div class="emoji-hero">' + emoji + '</div>' +
+           '<img class="tut-img" src="' + src + '" alt="" loading="lazy" data-emoji="' + emoji + '" onerror="onImgError(this)">';
+  }
+  return '<div class="emoji-hero">' + emoji + '</div>';
+}
+
+/* ===================== PASSWORD ===================== */
+function generateCurrentPassword() {
+  var now = new Date();
+  var Year = now.getFullYear(); var Month = now.getMonth(); var Day = now.getDate(); var Hour = now.getHours();
+  if (Year < 2026) return null;
+  var MonthIndex = (Year - 2026) * 12 + Month; if (MonthIndex < 0) return null;
+  var DayIdx = MonthIndex * 31 + Day; var HourIdx = DayIdx * 24 + Hour;
+  var Num = 2000 + HourIdx * 13 + 77 * 13;
+  var L1 = String.fromCharCode(97 + ((Year - 2026) % 26));
+  var L2 = String.fromCharCode(97 + (Month % 26));
+  var L3 = String.fromCharCode(97 + (Day % 26));
+  var L4 = String.fromCharCode(97 + Hour);
+  var Last = (HourIdx * 7 + Year % 10) % 9 + 1;
+  return ("aj" + Num + L1 + L2 + L3 + L4 + Last).toLowerCase();
+}
+function currentHourEndsAt() { var d = new Date(); d.setMinutes(59); d.setSeconds(59); d.setMilliseconds(999); return d.getTime(); }
+function isDateValid() { var n = new Date(); var Y = n.getFullYear(); var MI = (Y - 2026) * 12 + n.getMonth(); return (Y >= 2026 && MI >= 0); }
+window.onerror = function () { return true; };
+
+/* ===================== CONFIG ===================== */
+var SERVER_CONFIG = {
+  appwrite: {
+    endpoint: "https://cloud.appwrite.io/v1",
+    projectId: "YOUR_APPWRITE_PROJECT_ID",
+    databaseId: "YOUR_DATABASE_ID",
+    tutorialsCollection: "tutorials",
+    configCollection: "app_config",
+    paymentsCollection: "payments"
+  },
+  defaults: { trialMinutes: 5, subscriptionDays: 30 }
+};
+var PAYMENT_INFO = { phone: "0768207738", name: "Bwire", amount: 10000, currency: "UGX" };
+
+var CATEGORIES = [
+  { id: "food",    name: "🍲 Food & Drinks" },
+  { id: "home",    name: "🧼 Home Products" },
+  { id: "cosm",    name: "🧴 Cosmetics" },
+  { id: "agri",    name: "🌾 Agriculture" },
+  { id: "craft",   name: "🎨 Crafts" },
+  { id: "oil",     name: "🛢️ Cooking Oils" },
+  { id: "service", name: "🛠️ Services" },
+  { id: "online",  name: "💻 Online" }
+];
+
+/* ===================================================================
+   500 UNIQUE BUSINESSES
+   Format: [title, emoji, cat, cost, sales, time, buy, sell, tag,
+            materials(pipe-sep item~cost~where),
+            tools(pipe-sep),
+            steps(pipe-sep),
+            dos(pipe-sep),
+            donts(pipe-sep),
+            fails(pipe-sep problem~fix),
+            markets(pipe-sep channel~detail),
+            startToday]
+   =================================================================== */
+var RAW_BUSINESSES = [
+
+];
+
+function expandBusiness(raw, index) {
+  var id = index + 1;
+  function split(s) { return s ? s.split("||") : []; }
+  function splitPipe(s) { return s ? s.split("|") : []; }
+  function splitTilde(s, n) {
+    var parts = s.split("~");
+    while (parts.length < n) parts.push("");
+    return parts;
+  }
+  var matArr = splitPipe(raw[9]).map(function(m) {
+    var p = splitTilde(m, 3);
+    return { item: p[0], cost: p[1], where: p[2] };
+  });
+  var failsArr = splitPipe(raw[14]).map(function(f) {
+    var p = splitTilde(f, 2);
+    return { problem: p[0], fix: p[1] };
+  });
+  var marketArr = splitPipe(raw[15]).map(function(m) {
+    var p = splitTilde(m, 2);
+    return { channel: p[0], detail: p[1] };
+  });
+  return {
+    id: id,
+    t: raw[0],
+    emoji: raw[1],
+    c: raw[2],
+    cost: raw[3],
+    sales: raw[4],
+    profit: Number(raw[4]) - Number(raw[3]),
+    time: raw[5],
+    buy: raw[6],
+    sell: raw[7],
+    tagline: raw[8],
+    materials: matArr,
+    tools: splitPipe(raw[10]),
+    steps: split(raw[11]),
+    dos: splitPipe(raw[12]),
+    donts: splitPipe(raw[13]),
+    fails: failsArr,
+    market: marketArr,
+    startToday: raw[16]
+  };
+}
+
+var ALL_BUSINESSES = RAW_BUSINESSES.map(expandBusiness);
+
+/* ===================== STORAGE ===================== */
+var LS_FAV = "ajon_favs_v11";
+var LS_HIST = "ajon_hist_v11";
+var LS_NOTES = "ajon_notes_v11";
+var LS_INSTALL = "ajon_install_v11";
+var LS_USED_PW = "ajon_used_pw_v11";
+var LS_SUB_END = "ajon_sub_end_v11";
+var LS_USERS = "ajon_users_v11";
+
+var favs = readJSON(LS_FAV, []);
+var hist = readJSON(LS_HIST, []);
+var notes = readJSON(LS_NOTES, []);
+var usedPasswords = readJSON(LS_USED_PW, []);
+var subscriptionEndDate = readJSON(LS_SUB_END, 0);
+var appConfig = SERVER_CONFIG.defaults;
+
+var installTime = readJSON(LS_INSTALL, null);
+if (!installTime) { installTime = Date.now(); writeJSON(LS_INSTALL, installTime); }
+
+var USER_BASE = 208400, USER_START = 1000;
+var userCount = readJSON(LS_USERS, USER_START);
+if (userCount < USER_START) userCount = USER_START;
+var userTickTimer = null;
+
+var TUTORIALS = [];
+var currentTab = "tutorials";
+var currentQuery = "";
+var currentCategory = "all";
+var askToken = 0;
+var tutOffset = 0;
+var TUT_PAGE = 15;
+var searchTimer = null;
+var trialTickTimer = null;
+var currentlySpeakingId = null;
+var currentItems = [];
+var loadingMore = false;
+var observer = null;
+
+function readJSON(key, fb) { try { var r = localStorage.getItem(key); if (!r) return fb; var v = JSON.parse(r); return (v == null) ? fb : v; } catch (e) { return fb; } }
+function writeJSON(key, val) { try { localStorage.setItem(key, JSON.stringify(val)); } catch (e) {} }
+function fmt(n) { n = Number(n) || 0; try { return n.toLocaleString("en-US"); } catch (e) { return String(n); } }
+function escapeHTML(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function byId(id) { return document.getElementById(id); }
+function formatDate(ts) { try { var d = new Date(ts); return d.toLocaleDateString() + " " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }); } catch (e) { return ""; } }
+function formatDateShort(ts) { try { var d = new Date(ts); return d.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" }); } catch (e) { return ""; } }
+function formatUserCount(n) { n = Number(n) || 0; if (n >= 1000000) return (n / 1000000).toFixed(2) + "M"; if (n >= 1000) return (n / 1000).toFixed(1) + "k"; return String(n); }
+
+/* ===================== LIVE USER COUNTER ===================== */
+function animateUserCount() {
+  var el = byId("userBadge"); if (!el) return;
+  if (userCount >= USER_BASE) { el.textContent = formatUserCount(userCount); startUserTick(); return; }
+  var from = Math.max(USER_START, userCount), to = USER_BASE, startTime = Date.now(), duration = 2600;
+  function step() {
+    var t = Math.min((Date.now() - startTime) / duration, 1); t = 1 - Math.pow(1 - t, 3);
+    var current = Math.floor(from + (to - from) * t); el.textContent = formatUserCount(current); userCount = current;
+    if (t < 1) requestAnimationFrame(step);
+    else { userCount = USER_BASE; writeJSON(LS_USERS, userCount); el.textContent = formatUserCount(userCount); startUserTick(); }
+  }
+  requestAnimationFrame(step);
+}
+function startUserTick() {
+  if (userTickTimer) clearInterval(userTickTimer);
+  userTickTimer = setInterval(function () {
+    userCount += Math.floor(Math.random() * 5) + 1;
+    var el = byId("userBadge"); if (el) el.textContent = formatUserCount(userCount);
+    if (Math.random() < 0.12) writeJSON(LS_USERS, userCount);
+  }, 2800);
+}
+
+/* ===================== TRIAL ===================== */
+function trialMinutesLeft() { var trialMs = (appConfig.trialMinutes || 5) * 60 * 1000; return Math.max(0, trialMs - (Date.now() - installTime)); }
+function isTrialActive() { return trialMinutesLeft() > 0; }
+function isSubscribed() { return subscriptionEndDate && subscriptionEndDate > Date.now(); }
+function hasFullAccess() { return isSubscribed() || isTrialActive(); }
+function canAccess(tut) { if (hasFullAccess()) return true; return Number(tut.id) <= 2; }
+function formatTrialTime(ms) { var s = Math.ceil(ms / 1000); var m = Math.floor(s / 60); var sec = s % 60; return m + ":" + (sec < 10 ? "0" : "") + sec; }
+function updateTrialBar() {
+  var bar = byId("trialBar"); if (!bar) return;
+  if (isSubscribed()) { var daysLeft = Math.ceil((subscriptionEndDate - Date.now()) / (1000 * 60 * 60 * 24)); bar.innerHTML = '<div class="trial-bar">✅ Full access — ' + daysLeft + ' days remaining</div>'; return; }
+  if (isTrialActive()) { bar.innerHTML = '<div class="trial-bar">🎁 Free preview: <span class="time">' + formatTrialTime(trialMinutesLeft()) + '</span> — enjoy all tutorials</div>'; return; }
+  bar.innerHTML = '<div class="trial-bar">🔒 Preview ended — Unlock 500+ ideas in the Unlock tab</div>';
+}
+function startTrialTick() {
+  if (trialTickTimer) clearInterval(trialTickTimer);
+  trialTickTimer = setInterval(function () { updateTrialBar(); if (!isTrialActive() && !isSubscribed()) { tutOffset = 0; renderTutorials(true); } }, 1000);
+}
+
+/* ===================== LAZY LOADING ===================== */
+function setupObserver() {
+  if (observer) observer.disconnect();
+  var sentinel = byId("loadSentinel");
+  if (!sentinel) return;
+  observer = new IntersectionObserver(function (entries) {
+    if (entries[0].isIntersecting && !loadingMore && tutOffset < currentItems.length) {
+      loadMoreTut();
+    }
+  }, { rootMargin: "200px" });
+  observer.observe(sentinel);
+}
+
+/* ===================== RENDER ===================== */
+function searchT(q) { currentQuery = (q === undefined || q === null) ? "" : String(q); tutOffset = 0; renderTutorials(true); }
+
+function renderTutorials(reset) {
+  var list = byId("tutList"); var countEl = byId("tutCount"); var sentinel = byId("loadSentinel");
+  if (!list) return;
+
+  var query = currentQuery.toLowerCase().trim();
+  var items = ALL_BUSINESSES.slice();
+
+  if (currentCategory !== "all") items = items.filter(function (x) { return x.c === currentCategory; });
+  if (query) items = items.filter(function (x) {
+    return (x.t + " " + x.c + " " + (x.tagline || "") + " " + x.buy + " " + x.sell).toLowerCase().indexOf(query) > -1;
+  });
+  if (!query && currentCategory === "all") {
+    for (var k = items.length - 1; k > 0; k--) { var r = Math.floor(Math.random() * (k + 1)); var tmp = items[k]; items[k] = items[r]; items[r] = tmp; }
+  }
+
+  currentItems = items;
+
+  if (reset) { list.innerHTML = ""; tutOffset = 0; loadingMore = false; }
+
+  if (!items.length) {
+    list.innerHTML = '<div class="empty"><div class="bigicon">😕</div><h3>No business matched</h3><p>Try: candy, soap, mushroom, chicken, oil, tomato</p></div>';
+    if (countEl) countEl.textContent = "0 results";
+    if (sentinel) sentinel.style.display = "none";
+    return;
+  }
+
+  if (!hasFullAccess()) {
+    list.insertAdjacentHTML("beforeend",
+      '<div class="free-bar"><strong>🔓 Preview ended</strong>' +
+      'Unlock 500+ ideas for ' + fmt(PAYMENT_INFO.amount) + ' ' + PAYMENT_INFO.currency + ' / month — see the Unlock tab</div>');
+  }
+
+  if (countEl) countEl.textContent = items.length + " businesses" + (query ? ' for "' + currentQuery + '"' : "");
+
+  var end = Math.min(tutOffset + TUT_PAGE, items.length);
+  var html = "";
+  for (var m = tutOffset; m < end; m++) html += cardHTML(items[m]);
+  list.insertAdjacentHTML("beforeend", html);
+  tutOffset = end;
+
+  if (sentinel) sentinel.style.display = (tutOffset < items.length) ? "block" : "none";
+  if (reset) setupObserver();
+}
+
+function loadMoreTut() {
+  if (loadingMore || tutOffset >= currentItems.length) return;
+  loadingMore = true;
+  var list = byId("tutList");
+  var end = Math.min(tutOffset + TUT_PAGE, currentItems.length);
+  var html = "";
+  for (var m = tutOffset; m < end; m++) html += cardHTML(currentItems[m]);
+  if (list) list.insertAdjacentHTML("beforeend", html);
+  tutOffset = end;
+  loadingMore = false;
+  var sentinel = byId("loadSentinel");
+  if (sentinel) sentinel.style.display = (tutOffset < currentItems.length) ? "block" : "none";
+}
+
+function cardHTML(t) {
+  var locked = !canAccess(t);
+  var fav = isFav(t.id);
+  return '<div class="card' + (locked ? " locked" : "") + '">' +
+    '<div class="imgwrap">' + imgHTML(t) +
+    '<span class="badge' + (locked ? " lock" : "") + '">' + (locked ? "🔒 Locked" : (t.emoji || "💰") + ' UGX ' + fmt(t.profit)) + '</span>' +
+    '<button class="fav" data-fav="' + t.id + '" onclick="toggleFav(' + t.id + ', event)">' + (fav ? "❤️" : "🤍") + '</button></div>' +
+    '<h3 class="card-title">' + (t.emoji || "") + ' ' + escapeHTML(t.t) + '</h3>' +
+    '<span class="chip">' + escapeHTML(catName(t.c)) + '</span>' +
+    '<span class="cost">Start: UGX ' + fmt(t.cost) + ' • Sales: UGX ' + fmt(t.sales) + '</span>' +
+    '<div class="profit">💰 Profit: UGX ' + fmt(t.profit) + '</div>' +
+    '<button class="btn' + (locked ? " grey" : "") + '" onclick="openTutorial(' + t.id + ')">' + (locked ? "🔒 Unlock to View" : "View Full Tutorial") + '</button></div>';
+}
+
+function catName(id) {
+  for (var i = 0; i < CATEGORIES.length; i++) if (CATEGORIES[i].id === id) return CATEGORIES[i].name;
+  return id;
+}
+
+/* ===================== DETAIL ===================== */
+function detailHTML(t) {
+  var stepsHTML = "";
+  for (var i = 0; i < (t.steps || []).length; i++) {
+    stepsHTML += '<div class="step"><div class="step-head"><span class="step-num">' + (i + 1) + '</span><span class="step-title">Step ' + (i + 1) + '</span></div><p class="step-text">' + escapeHTML(t.steps[i]) + '</p></div>';
+  }
+  var matHTML = "";
+  if (t.materials && t.materials.length) {
+    matHTML = '<div class="mat-box"><h4>🛒 WHERE TO BUY MATERIALS</h4>';
+    for (var m = 0; m < t.materials.length; m++) {
+      var mat = t.materials[m];
+      matHTML += '<div class="mat-item"><div class="mi-name">' + escapeHTML(mat.item) + (mat.where ? '<span class="mi-where">📍 ' + escapeHTML(mat.where) + '</span>' : '') + '</div><div class="mi-cost">' + escapeHTML(mat.cost) + ' UGX</div></div>';
+    }
+    matHTML += '</div>';
+  }
+  var toolsHTML = "";
+  if (t.tools && t.tools.length) toolsHTML = '<div class="mat-box"><h4>🔧 TOOLS NEEDED</h4><div class="mat-item"><div class="mi-name">' + t.tools.map(escapeHTML).join(' • ') + '</div></div></div>';
+  var doHTML = "";
+  if (t.dos && t.dos.length) { doHTML = '<div class="dolist"><h4>✅ DO</h4><ul>'; for (var a = 0; a < t.dos.length; a++) doHTML += "<li>" + escapeHTML(t.dos[a]) + "</li>"; doHTML += "</ul></div>"; }
+  var dontHTML = "";
+  if (t.donts && t.donts.length) { dontHTML = '<div class="dontlist"><h4>⛔ DON\'T</h4><ul>'; for (var b = 0; b < t.donts.length; b++) dontHTML += "<li>" + escapeHTML(t.donts[b]) + "</li>"; dontHTML += "</ul></div>"; }
+  var failHTML = "";
+  if (t.fails && t.fails.length) { failHTML = '<div class="failbox"><strong>⚠️ FAIL FIX</strong>'; for (var f = 0; f < t.fails.length; f++) failHTML += '<div class="fail-item"><strong>' + escapeHTML(t.fails[f].problem) + ':</strong> ' + escapeHTML(t.fails[f].fix) + '</div>'; failHTML += '</div>'; }
+  var marketHTML = "";
+  if (t.market && t.market.length) { marketHTML = '<div class="market-box"><h4>💰 WHERE TO SELL</h4>'; for (var mk = 0; mk < t.market.length; mk++) marketHTML += '<div class="market-item"><strong>' + escapeHTML(t.market[mk].channel) + '</strong>' + escapeHTML(t.market[mk].detail) + '</div>'; marketHTML += '</div>'; }
+  var startHTML = t.startToday ? '<div class="start-today"><strong>🚀 START TODAY</strong>' + escapeHTML(t.startToday) + '</div>' : "";
+  var fav = isFav(t.id);
+
+  return '<div class="sheet-head"><button class="back-btn" onclick="closeDetail()">←</button><div class="sheet-title">' + escapeHTML(t.t) + '</div><button class="speak-btn" id="speakBtn" onclick="toggleSpeak(' + t.id + ')" title="Listen">🔊</button></div>' +
+    '<div class="sheet-body"><div class="card"><div class="imgwrap">' + imgHTML(t) +
+    '<span class="badge">' + (t.emoji || "💰") + ' UGX ' + fmt(t.profit) + '</span>' +
+    '<button class="fav" data-fav="' + t.id + '" onclick="toggleFav(' + t.id + ', event)">' + (fav ? "❤️" : "🤍") + '</button></div>' +
+    '<h3 class="card-title">' + escapeHTML(t.t) + '</h3>' +
+    '<span class="chip">' + escapeHTML(catName(t.c)) + '</span>' +
+    (t.tagline ? '<p class="muted" style="margin-bottom:8px;">' + escapeHTML(t.tagline) + '</p>' : '') +
+    '<span class="cost">Start: UGX ' + fmt(t.cost) + ' • Sales: UGX ' + fmt(t.sales) + '</span>' +
+    '<span class="cost">⏱️ ' + escapeHTML(t.time || "Varies") + '</span>' +
+    '<span class="cost">📍 Buy from: ' + escapeHTML(t.buy || "Local markets") + '</span>' +
+    '<span class="cost">🏪 Sell at: ' + escapeHTML(t.sell || "Local markets") + '</span>' +
+    '<div class="profit">💰 Profit: UGX ' + fmt(t.profit) + '</div>' +
+    '<button class="btn" onclick="toggleSpeak(' + t.id + ')">🔊 Listen to Tutorial</button></div>' +
+    matHTML + toolsHTML + stepsHTML +
+    '<div style="padding:0 16px;">' + doHTML + dontHTML + failHTML + marketHTML + startHTML + '</div></div>';
+}
+
+function openTutorial(id) {
+  var nid = Number(id), found = null;
+  for (var i = 0; i < ALL_BUSINESSES.length; i++) if (ALL_BUSINESSES[i].id === nid) { found = ALL_BUSINESSES[i]; break; }
+  if (!found) return;
+  if (!canAccess(found)) { showTab("video"); return; }
+  var sheet = byId("detailSheet");
+  sheet.innerHTML = detailHTML(found);
+  sheet.classList.add("open");
+  sheet.scrollTop = 0;
+}
+function closeDetail() { stopSpeaking(); var s = byId("detailSheet"); if (s) s.classList.remove("open"); }
+
+/* ===================== TTS ===================== */
+function stripMD(s) { return String(s || "").replace(/\*\*/g, "").replace(/[*_`#]/g, ""); }
+function buildSpeechText(t) {
+  var parts = []; parts.push("Tutorial: " + t.t + ". Category: " + catName(t.c) + ".");
+  parts.push("Start cost " + t.cost + " shillings. Sales " + t.sales + " shillings. Profit " + t.profit + " shillings.");
+  parts.push("Buy materials from: " + t.buy + ". Sell at: " + t.sell + ".");
+  if (t.materials && t.materials.length) { parts.push("Materials:"); for (var m = 0; m < t.materials.length; m++) parts.push(t.materials[m].item + " costing " + t.materials[m].cost + " shillings from " + t.materials[m].where + "."); }
+  if (t.steps && t.steps.length) { parts.push("Steps:"); for (var s = 0; s < t.steps.length; s++) parts.push("Step " + (s + 1) + ". " + stripMD(t.steps[s])); }
+  if (t.dos && t.dos.length) { parts.push("Do's:"); for (var d = 0; d < t.dos.length; d++) parts.push(stripMD(t.dos[d]) + "."); }
+  if (t.donts && t.donts.length) { parts.push("Don'ts:"); for (var dn = 0; dn < t.donts.length; dn++) parts.push(stripMD(t.donts[dn]) + "."); }
+  if (t.market && t.market.length) { parts.push("Where to sell:"); for (var mk = 0; mk < t.market.length; mk++) parts.push(t.market[mk].channel + ". " + stripMD(t.market[mk].detail) + "."); }
+  if (t.startToday) parts.push("Start today. " + stripMD(t.startToday));
+  return parts.join(" ");
+}
+function toggleSpeak(id) {
+  var nid = Number(id);
+  if (currentlySpeakingId === nid) { stopSpeaking(); return; }
+  stopSpeaking();
+  if (!("speechSynthesis" in window)) { try { alert("Speech not supported on this device."); } catch (e) {} return; }
+  var t = null; for (var i = 0; i < ALL_BUSINESSES.length; i++) if (ALL_BUSINESSES[i].id === nid) { t = ALL_BUSINESSES[i]; break; }
+  if (!t) return;
+  var text = buildSpeechText(t); var words = text.split(/\s+/); var chunks = [], cur = "";
+  for (var w = 0; w < words.length; w++) { if ((cur + " " + words[w]).length > 200) { if (cur) chunks.push(cur.trim()); cur = words[w]; } else cur += " " + words[w]; }
+  if (cur.trim()) chunks.push(cur.trim());
+  var idx = 0;
+  function speakNext() {
+    if (idx >= chunks.length) { currentlySpeakingId = null; updateSpeakBtn(); return; }
+    var u = new SpeechSynthesisUtterance(chunks[idx]);
+    u.rate = 0.95; u.pitch = 1; u.volume = 1; u.lang = "en-US";
+    u.onend = function () { idx++; if (currentlySpeakingId === nid) speakNext(); };
+    u.onerror = function () { idx++; if (currentlySpeakingId === nid) speakNext(); };
+    window.speechSynthesis.speak(u);
+  }
+  currentlySpeakingId = nid; updateSpeakBtn(); speakNext();
+}
+function stopSpeaking() { currentlySpeakingId = null; try { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); } catch (e) {} updateSpeakBtn(); }
+function updateSpeakBtn() { var b = byId("speakBtn"); if (!b) return; b.textContent = currentlySpeakingId ? "⏸️" : "🔊"; }
+
+/* ===================== FAV / NOTES ===================== */
+function isFav(id) { return favs.indexOf(Number(id)) > -1; }
+function toggleFav(id, ev) {
+  if (ev && ev.stopPropagation) ev.stopPropagation();
+  var nid = Number(id); var idx = favs.indexOf(nid);
+  if (idx > -1) favs.splice(idx, 1); else favs.push(nid);
+  writeJSON(LS_FAV, favs);
+  var btn = document.querySelector('.fav[data-fav="' + nid + '"]');
+  if (btn) { btn.classList.add("pop"); setTimeout(function () { btn.classList.remove("pop"); }, 460); }
+}
+function saveHist(q, a) { hist.unshift({ q: String(q), a: String(a), t: Date.now() }); if (hist.length > 50) hist = hist.slice(0, 50); writeJSON(LS_HIST, hist); }
+function saveNote() {
+  var titleEl = byId("noteTitle"), bodyEl = byId("noteBody"); if (!titleEl || !bodyEl) return;
+  var title = titleEl.value.trim(), body = bodyEl.value.trim(); if (!title && !body) return;
+  notes.unshift({ id: Date.now(), title: title || "Untitled Note", body: body, t: Date.now() });
+  writeJSON(LS_NOTES, notes); titleEl.value = ""; bodyEl.value = ""; renderNotes();
+}
+function deleteNote(id, ev) { if (ev && ev.stopPropagation) ev.stopPropagation(); notes = notes.filter(function (n) { return n.id !== Number(id); }); writeJSON(LS_NOTES, notes); renderNotes(); }
+function openNoteModal(id) {
+  var found = null; for (var i = 0; i < notes.length; i++) if (notes[i].id === Number(id)) { found = notes[i]; break; }
+  if (!found) return;
+  byId("noteModalTitle").textContent = found.title;
+  byId("noteModalBody").innerHTML = '<span class="date">' + escapeHTML(formatDate(found.t)) + "</span>" + escapeHTML(found.body || "(empty)");
+  byId("noteModal").classList.add("open");
+}
+function closeNoteModal() { var m = byId("noteModal"); if (m) m.classList.remove("open"); }
+function renderNotes() {
+  var list = byId("notesList"); if (!list) return;
+  if (!notes.length) list.innerHTML = '<div class="note-empty"><span class="bigicon">📝</span>No notes yet.<br>Write your first business idea above.</div>';
+  else { var html = ""; for (var i = 0; i < notes.length; i++) { var n = notes[i]; html += '<div class="note-item" onclick="openNoteModal(' + n.id + ')"><h4>' + escapeHTML(n.title) + '</h4><div class="date">' + escapeHTML(formatDate(n.t)) + '</div><p>' + escapeHTML(n.body || "(empty)") + '</p><button class="note-delete" onclick="deleteNote(' + n.id + ', event)">Delete</button></div>'; } list.innerHTML = html; }
+  renderCreatorCard();
+}
+function renderCreatorCard() {
+  var slot = byId("creatorSlot"); if (!slot) return;
+  slot.innerHTML = '<div class="creator-card"><div class="creator-logo">AJON</div><div class="creator-name">App made by Ajon Inno aka B.Innocent John</div><a class="creator-tel" href="tel:+256768207738">📞 +256 768 207 738</a><div class="creator-divider"></div><div class="mission">Its Time To Devorce from Poverty Later might be Never</div><div class="creator-copy">© 2025 Ajon • com.ajon.makemoney</div></div>';
+}
+
+/* ===================== HELPER ===================== */
+function typingHTML() { return '<div class="card"><div class="typing"><span></span><span></span><span></span></div><div class="typing-label">Searching...</div></div>'; }
+function helperSearch(q) {
+  var query = String(q || "").toLowerCase().trim(); if (!query) return null;
+  var best = null, bestScore = 0; var words = query.split(/\s+/);
+  for (var i = 0; i < ALL_BUSINESSES.length; i++) {
+    var t = ALL_BUSINESSES[i]; var hay = (t.t + " " + t.c + " " + (t.tagline || "")).toLowerCase(); var score = 0;
+    for (var w = 0; w < words.length; w++) if (words[w].length > 2 && hay.indexOf(words[w]) > -1) score += 3;
+    if (hay.indexOf(query) > -1) score += 5; if (score > bestScore) { bestScore = score; best = t; }
+  }
+  return bestScore > 0 ? best : null;
+}
+function answerText(t) { return "Found: " + t.t + ". Start UGX " + fmt(t.cost) + ", sales UGX " + fmt(t.sales) + ", profit UGX " + fmt(t.profit) + ". Buy from: " + t.buy + ". Sell at: " + t.sell + "."; }
+function noAnswerText() { return "No exact match. Try: candy, soap, mushroom, chicken, oil, tomato."; }
+function answerCardHTML(t) { return '<div class="card"><div class="imgwrap">' + imgHTML(t) + '<span class="badge">' + (t.emoji || "💰") + ' UGX ' + fmt(t.profit) + '</span></div><h3 class="card-title">' + escapeHTML(t.t) + '</h3><span class="chip">' + escapeHTML(catName(t.c)) + '</span><p class="typed"></p><div class="profit">💰 Cost UGX ' + fmt(t.cost) + ' → Profit UGX ' + fmt(t.profit) + '</div><button class="btn" onclick="openTutorial(' + t.id + ')" style="margin-top:10px;">Open Full Tutorial</button></div>'; }
+function noAnswerHTML() { return '<div class="card"><h3 class="card-title">🤔 No exact match</h3><p class="typed"></p><div class="note">Try: candy, soap, mushroom, chicken, oil.</div></div>'; }
+function askAI() {
+  var input = byId("aiInput"), aires = byId("aires"); if (!input || !aires) return;
+  var q = input.value.trim(); if (!q) { input.focus(); return; }
+  var my = ++askToken; aires.innerHTML = typingHTML();
+  setTimeout(function () {
+    if (my !== askToken) return;
+    var t = helperSearch(q); saveHist(q, t ? t.t : "No match");
+    aires.innerHTML = t ? answerCardHTML(t) : noAnswerHTML();
+    var typedEl = aires.querySelector(".typed"); var fullText = t ? answerText(t) : noAnswerText();
+    typeWriter(fullText, typedEl, 20);
+  }, 700);
+}
+function typeWriter(text, el, speed, done) {
+  if (!el) { if (done) done(); return; }
+  var full = String(text || ""), i = 0, finished = false;
+  el.textContent = ""; el.classList.add("cursor");
+  function finish() { if (finished) return; finished = true; el.textContent = full; el.classList.remove("cursor"); if (done) done(); }
+  el.addEventListener("click", finish, { once: true });
+  function tick() { if (finished) return; if (i >= full.length) { finish(); return; } el.textContent += full.charAt(i); i++; setTimeout(tick, speed); }
+  tick();
+}
+
+/* ===================== PAYMENT ===================== */
+function renderPayment() {
+  var area = byId("videoArea"); if (!area) return;
+  if (!isDateValid()) {
+    area.innerHTML = '<div class="paywall-wrap"><div class="paywall-card"><div class="paywall-lock">⏰</div><div class="paywall-title">Set Correct Date</div><p class="paywall-sub">Please set automatic date and time in phone settings.</p><div class="paywall-instructions"><div class="line"><span class="ic">→</span><div>Open <strong>Settings</strong>.</div></div><div class="line"><span class="ic">→</span><div><strong>System → Date &amp; Time</strong>.</div></div><div class="line"><span class="ic">→</span><div>Turn on <strong>Set automatically</strong>.</div></div></div></div></div>';
+    return;
+  }
+  if (isSubscribed()) {
+    var daysLeft = Math.ceil((subscriptionEndDate - Date.now()) / (1000 * 60 * 60 * 24));
+    var hoursLeft = Math.ceil((subscriptionEndDate - Date.now()) / (1000 * 60 * 60));
+    var human = daysLeft >= 1 ? daysLeft + " days" : hoursLeft + " hours";
+    area.innerHTML = '<div class="paywall-wrap"><div class="paywall-active-card"><h3>✅ Unlocked</h3><div class="num">' + human + '</div><div class="lbl">REMAINING</div><div class="exp">Valid until <strong>' + escapeHTML(formatDateShort(subscriptionEndDate)) + '</strong></div><div class="paywall-divider"></div><div class="paywall-perks"><div class="pr"><span class="tick">✓</span>All 500+ tutorials</div><div class="pr"><span class="tick">✓</span>Offline Helper</div><div class="pr"><span class="tick">✓</span>Text-to-speech on every tutorial</div><div class="pr"><span class="tick">✓</span>Notes and favourites</div></div></div></div>';
+    return;
+  }
+  var trialLeft = trialMinutesLeft();
+  var trialMsg = trialLeft > 0 ? '<div class="paywall-instructions" style="background:linear-gradient(135deg,#001a0a,#003d14);border-color:rgba(0,200,83,.55);"><div style="text-align:center;font-size:13px;color:#00c853;font-weight:800;">🎁 Free preview: ' + formatTrialTime(trialLeft) + ' left</div></div>' : '';
+  var expiryTime = currentHourEndsAt();
+  var expiryText = new Date(expiryTime).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  area.innerHTML = '<div class="paywall-wrap">' + trialMsg +
+    '<div class="paywall-card"><div class="paywall-lock">🔓</div><div class="paywall-title">Unlock All 500 Ideas</div><div class="paywall-sub">30 days access • password refreshes hourly</div><div class="paywall-instructions"><div class="line"><span class="ic">1.</span><div>Pay <strong>' + fmt(PAYMENT_INFO.amount) + ' ' + escapeHTML(PAYMENT_INFO.currency) + '</strong> to MTN <span class="num">' + escapeHTML(PAYMENT_INFO.phone) + '</span> Name <strong>' + escapeHTML(PAYMENT_INFO.name) + '</strong>.</div></div><div class="line"><span class="ic">2.</span><div>After payment, <strong>beep or call</strong> <span class="num">' + escapeHTML(PAYMENT_INFO.phone) + '</span> to get the current hour password.</div></div><div class="line"><span class="ic">3.</span><div>Enter the password below and tap <strong>Verify</strong>.</div></div></div><div class="paywall-hint">⚠️ Password changes every hour. Current expires at <strong style="color:#00c853;">' + escapeHTML(expiryText) + '</strong>.</div><div class="paywall-input-row"><input id="txInput" type="text" placeholder="Enter hourly password" autocomplete="off" autocapitalize="off" spellcheck="false"></div><button id="verifyBtn" onclick="verifyPassword()">Verify and Unlock 30 Days</button><div id="statusMsg"></div><div class="paywall-faq"><strong>HOW IT WORKS</strong>Each password is valid for one hour only. Once verified, the app unlocks for 30 full days.</div></div></div>';
+}
+function verifyPassword() {
+  var input = byId("txInput"); var status = byId("statusMsg"); if (!input || !status) return;
+  var entered = String(input.value || "").trim().toLowerCase();
+  if (!isDateValid()) { status.className = "err"; status.textContent = "Set automatic date and time first."; return; }
+  var expected = generateCurrentPassword(); if (!expected) { status.className = "err"; status.textContent = "Set automatic date and time first."; return; }
+  try { console.log("[Ajon owner] Hourly password:", expected); } catch (e) {}
+  if (entered.length < 7) { status.className = "err"; status.textContent = "Invalid password"; return; }
+  if (entered !== expected) { status.className = "err"; status.textContent = "Wrong password for this hour."; return; }
+  for (var i = 0; i < usedPasswords.length; i++) { if (String(usedPasswords[i]).toLowerCase() === entered) { status.className = "err"; status.textContent = "Already used on this phone."; return; } }
+  usedPasswords.push(entered); if (usedPasswords.length > 500) usedPasswords = usedPasswords.slice(-500);
+  writeJSON(LS_USED_PW, usedPasswords);
+  var days = appConfig.subscriptionDays || 30;
+  subscriptionEndDate = Date.now() + (days * 24 * 60 * 60 * 1000);
+  writeJSON(LS_SUB_END, subscriptionEndDate);
+  status.className = "ok"; status.textContent = "Success! Unlocked " + days + " days.";
+  try { updateTrialBar(); } catch (e) {} try { tutOffset = 0; renderTutorials(true); } catch (e) {}
+  setTimeout(function () { try { alert("Welcome to Ajon! You now have 30 days of full access."); } catch (e) {} renderPayment(); }, 1500);
+}
+
+/* ===================== NETWORK ===================== */
+function updateNet() { var online = navigator.onLine; var dot = byId("netDot"); if (dot) dot.classList.toggle("on", online); var st = byId("aiStatus"); if (st) st.textContent = online ? "🟢 Online" : "🔴 Offline — works fully"; }
+
+/* ===================== TABS ===================== */
+function showTab(name) {
+  if (typeof resumeAudio === "function") resumeAudio();
+  if (name !== "tutorials") stopSpeaking();
+  currentTab = name;
+  var panels = document.querySelectorAll(".panel");
+  for (var i = 0; i < panels.length; i++) panels[i].classList.toggle("active", panels[i].id === "panel-" + name);
+  var btns = document.querySelectorAll(".tab-btn");
+  for (var j = 0; j < btns.length; j++) btns[j].classList.toggle("active", btns[j].getAttribute("data-tab") === name);
+  var main = byId("main"); if (main) main.scrollTop = 0;
+  if (name === "tutorials") { pauseAssistantChat(); tutOffset = 0; renderTutorials(true); }
+  else if (name === "video") { pauseAssistantChat(); renderPayment(); }
+  else if (name === "notes") { pauseAssistantChat(); renderNotes(); }
+  else if (name === "ai") { pauseAssistantChat(); updateNet(); var inp = byId("aiInput"); if (inp) setTimeout(function () { try { inp.focus(); } catch (e) {} }, 50); }
+  else if (name === "chat") { setTimeout(function () { openAssistantTab(); }, 200); }
+}
+function renderCatBar() {
+  var bar = byId("catBar"); if (!bar) return;
+  var html = '<div class="cat-chip active" data-cat="all" onclick="filterCat(\'all\')">All</div>';
+  for (var i = 0; i < CATEGORIES.length; i++) html += '<div class="cat-chip" data-cat="' + CATEGORIES[i].id + '" onclick="filterCat(\'' + CATEGORIES[i].id + '\')">' + CATEGORIES[i].name + '</div>';
+  bar.innerHTML = html;
+}
+
+/* ===================== SPLASH ===================== */
+function hideSplash() { var splash = byId("splashScreen"); if (!splash) return; splash.classList.add("hide"); setTimeout(function () { try { if (splash.parentNode) splash.parentNode.removeChild(splash); } catch (e) {} }, 700); }
+
+/* ===================== BOOT ===================== */
+function boot() {
+  try {
+    TUTORIALS = ALL_BUSINESSES;
+    loadBrainState();
+    if (typeof ensureAudioUnlocked === "function") ensureAudioUnlocked();
+    renderCatBar();
+    var searchInput = byId("searchInput");
+    if (searchInput) {
+      searchInput.addEventListener("input", function (e) {
+        var v = e.target.value;
+        if (searchTimer) clearTimeout(searchTimer);
+        searchTimer = setTimeout(function () { searchT(v); }, 200);
+      });
+    }
+    searchT("");
+    var aiInput = byId("aiInput");
+    if (aiInput) aiInput.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); askAI(); } });
+    window.addEventListener("online", updateNet);
+    window.addEventListener("offline", updateNet);
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") { closeDetail(); closeNoteModal(); stopSpeaking(); } });
+    document.addEventListener("visibilitychange", function () { if (document.hidden) stopSpeaking(); });
+    try { var dbg = generateCurrentPassword(); if (dbg) console.log("[Ajon owner] Current hour password:", dbg); } catch (e) {}
+    animateUserCount();
+    updateNet();
+    renderNotes();
+    renderPayment();
+    updateTrialBar();
+    startTrialTick();
+    setTimeout(hideSplash, 2400);
+  } catch (e) { try { console.log("Ajon boot:", e && e.message); } catch (x) {} hideSplash(); }
+}
+
+if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+else boot();
+
+/* =====================================================================
+   ASSISTANT BRAIN v3 — Ajon x Pesie
+   ===================================================================== */
+
+
+/* =====================================================================
+   AJON CHAT v5 — Fresh short messages + notification sound per message
+   ===================================================================== */
+
+
+
+/* =====================================================================
+   AJON CHAT v9 — Mr Ajon & Pesie, clean linked Q&A
+   ===================================================================== */
+
+var BRAIN_STATE_KEY = "ajon_chat_v9";
+var BRAIN = {
+  chatCount: 0, level: 1, capital: 86000, location: "Busia",
+  isRunning: false, isPaused: true, messages: [],
+  currentTopicId: null, lastTopics: [], lastPrinciple: null,
+  pendingBiz: null, bizIdx: {}, rotIdx: {}, lastMode: "question"
+};
+var assistSoundOn = true;
+var chatTimer = null;
+var chatToken = 0;
+var audioCtx = null;
+
+/* ---------- Sound (kept ON, beep per message) ---------- */
+function playNotify() {
+  if (!assistSoundOn) return;
+  try {
+    if (!audioCtx) {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) audioCtx = new Ctx();
+    }
+    if (!audioCtx) return;
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    var now = audioCtx.currentTime;
+    var o1 = audioCtx.createOscillator(), g1 = audioCtx.createGain();
+    o1.connect(g1); g1.connect(audioCtx.destination);
+    o1.type = "sine";
+    o1.frequency.setValueAtTime(880, now);
+    g1.gain.setValueAtTime(0.0001, now);
+    g1.gain.exponentialRampToValueAtTime(0.42, now + 0.012);
+    g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.11);
+    o1.start(now); o1.stop(now + 0.13);
+    var o2 = audioCtx.createOscillator(), g2 = audioCtx.createGain();
+    o2.connect(g2); g2.connect(audioCtx.destination);
+    o2.type = "sine";
+    o2.frequency.setValueAtTime(1245, now + 0.09);
+    g2.gain.setValueAtTime(0.0001, now + 0.09);
+    g2.gain.exponentialRampToValueAtTime(0.42, now + 0.10);
+    g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.23);
+    o2.start(now + 0.09); o2.stop(now + 0.26);
+  } catch (e) {}
+}
+function playNotifySound() { playNotify(); }
+function resumeAudio() {
+  try {
+    if (!audioCtx) {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) audioCtx = new Ctx();
+    }
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  } catch (e) {}
+}
+try {
+  ["touchstart","touchend","click","keydown"].forEach(function(ev){
+    document.addEventListener(ev, resumeAudio, true);
+  });
+} catch (e) {}
+
+/* ---------- Data ---------- */
+var EMOJIS = {
+  scared:"\uD83D\uDE30", hopeful:"\uD83D\uDE42", tired:"\uD83D\uDE29",
+  worried:"\uD83D\uDE1F", determined:"\uD83D\uDCAA", proud:"\uD83D\uDE0A",
+  curious:"\uD83E\uDD14", thankful:"\uD83D\uDE4F"
+};
+var EMOTION_KEYS = Object.keys(EMOJIS);
+
+var MR_AJON_OPENERS = [
+  "My child, sit down.",
+  "Listen carefully.",
+  "Good question.",
+  "I hear you. Now hear me.",
+  "Let me tell you the truth."
+];
+var MR_AJON_CLOSERS = [
+  "What will you finish before 6pm?",
+  "Tell me tomorrow what you did.",
+  "Ask yourself tonight: did I do it?",
+  "Count tomorrow. Tell me the number.",
+  "Now go and do it today."
+];
+var PESIE_ACKS = [
+  "Oh! I see now. \uD83D\uDE42",
+  "Eeeh Mr Ajon, I understand. \uD83D\uDE4F",
+  "Yes, now I get it! \uD83D\uDE0A",
+  "Wooow, thank you Mr Ajon. \uD83D\uDE4C",
+  "Okay, I see the point. \uD83D\uDC4D",
+  "Eeh! I never thought of it like that. \uD83D\uDE2E",
+  "Mr Ajon, this makes sense now. \uD83D\uDE42",
+  "Aha, I understand clearly. \uD83D\uDC4C",
+  "Mr Ajon, you have opened my eyes. \uD83D\uDC40",
+  "Okay Mr Ajon, I hear you well. \uD83D\uDE4F"
+];
+var PESIE_WONDERS = [
+  "Mr Ajon, I wonder why...",
+  "Hmm, Mr Ajon...",
+  "I keep thinking about this...",
+  "Mr Ajon, something is on my mind.",
+  "Wait, Mr Ajon, one more thing..."
+];
+var MR_AJON_CONFIRMS = [
+  "That's it, my child.",
+  "Exactly.",
+  "Yes. Now go and do it.",
+  "You heard it. Now act.",
+  "Correct. Do not forget it.",
+  "Good. Your turn to move.",
+  "Now you know. Now you do.",
+  "Go and practise it today.",
+  "That is the way.",
+  "Remember it. Then use it."
+];
+var PROVERBS = [
+  "Slow is smooth. Smooth is fast.",
+  "Start ugly. Refine daily.",
+  "Small deeds done beat big plans.",
+  "The market rewards patience.",
+  "Discipline is born of routine.",
+  "Fail. Learn. Try again.",
+  "Consistency beats talent weekly.",
+  "Reputation travels faster than boda.",
+  "One well gives water. Ten holes give dust.",
+  "Show up daily. That alone wins."
+];
+
+/* ---------- 100 linked topics ---------- */
+/* Format: [id, question, answer, principle, action, next1|next2] */
+var RAW_TOPICS = [
+["fear","I am scared to start. 😰","Root is fear of small dreams.|Start small, then grow.","Fear is a tax you pay for dreaming small.","Do one small thing today.","capital|first_step"],
+["capital","I have only {cap} UGX. 😟","Root is big dream, small wallet.|That is normal at start.","Learn to grow 50k before 500k.","Buy smallest starter kit today.","pricing|records"],
+["first_step","What is my first step? 🤔","Root is wanting certainty before action.|Just start.","The first step is the only one you control.","Do one small action in 30 minutes.","pricing|records"],
+["pricing","What price should I charge? 💰","Root is pricing from fear, not value.|Cost plus margin is price.","Fair price beats cheap price.","Calculate full cost today.","value|customer_care"],
+["value","How do I show value? 🌟","Root is selling product not outcome.|Show the result.","People buy feelings, not features.","Show one outcome today.","brand|retention"],
+["customer_care","Customers complain a lot. 😞","Root is serving without love.|Complaints are gifts.","Service is the product.","Apologise fast, correct faster.","retention|trust"],
+["retention","Customers don't come back. 😕","Root is no reason to return.|Give a reason.","Ten loyal beat a hundred random.","Call 5 old customers today.","trust|word_of_mouth"],
+["trust","Nobody trusts me yet. 😔","Root is no system yet.|Consistency builds trust.","Money follows trust.","Deliver one order 1 hour early.","brand|records"],
+["brand","My brand is too small. 📛","Root is no clear feeling about you.|Pick one feeling.","Reputation is your real capital.","Ask 5 customers what they feel.","word_of_mouth|retention"],
+["word_of_mouth","No money for ads. 📢","Root is current customers aren't talking.|Deliver unforgettable service.","Word of mouth is the cheapest ad.","Ask best customer for 1 referral.","retention|brand"],
+["records","I don't keep records. 📓","Root is trusting head over book.|Buy a small book today.","Write it down. Memory is a liar.","Write sales, cost, cash left today.","cash_flow|savings"],
+["cash_flow","Money keeps vanishing. 💸","Root is money leaves faster than enters.|Track every shilling.","Cash in hand beats credit.","Write every sale and cost today.","savings|unit_economics"],
+["unit_economics","Profit is too small. 📉","Root is one unit loses money.|Fix the unit first.","Fix unit before volume.","Calculate cost of one product today.","savings|debt"],
+["savings","I never save. 🐖","Root is every shilling finds a mouth.|Save before spending.","Save before you spend.","Take 10% out the moment you sell.","debt|emergency"],
+["emergency","No backup money. 🚨","Root is no cushion for hard days.|Build one month of savings.","Save in harvest for dry months.","Save 500 UGX daily for 30 days.","savings|debt"],
+["debt","Should I take a loan? 💳","Root is why the debt is taken.|Debt for stock, not shoes.","Debt for growth is a bridge.","Write what the loan is for today.","savings|records"],
+["family","Family keeps asking for money. 👨‍👩‍👧","Root is family has needs, no plan.|Give a plan, not just cash.","Pay yourself first. Then help.","Open separate family pocket today.","savings|discipline"],
+["discipline","I have no routine. 🥱","Root is no routine protecting discipline.|A schedule is a promise.","Discipline is the only partner that stays.","Set fixed wake-up time 30 days.","focus|morning_routine"],
+["morning_routine","I waste my mornings. ☀️","Root is letting the day start you.|You start the day.","You start the day. The day doesn't start you.","Plan 3 tasks tonight for tomorrow.","focus|records"],
+["focus","I want five businesses. 🎯","Root is too many good ones, no decision.|One deep well beats ten holes.","One deep well beats ten holes.","Circle ONE idea. Say no to two for 90 days.","discipline|hiring"],
+["competition","Someone copied my shop. 🏪","Root is you got comfortable.|Study them, don't copy.","Do not copy. Study.","Talk to 5 old customers today.","value|brand"],
+["supplier","My supplier raised price. 📦","Root is only one source makes you weak.|Two sources turn supplier into partner.","Two sources turn supplier into partner.","Find a second supplier this week.","records|savings"],
+["hiring","Should I hire? 👨‍🔧","Root is wanting hands without system.|Systems first, people second.","Systems first, people second.","Write the job in 5 steps today.","expansion|records"],
+["expansion","Should I open another branch? 🏬","Root is scale, not stability.|Stable small first.","One shop done well beats ten done badly.","Check if first shop is leaking today.","hiring|savings"],
+["teaching","Can I teach my cousin? 👨‍🎓","Root is you teach what you practise.|Teaching sharpens you.","Teaching forces you to become what you teach.","Teach one lesson this week.","brand|community"],
+["community","How do I help my community? 🤝","Root is quiet help beats loud help.|Teach one, multiply forever.","Your neighbour's success is proof, not threat.","Teach one person one thing today.","teaching|legacy"],
+["legacy","What am I building for? 🏛️","Root is what outlives you is what you build.|Legacy is service.","Legacy is service, not riches.","Write your one-sentence mission tonight.","teaching|brand"],
+["quality","How do I keep quality? ⭐","Root is no routine protects quality.|Write 5 quality checks.","Quality is a habit, not an act.","Do quality checks every sale.","consistency|reputation"],
+["consistency","I am not consistent. 🔄","Root is no schedule. A schedule is a promise.|Show up daily.","Show up daily. That beats 90%.","Pick one fixed daily action tonight.","discipline|routine"],
+["differentiation","I look same as others. 🎭","Root is no named difference.|Name one thing only you do.","Differentiate or die cheap.","Name one unique thing today.","positioning|brand"],
+["positioning","Which market should I serve? 🎪","Root is trying to serve everyone.|Cheap OR premium. Not both.","Confused positioning sells nothing.","Pick cheap OR premium today.","value|differentiation"],
+["packaging","My packaging is plain. 🎁","Root is wrapper not matching value.|Improve one package.","Change the wrapper, change the price.","Improve one package this week.","brand|value"],
+["labelling","Should I label products? 🏷️","Root is no name recognition.|Print 20 labels.","Labels are silent salesmen.","Print 20 labels this week.","brand|packaging"],
+["delivery","Delivery is a headache. 🛵","Root is no clear delivery promise.|Promise slow, deliver fast.","Promise slow, deliver fast.","Set delivery window today.","trust|customer_care"],
+["negotiation","How do I negotiate? 🤝","Root is no walk-away point.|Set your lowest price.","Never negotiate on price alone.","Set lowest price tonight.","pricing|value"],
+["credit","Should I sell on credit? 📝","Root is no credit rules.|Max 2 people, 50% up front.","Credit given slowly is credit never lost.","Write credit rules today.","cash_flow|records"],
+["bulk_buying","Should I buy in bulk? 📦","Root is bulk without turnover math.|Only what sells in 30 days.","Buy in bulk or buy in pain.","Calculate turnover for one product.","cash_flow|unit_economics"],
+["transport","Transport eats my profit. 🚚","Root is no cost per trip.|Consolidate trips.","Cost per delivery first.","Calculate cost per delivery today.","supplier|unit_economics"],
+["theft","Stock keeps disappearing. 🕵️","Root is no counting system.|Count daily.","Count daily. Numbers reveal everything.","Count stock morning and night.","records|staff_loyalty"],
+["licenses","Do I need a license? 📜","Root is fear of paperwork.|Get one at a time.","A licensed business sleeps well.","Ask local office today.","trust|legacy"],
+["taxes","Should I pay tax? 💼","Root is no tax planning.|Save 10% of sales.","Tax is the price of a market.","Save 10% of sales monthly.","records|savings"],
+["location","Is my location good? 📍","Root is location by rent, not traffic.|Count foot traffic.","Location is a business decision.","Count foot traffic tomorrow morning.","foot_traffic|rent"],
+["foot_traffic","How many people pass? 👣","Root is no traffic numbers.|Count for 1 hour.","Foot traffic is free advertising.","Count passers-by for 1 hour today.","location|records"],
+["rent","My rent is too high. 🏠","Root is no written agreement.|Ask for fixed rent.","Put every agreement in writing.","Ask landlord for 6-month fixed rent.","location|records"],
+["advertisement","How do I advertise? 📣","Root is advertising where customers aren't.|One clear message.","One message repeated beats many once.","Pick one message today.","brand|word_of_mouth"],
+["social_media","Should I use social media? 📱","Root is posting randomly.|One platform done well.","One platform done well beats five done badly.","Pick one platform tonight.","brand|word_of_mouth"],
+["whatsapp_selling","Can I sell on WhatsApp? 💬","Root is no professional profile.|Add business name and photo.","Your WhatsApp is your shop window.","Update profile today.","social_media|brand"],
+["online_shop","Should I open online shop? 🛒","Root is trying tech before product.|Take 10 product photos.","Sell the same online and offline.","Take 10 clear photos today.","whatsapp_selling|delivery"],
+["seasons","Some months are slow. 📅","Root is no savings from peak season.|Save 20% of peak profit.","Save in harvest for dry season.","Save 20% of peak profit.","savings|emergency"],
+["rain_season","Rain kills my sales. 🌧️","Root is no rain plan.|Buy a rain cover.","Plan for rain like it's certain.","Buy a rain cover today.","seasons|savings"],
+["dry_season","Dry season is tough. 🌵","Root is no dry-season product.|Add dry-season product.","Every season has a market.","Add one dry-season product today.","seasons|savings"],
+["festive_season","Should I stock for Christmas? 🎄","Root is buying on emotion.|Buy 20% more, not 200%.","Buy 20% more, not 200% more.","Check last year's festive sales tonight.","seasons|records"],
+["school_season","School season is busy. 🎒","Root is no school calendar plan.|Talk to school heads.","Align with the school calendar.","Talk to 2 school heads this week.","seasons|bulk_buying"],
+["market_days","Market days are best. 🛒","Root is no prep for market days.|Stock extra day before market.","Prepare for market day like a festival.","Start 1 hour early on market day.","seasons|records"],
+["profit_margin","My margin is small. 📊","Root is price low or cost high.|Aim for 30% margin.","Aim for 30% margin minimum.","Calculate margin on 3 products today.","pricing|unit_economics"],
+["break_even","What is break-even? ⚖️","Root is not knowing your floor.|Know your break-even by heart.","Know your break-even by heart.","Calculate monthly fixed cost tonight.","unit_economics|profit_margin"],
+["fixed_cost","Fixed costs hurt. 💼","Root is fixed costs not matched to sales.|Cut one this month.","Every fixed cost is a bet.","List fixed costs today.","break_even|savings"],
+["variable_cost","Materials cost too much. 🧾","Root is no cost per unit.|Find 2 cheaper suppliers.","Cut cost without cutting quality.","Find 2 cheaper suppliers today.","supplier|bulk_buying"],
+["inventory","How much stock to keep? 📦","Root is no min/max rule.|Keep 2 weeks of fast sellers.","Fast turnover beats high margin.","Set min/max for top 5 products.","stock_counting|records"],
+["turnover","Money stuck in stock. 🔒","Root is slow sellers blocking cash.|Calculate turnover.","Fast turnover beats high margin.","Calculate turnover for one product.","inventory|dead_stock"],
+["dead_stock","Some stock never sells. 💀","Root is holding hope on dead items.|Discount 30%.","Dead stock is dead money.","Discount 30% off dead items today.","cash_flow|inventory"],
+["stock_counting","Do I need to count stock? 🔢","Root is trusting memory over count.|Count at 9pm.","Count daily. Numbers don't lie.","Count at 9pm tonight.","records|theft"],
+["staff_loyalty","How do I keep good workers? 🧑‍🏭","Root is pay below market.|Pay fairly, train deeply.","Pay fairly. Train deeply. Respect always.","Raise pay for one worker this month.","salary|hiring"],
+["salary","What should I pay? 💵","Root is no clear job description.|Write the job in 5 lines.","Pay for the job, not the person.","Write the job in 5 lines today.","hiring|staff_loyalty"],
+["bonus","Should I give bonus? 🎉","Root is bonus without clear targets.|Bonus for extra, not base.","Fix base pay. Then bonus.","Write 3 clear bonus targets today.","salary|staff_loyalty"],
+["motivation","I lose motivation. 😔","Root is no clear why.|Write your why.","Motivation is boda. Discipline is tarmac.","Write your why on the wall today.","discipline|focus"],
+["team","Should I build a team? 👥","Root is no system before team.|Write 3 roles you need.","Systems first, team second.","Write 3 roles you need tonight.","hiring|records"],
+["partnership","Should I partner? 🤝","Root is partnership without written terms.|Write terms on paper.","Partners need contracts, not just trust.","Write terms on one page today.","contract|cofounder"],
+["cofounder","Should I get a co-founder? 👬","Root is no clear skill complement.|Choose for skill, not friendship.","Choose partner for skill, not friendship.","List skills you lack today.","partnership|equity"],
+["contract","Should I sign contract? 📄","Root is trusting words over paper.|Write it down.","A written agreement protects both.","Write one-page contract today.","partnership|trust"],
+["business_plan","Do I need a plan? 📝","Root is confusion between plan and paper.|Write 90-day plan.","A plan is a promise in numbers.","Write 90-day plan on one page tonight.","goal_setting|records"],
+["goal_setting","How do I set goals? 🎯","Root is vague goals.|Write 1 clear goal.","Vague goals produce vague results.","Write one goal for this week tonight.","business_plan|routine"],
+["vision","What is my vision? 🔭","Root is no 5-year picture.|Write 5-year vision.","Write your 5-year vision on one page.","Write 5-year vision tonight.","mission|legacy"],
+["time_management","I don't have time. ⏰","Root is no priority list.|Do important before urgent.","Do the important before the urgent.","Write tomorrow's top 3 tasks tonight.","priority|routine"],
+["priority","What should I do first? 🥇","Root is no clear ranking.|Rank by money impact.","Rank by money impact, not noise.","Rank tasks tonight, do top 3.","time_management|focus"],
+["patience","How long until profit? 🕰️","Root is expecting fast returns.|Commit to 90 days.","Real wealth takes years.","Commit to 90 days without quitting.","discipline|long_term"],
+["long_term","How do I think long-term? 🌳","Root is survival mode blocking vision.|Write 1-year goal.","Small habits compound.","Write 1-year goal tonight.","vision|savings"],
+["hard_work","Is hard work enough? 💪","Root is working IN not ON.|Write 3 things only you can do.","Work hard AND smart.","Write 3 things only you can do today.","smart_work|systems"],
+["smart_work","How do I work smart? 🧠","Root is no system.|Write one process.","Systems beat sweat.","Write one process on paper today.","systems|routine"],
+["systems","What is a system? 🔧","Root is reliance on memory.|Write 5 steps for one task.","Write it down. Repeat it.","Write 5 steps for one task today.","routine|process"],
+["routine","Do I need a routine? 📆","Root is no anchor activities.|Set 3 morning steps.","A routine is a promise to yourself.","Set 3 morning steps tonight.","discipline|systems"],
+["network","How do I build network? 🌐","Root is no active networking.|Help 1 person today.","Give first. Network follows.","Help one person today, free.","mentor|community"],
+["mentor","Do I need a mentor? 🧓","Root is waiting for perfect mentor.|Pick 3 questions to ask one.","Mentors come to those who act.","Pick 3 questions tonight.","network|learning"],
+["learning","How do I keep learning? 📚","Root is no daily input.|Learn 1 thing daily.","Learn 1 thing. Apply 1 thing.","Read 10 pages today.","reading|practice"],
+["reading","Should I read books? 📖","Root is reading without application.|Read to apply, not finish.","Read to apply, not to finish.","Read 10 pages tonight.","learning|mentor"],
+["practice","Why do I forget? 🧪","Root is learning without doing.|Practise daily.","Practice turns knowledge into skill.","Practise one skill 15 minutes today.","learning|discipline"],
+["failure","I failed at business. 💔","Root is treating failure as end.|Write 3 lessons.","Failure is the school that never closes.","Write 3 lessons from the failure tonight.","recovery|resilience"],
+["recovery","How do I recover? 🌱","Root is rebuilding too fast.|Start small.","Start small. Start today.","Pick one small action tonight.","savings|resilience"],
+["resilience","How do I keep going? 🌊","Root is no small wins remembered.|Write 3 wins.","Fall seven times, stand up eight.","Write 3 wins from this month tonight.","failure|motivation"],
+["courage","I am afraid to try. 🦁","Root is waiting for fear to leave.|Do one brave thing.","Courage is acting with fear.","Do one small brave thing today.","fear|first_step"],
+["humility","How do I stay humble? 🙏","Root is comparing downward.|Say thank you to 3 people.","Humility opens doors money cannot.","Say thank you to 3 people today.","gratitude|legacy"],
+["honesty","Is honesty profitable? ✅","Root is short-term gain vs long-term trust.|Write your values.","Honesty builds what lies destroy.","Write your values on paper tonight.","trust|reputation"],
+["kindness","Does kindness sell? 💚","Root is confusion between kindness and weakness.|Do one kind thing.","Kindness costs nothing, pays everything.","Do one kind thing for a customer today.","customer_care|reputation"],
+["gratitude","How do I stay grateful? 🌻","Root is comparison to others.|Write 3 things you're grateful for.","Gratitude turns what you have into enough.","Write 3 things tonight.","humility|joy"],
+["joy","Where is joy in business? 😊","Root is only chasing, never celebrating.|Celebrate one small win.","Joy is in the small things.","Celebrate one small win today.","gratitude|celebration"],
+["celebration","Should I celebrate? 🎊","Root is only chasing next goal.|Celebrate tonight.","Celebrate wins. They fuel the next mountain.","Celebrate one win tonight.","joy|gratitude"],
+["peace","I feel stressed. 🧘","Root is no boundaries.|Set 1 hour without business.","Your peace is worth more than any argument.","Set 1 hour daily without business.","rest|health"],
+["anger","I get angry easily. 😠","Root is no pause before reaction.|Pause 3 seconds.","Raise your voice, lose the sale.","Pause 3 seconds before speaking today.","peace|discipline"],
+["envy","I envy other businesses. 😒","Root is comparing your chapter 1 to their chapter 20.|Focus on your own growth.","Your neighbour's success is proof, not threat.","Write 3 wins you had this month tonight.","focus|gratitude"],
+["anxiety","I feel anxious daily. 😰","Root is no plan for worst case.|Write worst-case plan.","Prepare for worst. Enjoy the best.","Write worst-case plan tonight.","emergency|peace"],
+["health","How do I stay healthy? 🏃","Root is health last priority.|Walk 20 minutes today.","A sick body builds no empire.","Walk 20 minutes today.","energy|rest"],
+["rest","How do I rest? 😴","Root is confusing rest with laziness.|Block 4 hours this Sunday.","Rest is strategy, not laziness.","Block 4 hours this Sunday for rest.","health|peace"],
+["sleep","I don't sleep enough. 🛌","Root is phone before bed.|Phone off at 10pm.","Sleep is when the body repairs.","Phone off at 10pm tonight.","health|rest"],
+["review","How often should I review? 🔍","Root is only working, not measuring.|Review weekly.","Review weekly, adjust monthly.","Review one week's numbers tonight.","records|routine"],
+["feedback","Should I ask for feedback? 💬","Root is fear of criticism.|Ask 3 customers one question.","Feedback is food, not fire.","Ask 3 customers one question today.","review|improvement"],
+["improvement","How do I improve? 📈","Root is no clear metric.|Pick one thing to improve.","1% better every day is 37x per year.","Pick one thing to improve this week.","practice|learning"],
+["change","Things keep changing. 🔄","Root is resisting change.|Learn one new skill.","Change or be changed.","Learn one new skill this month.","adaptation|innovation"],
+["problem_solving","How do I solve problems? 🧩","Root is no clear problem statement.|Solve one problem well.","Solve one problem well, then the next.","Write the problem in one line tonight.","focus|systems"],
+["decision_making","How do I decide? 🤔","Root is waiting for perfect choice.|Set a 24-hour deadline.","A decision today beats a perfect one in a week.","Set a 24-hour deadline for one decision.","focus|discipline"],
+["risk","Should I take risk? 🎲","Root is no small risk testing.|Bet small, learn fast.","Bet small. Learn fast. Scale up.","Set max loss you can handle tonight.","backup_plan|insurance"],
+["backup_plan","What if things fail? 🛟","Root is only one revenue source.|Find one backup.","Every business needs a second source.","Find one backup supplier this month.","emergency|risk"],
+["crisis","How do I handle crisis? 🚨","Root is no crisis protocol.|Write a crisis plan.","Plan in peace for war.","Write a crisis plan tonight.","emergency|risk"],
+["reputation","How do I build reputation? 🌟","Root is no consistent quality.|Deliver one extra value.","Reputation is built in drops, lost in buckets.","Deliver one extra value today.","trust|brand"],
+["purpose","What is my purpose? 🧭","Root is no clear why.|Write your purpose.","Purpose is being useful to others.","Write your purpose in one line tonight.","mission|legacy"],
+["hope","I feel hopeless. 🌤️","Root is only looking at today.|Write one hope.","Hope is not a plan. But it fuels one.","Write one hope for this year tonight.","purpose|faith"],
+["faith","How does faith fit business? 🕊️","Root is faith as Sunday-only.|Pray before opening.","Work like the market depends on you. Pray like it depends on God.","Pray before opening today.","purpose|hope"]
+];
+
+var TOPICS = {};
+var TOPIC_IDS = [];
+for (var _ti = 0; _ti < RAW_TOPICS.length; _ti++) {
+  var r = RAW_TOPICS[_ti];
+  TOPICS[r[0]] = {
+    id: r[0],
+    q: r[1],
+    a: r[2].split("|"),
+    p: r[3],
+    act: r[4],
+    next: r[5].split("|")
+  };
+  TOPIC_IDS.push(r[0]);
+}
+
+/* ---------- Topic-linked business keywords ---------- */
+var TOPIC_BIZ_KEYWORDS = {
+  food:["food","drink","bake","cook","juice","candy","oil"],
+  pricing:["retail","premium","shop"],
+  capital:["small","home","budget","village"],
+  fear:["beginner","small","starter"],
+  first_step:["home","small","budget"],
+  value:["premium","quality"],
+  customer_care:["retail","service","shop"],
+  retention:["retail","premium","brand"],
+  trust:["retail","quality"],
+  brand:["premium","brand","export"],
+  word_of_mouth:["retail","village","urban"],
+  records:["retail","small"],
+  cash_flow:["wholesale","bulk","commercial"],
+  unit_economics:["bulk","commercial","wholesale"],
+  savings:["home","small"],
+  emergency:["home","small"],
+  debt:["commercial","bulk","medium"],
+  family:["home","village","small"],
+  discipline:["home","small","medium"],
+  morning_routine:["home","retail","small"],
+  focus:["premium","niche","medium"],
+  competition:["premium","niche","urban"],
+  supplier:["wholesale","bulk","commercial"],
+  hiring:["medium","commercial","urban"],
+  expansion:["commercial","urban","wholesale"],
+  teaching:["community","village","small"],
+  community:["community","village"],
+  legacy:["premium","brand","export"]
+};
+
+/* ---------- Utility ---------- */
+function pickRot(arr, key) {
+  if (!arr || !arr.length) return "";
+  if (BRAIN.rotIdx[key] === undefined) BRAIN.rotIdx[key] = Math.floor(Math.random() * arr.length);
+  var v = arr[BRAIN.rotIdx[key] % arr.length];
+  BRAIN.rotIdx[key] = (BRAIN.rotIdx[key] + 1) % arr.length;
+  return v;
+}
+function fillT(t) {
+  return String(t || "")
+    .replace(/\{cap\}/g, fmt(BRAIN.capital))
+    .replace(/\{loc\}/g, BRAIN.location);
+}
+function chunkMsg(text, maxLen) {
+  maxLen = maxLen || 55;
+  text = String(text || "").trim();
+  if (!text) return [];
+  if (text.length <= maxLen) return [text];
+  var words = text.split(/\s+/);
+  var out = [], cur = "";
+  for (var i = 0; i < words.length; i++) {
+    if (!cur) { cur = words[i]; continue; }
+    if ((cur + " " + words[i]).length <= maxLen) cur += " " + words[i];
+    else { out.push(cur); cur = words[i]; }
+  }
+  if (cur) out.push(cur);
+  return out;
+}
+function pickBusinessForTopic(topicId) {
+  if (typeof ALL_BUSINESSES === "undefined" || !ALL_BUSINESSES.length) return null;
+  var keywords = TOPIC_BIZ_KEYWORDS[topicId] || [];
+  var candidates = [];
+  for (var i = 0; i < ALL_BUSINESSES.length; i++) {
+    var b = ALL_BUSINESSES[i];
+    var hay = ((b.t || "") + " " + (b.tagline || "")).toLowerCase();
+    for (var k = 0; k < keywords.length; k++) {
+      if (hay.indexOf(keywords[k]) > -1) { candidates.push(b); break; }
+    }
+  }
+  if (!candidates.length) candidates = ALL_BUSINESSES;
+  var key = "biz_" + topicId;
+  if (BRAIN.bizIdx[key] === undefined) BRAIN.bizIdx[key] = Math.floor(Math.random() * candidates.length);
+  var b2 = candidates[BRAIN.bizIdx[key] % candidates.length];
+  BRAIN.bizIdx[key] = (BRAIN.bizIdx[key] + 1) % candidates.length;
+  return b2;
+}
+function shortStep(s, n) {
+  if (!s) return "";
+  s = String(s).replace(/\*\*/g, "").trim();
+  n = n || 48;
+  if (s.length <= n) return s;
+  var w = s.split(/\s+/);
+  var cur = "";
+  for (var i = 0; i < w.length; i++) {
+    if (!cur) { cur = w[i]; continue; }
+    if ((cur + " " + w[i]).length <= n) cur += " " + w[i];
+    else break;
+  }
+  return cur + "...";
+}
+
+/* ---------- Pesie turn: 1 bubble ---------- */
+function buildPesieTurn() {
+  var tid = BRAIN.currentTopicId;
+  if (!tid) {
+    tid = TOPIC_IDS[Math.floor(Math.random() * TOPIC_IDS.length)];
+    BRAIN.currentTopicId = tid;
+  }
+  var t = TOPICS[tid];
+  if (!t) { t = TOPICS[TOPIC_IDS[0]]; BRAIN.currentTopicId = t.id; }
+
+  var roll = Math.random();
+  var out = [];
+
+  if (BRAIN.lastMode === "question" && roll < 0.30) {
+    /* Pesie acknowledges or wonders */
+    BRAIN.lastMode = (roll < 0.18) ? "ack" : "wonder";
+    out.push(pickRot(PESIE_ACKS, "ack"));
+    return out;
+  }
+  if (BRAIN.lastMode === "ack" && roll < 0.20) {
+    BRAIN.lastMode = "ack";
+    out.push(pickRot(PESIE_ACKS, "ack"));
+    return out;
+  }
+
+  /* Default: Pesie asks ONE question */
+  BRAIN.lastMode = "question";
+  var q = fillT(t.q);
+  /* Occasionally prepend context */
+  if (BRAIN.lastPrinciple && roll > 0.85) {
+    q = "You said: " + BRAIN.lastPrinciple + " " + q;
+  }
+  out.push(q);
+  return out;
+}
+
+/* ---------- Mr Ajon turn: 2-5 bubbles ---------- */
+function buildMrAjonTurn() {
+  var tid = BRAIN.currentTopicId || TOPIC_IDS[0];
+  var t = TOPICS[tid] || TOPICS[TOPIC_IDS[0]];
+  var out = [];
+
+  if (BRAIN.lastMode === "ack") {
+    out.push(pickRot(MR_AJON_CONFIRMS, "conf"));
+    if (Math.random() < 0.5) {
+      out.push("Remember: " + t.p);
+    }
+    return out;
+  }
+
+  if (BRAIN.lastMode === "wonder") {
+    out.push(pickRot(MR_AJON_OPENERS, "op"));
+    out.push(fillT(pickRot(t.a, "a_" + tid)));
+    out.push("Principle: " + t.p);
+    out.push(fillT(t.act));
+    return out;
+  }
+
+  /* Default: question → 3-5 bubbles */
+  out.push(pickRot(MR_AJON_OPENERS, "op"));
+  var a1 = fillT(pickRot(t.a, "a_" + tid));
+  out.push(a1);
+  var a2 = fillT(pickRot(t.a, "a2_" + tid));
+  if (a2 && a2 !== a1) out.push(a2);
+  out.push("Principle: " + t.p);
+  out.push(fillT(t.act));
+
+  /* Business every 4th question */
+  if (BRAIN.chatCount % 4 === 2 || BRAIN.pendingBiz) {
+    var b = BRAIN.pendingBiz || pickBusinessForTopic(tid);
+    BRAIN.pendingBiz = null;
+    if (b) {
+      out.push("Idea: " + b.t + " in " + (b.location || "your area") + ".");
+      out.push("Start " + fmt(b.cost) + " UGX. Profit " + fmt(b.profit) + ".");
+      if (b.steps && b.steps[0]) out.push("S1: " + shortStep(b.steps[0], 46));
+    }
+  }
+
+  /* Cap at 5 */
+  if (out.length > 5) out = out.slice(0, 5);
+  if (out.length < 2) out.push(pickRot(MR_AJON_CLOSERS, "cl"));
+  else if (out.length === 4) out.push(pickRot(MR_AJON_CLOSERS, "cl"));
+  return out;
+}
+
+/* ---------- Next topic ---------- */
+function nextTopicV9() {
+  var tid = BRAIN.currentTopicId || TOPIC_IDS[0];
+  var t = TOPICS[tid];
+  if (!t || !t.next || !t.next.length) {
+    return TOPIC_IDS[Math.floor(Math.random() * TOPIC_IDS.length)];
+  }
+  var recent = BRAIN.lastTopics || [];
+  var fresh = t.next.filter(function (x) { return recent.indexOf(x) === -1 && TOPICS[x]; });
+  if (!fresh.length) fresh = t.next.filter(function (x) { return TOPICS[x]; });
+  if (!fresh.length) return TOPIC_IDS[Math.floor(Math.random() * TOPIC_IDS.length)];
+  var nxt = fresh[Math.floor(Math.random() * fresh.length)];
+  BRAIN.lastTopics = (recent.concat([nxt])).slice(-10);
+  return nxt;
+}
+
+/* ---------- DOM helpers ---------- */
+function ajon_makeRow(speaker, text, withCursor) {
+  var isAjon = speaker === "ajon";
+  var name = isAjon ? "Mr Ajon" : "Pesie";
+  var cls = isAjon ? "ajon" : "pasie";
+  var emoji = isAjon ? "\uD83E\uDDD1\uD83C\uDFFE\u200D\uD83C\uDFEB" : "\uD83E\uDDD1\uD83C\uDFFE\u200D\uD83C\uDF3E";
+  var div = document.createElement("div");
+  div.className = "bubble-row " + cls;
+  div.innerHTML =
+    '<div class="bubble-avatar">' + emoji + '</div>' +
+    '<div class="bubble-body">' +
+      '<div class="bubble-name">' + name + '</div>' +
+      '<div class="bubble ' + cls + (withCursor ? " typing-cursor" : "") + '"></div>' +
+    '</div>';
+  if (text !== null && text !== undefined) {
+    div.querySelector(".bubble").innerHTML = escapeHTML(text);
+  }
+  return div;
+}
+function ajon_showTyping(speaker) {
+  var box = byId("assistMsgs");
+  if (!box) return null;
+  var isAjon = speaker === "ajon";
+  var name = isAjon ? "Mr Ajon" : "Pesie";
+  var cls = isAjon ? "ajon" : "pasie";
+  var emoji = isAjon ? "\uD83E\uDDD1\uD83C\uDFFE\u200D\uD83C\uDFEB" : "\uD83E\uDDD1\uD83C\uDFFE\u200D\uD83C\uDF3E";
+  var div = document.createElement("div");
+  div.className = "bubble-row " + cls + " typing-row";
+  div.innerHTML =
+    '<div class="bubble-avatar">' + emoji + '</div>' +
+    '<div class="bubble-body">' +
+      '<div class="bubble-name">' + name + ' <span class="typing-mini">typing</span></div>' +
+      '<div class="bubble ' + cls + ' bubble-typing">' +
+        '<span class="dot"></span><span class="dot"></span><span class="dot"></span>' +
+      '</div>' +
+    '</div>';
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+  return div;
+}
+function ajon_send(speaker, bubbles, token) {
+  return new Promise(function (resolve) {
+    var box = byId("assistMsgs");
+    if (!box) return resolve(false);
+    var flat = [];
+    for (var i = 0; i < bubbles.length; i++) {
+      var parts = chunkMsg(bubbles[i], 55);
+      for (var j = 0; j < parts.length; j++) if (parts[j]) flat.push(parts[j]);
+    }
+    var idx = 0;
+    function typeOne() {
+      if (token !== chatToken || !BRAIN.isRunning) return resolve(false);
+      if (idx >= flat.length) return resolve(true);
+      var text = flat[idx];
+      var row = ajon_makeRow(speaker, null, true);
+      box.appendChild(row);
+      var bubble = row.querySelector(".bubble");
+      var i = 0;
+      var speed = 90 + Math.random() * 40;
+      function step() {
+        if (token !== chatToken || !BRAIN.isRunning) {
+          bubble.classList.remove("typing-cursor");
+          return resolve(false);
+        }
+        if (i >= text.length) {
+          bubble.classList.remove("typing-cursor");
+          playNotify();
+          idx++;
+          setTimeout(typeOne, 900 + Math.random() * 400);
+          return;
+        }
+        bubble.innerHTML = escapeHTML(text.substring(0, i + 1));
+        box.scrollTop = box.scrollHeight;
+        i++;
+        setTimeout(step, speed);
+      }
+      step();
+    }
+    typeOne();
+  });
+}
+function ajon_sleep(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+
+/* ---------- State ---------- */
+function loadBrainState() {
+  try {
+    var raw = localStorage.getItem(BRAIN_STATE_KEY);
+    if (raw) {
+      var s = JSON.parse(raw);
+      BRAIN.chatCount = s.chatCount || 0;
+      BRAIN.capital = s.capital || 86000;
+      BRAIN.level = s.level || 1;
+      BRAIN.messages = s.messages || [];
+      BRAIN.currentTopicId = s.currentTopicId || null;
+      BRAIN.lastTopics = s.lastTopics || [];
+      BRAIN.lastPrinciple = s.lastPrinciple || null;
+      BRAIN.lastMode = s.lastMode || "question";
+    }
+  } catch (e) {}
+  BRAIN.isRunning = false;
+  BRAIN.isPaused = true;
+}
+function saveBrainState() {
+  try {
+    localStorage.setItem(BRAIN_STATE_KEY, JSON.stringify({
+      chatCount: BRAIN.chatCount,
+      capital: BRAIN.capital,
+      level: BRAIN.level,
+      messages: BRAIN.messages.slice(-40),
+      currentTopicId: BRAIN.currentTopicId,
+      lastTopics: BRAIN.lastTopics.slice(-10),
+      lastPrinciple: BRAIN.lastPrinciple,
+      lastMode: BRAIN.lastMode
+    }));
+  } catch (e) {}
+}
+function pauseAssistantChat() {
+  BRAIN.isRunning = false;
+  BRAIN.isPaused = true;
+  chatToken++;
+  if (chatTimer) { clearTimeout(chatTimer); chatTimer = null; }
+  var rows = document.querySelectorAll(".typing-row");
+  for (var i = 0; i < rows.length; i++) if (rows[i].parentNode) rows[i].parentNode.removeChild(rows[i]);
+}
+function openAssistantTab() {
+  resumeAudio();
+  var box = byId("assistMsgs");
+  if (!box) return;
+  if (!hasFullAccess()) {
+    box.innerHTML = '<div class="coming-soon"><span class="bigicon">\uD83D\uDD12</span><h3>Assistant Locked</h3><p>Unlock to watch Mr Ajon teach Pesie.</p></div>';
+    return;
+  }
+  if (box.querySelector(".coming-soon")) box.innerHTML = "";
+  if (box.children.length === 0 && BRAIN.messages.length > 0) {
+    for (var i = 0; i < BRAIN.messages.length; i++) {
+      var m = BRAIN.messages[i];
+      var parts = String(m.t).split("\n");
+      for (var j = 0; j < parts.length; j++) {
+        if (parts[j]) box.appendChild(ajon_makeRow(m.s, parts[j], false));
+      }
+    }
+  }
+  if (!BRAIN.isRunning) startAssistantChat();
+}
+function startAssistantChat() {
+  if (!hasFullAccess()) return;
+  if (BRAIN.isRunning) return;
+  BRAIN.isRunning = true;
+  BRAIN.isPaused = false;
+  chatToken++;
+  runTurn(chatToken);
+}
+
+async function runTurn(token) {
+  if (token !== chatToken || !BRAIN.isRunning) return;
+  var box = byId("assistMsgs");
+  if (!box) return;
+
+  /* 1. Pesie typing dots */
+  var t1 = ajon_showTyping("pasie");
+  await ajon_sleep(1400 + Math.random() * 800);
+  if (token !== chatToken || !BRAIN.isRunning) { if (t1 && t1.parentNode) t1.parentNode.removeChild(t1); return; }
+  if (t1 && t1.parentNode) t1.parentNode.removeChild(t1);
+
+  /* 2. Pesie sends 1 bubble */
+  var pesieBubbles = buildPesieTurn();
+  var ok1 = await ajon_send("pasie", pesieBubbles, token);
+  if (!ok1) return;
+  BRAIN.messages.push({ s: "pasie", t: pesieBubbles.join("\n"), ts: Date.now() });
+
+  /* 3. Wait */
+  await ajon_sleep(900);
+  if (token !== chatToken || !BRAIN.isRunning) return;
+
+  /* 4. Mr Ajon typing dots */
+  var t2 = ajon_showTyping("ajon");
+  await ajon_sleep(1800 + Math.random() * 1200);
+  if (token !== chatToken || !BRAIN.isRunning) { if (t2 && t2.parentNode) t2.parentNode.removeChild(t2); return; }
+  if (t2 && t2.parentNode) t2.parentNode.removeChild(t2);
+
+  /* 5. Mr Ajon sends 2-5 bubbles */
+  var ajonBubbles = buildMrAjonTurn();
+  var ok2 = await ajon_send("ajon", ajonBubbles, token);
+  if (!ok2) return;
+  BRAIN.messages.push({ s: "ajon", t: ajonBubbles.join("\n"), ts: Date.now() });
+
+  /* Capture last principle */
+  for (var ai = 0; ai < ajonBubbles.length; ai++) {
+    var line = String(ajonBubbles[ai]);
+    if (line.indexOf("Principle: ") === 0) {
+      BRAIN.lastPrinciple = line.substring(11);
+      break;
+    }
+  }
+
+  /* Advance state */
+  BRAIN.chatCount++;
+  if (BRAIN.lastMode === "question") {
+    BRAIN.currentTopicId = nextTopicV9();
+  }
+  BRAIN.capital += Math.floor(Math.random() * 4000) + 1200;
+  if (BRAIN.chatCount >= 300) BRAIN.level = 6;
+  else if (BRAIN.chatCount >= 150) BRAIN.level = 5;
+  else if (BRAIN.chatCount >= 80) BRAIN.level = 4;
+  else if (BRAIN.chatCount >= 40) BRAIN.level = 3;
+  else if (BRAIN.chatCount >= 15) BRAIN.level = 2;
+  else BRAIN.level = 1;
+
+  if (BRAIN.messages.length > 40) BRAIN.messages = BRAIN.messages.slice(-40);
+  saveBrainState();
+
+  /* Next turn after delay */
+  chatTimer = setTimeout(function () {
+    if (token !== chatToken) return;
+    runTurn(token);
+  }, 5000 + Math.random() * 3000);
+}
+
+function clearAssistantChat() {
+  if (!hasFullAccess()) return;
+  pauseAssistantChat();
+  try {
+    var keys = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf("ajon_") === 0) keys.push(k);
+    }
+    for (var j = 0; j < keys.length; j++) localStorage.removeItem(keys[j]);
+  } catch (e) {}
+  BRAIN.messages = [];
+  BRAIN.chatCount = 0;
+  BRAIN.level = 1;
+  BRAIN.capital = 86000;
+  BRAIN.currentTopicId = null;
+  BRAIN.lastTopics = [];
+  BRAIN.lastPrinciple = null;
+  BRAIN.pendingBiz = null;
+  BRAIN.bizIdx = {};
+  BRAIN.rotIdx = {};
+  BRAIN.lastMode = "question";
+  var box = byId("assistMsgs");
+  if (box) box.innerHTML = "";
+  setTimeout(function () { startAssistantChat(); }, 700);
+}
+
+function toggleAssistSound() {
+  assistSoundOn = !assistSoundOn;
+  var b = byId("soundToggleBtn");
+  if (b) b.textContent = assistSoundOn ? "\uD83D\uDD0A" : "\uD83D\uDD07";
+}
+function updateSoundButton() {
+  var b = byId("soundToggleBtn");
+  if (b) b.textContent = assistSoundOn ? "\uD83D\uDD0A" : "\uD83D\uDD07";
+}
+function avatarFallback(img, emoji) {
+  try {
+    var span = document.createElement("span");
+    span.className = "avatar-emoji";
+    span.textContent = emoji;
+    img.parentNode.replaceChild(span, img);
+  } catch (e) {}
+}
+</script>
+</body>
+</html>
