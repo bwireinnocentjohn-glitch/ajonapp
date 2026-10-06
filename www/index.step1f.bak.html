@@ -2264,7 +2264,6 @@ function boot() {
   try {
     TUTORIALS = ALL_BUSINESSES;
     loadBrainState();
-    _primeAudioOnFirstTouch();
     if (typeof ensureAudioUnlocked === "function") ensureAudioUnlocked();
     renderCatBar();
     var searchInput = byId("searchInput");
@@ -3224,7 +3223,29 @@ function buildAjonReply(pasieText) {
     extraBlock + actions + proverbBlock + accountability;
 }
 
-
+function playNotifySound() {
+  if (!assistSoundOn) return;
+  try {
+    if (!audioCtx) {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      audioCtx = new Ctx();
+    }
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    var now = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(880, now);
+    osc.frequency.setValueAtTime(1245, now + 0.08);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.18, now + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.30);
+    osc.start(now);
+    osc.stop(now + 0.32);
+  } catch (e) {}
+}
 
 function avatarHTML(who) {
   var isAjon = who === "ajon";
@@ -3341,7 +3362,6 @@ function pauseAssistantChat() {
 }
 
 function openAssistantTab() {
-  _primeAudioOnFirstTouch();
   primeAudio();
   var box = byId("assistMsgs");
   if (!box) return;
@@ -3377,9 +3397,9 @@ async function runChatTurn(token) {
   if (t1 && t1.parentNode) t1.parentNode.removeChild(t1);
 
   var pasieMsg = buildPasieQuestion();
-  var ok1 = await ajonSendBubbles("pasie", [pasieMsg], token);
+  var ok1 = await typeMessageLetterByLetter("pasie", pasieMsg, token);
   if (!ok1) return;
-  ajonNotify();
+  playNotifyV4();
   BRAIN.messages.push({ s: "pasie", t: pasieMsg, ts: Date.now() });
   if (BRAIN.messages.length > 100) BRAIN.messages = BRAIN.messages.slice(-100);
   saveBrainState();
@@ -3392,9 +3412,9 @@ async function runChatTurn(token) {
   if (t2 && t2.parentNode) t2.parentNode.removeChild(t2);
 
   var ajonMsg = buildAjonReply(pasieMsg);
-  var ok2 = await ajonSendBubbles("ajon", [ajonMsg], token);
+  var ok2 = await typeMessageLetterByLetter("ajon", ajonMsg, token);
   if (!ok2) return;
-  ajonNotify();
+  playNotifyV4();
   BRAIN.messages.push({ s: "ajon", t: ajonMsg, ts: Date.now() });
   if (BRAIN.messages.length > 100) BRAIN.messages = BRAIN.messages.slice(-100);
 
@@ -3452,11 +3472,98 @@ function clearAssistantChat() {
 
 
 /* ========== Step 1c overrides ========== */
+function forceShortChunks(text, maxLen) {
+  maxLen = maxLen || 65;
+  var out = [];
+  var blocks = String(text || "").split(/\n+/);
+  for (var b = 0; b < blocks.length; b++) {
+    var block = blocks[b].trim();
+    if (!block) continue;
+    if (block.length <= maxLen) { out.push(block); continue; }
+    var sentences = block.match(/[^.!?]+[.!?]+/g) || [block];
+    for (var s = 0; s < sentences.length; s++) {
+      var sen = sentences[s].trim();
+      if (!sen) continue;
+      if (sen.length <= maxLen) { out.push(sen); continue; }
+      var words = sen.split(/\s+/);
+      var cur = "";
+      for (var w = 0; w < words.length; w++) {
+        if (!cur) { cur = words[w]; continue; }
+        if ((cur + " " + words[w]).length <= maxLen) cur += " " + words[w];
+        else { out.push(cur); cur = words[w]; }
+      }
+      if (cur) out.push(cur);
+    }
+  }
+  return out;
+}
 
+function playTypingClick() {
+  if (!assistSoundOn) return;
+  try {
+    if (!audioCtx) {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      audioCtx = new Ctx();
+    }
+    if (audioCtx.state === "suspended") audioCtx.resume();
+    var now = audioCtx.currentTime;
+    var osc = audioCtx.createOscillator();
+    var gain = audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(2400 + Math.random() * 600, now);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.22, now + 0.003);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.045);
+    osc.start(now);
+    osc.stop(now + 0.05);
+  } catch (e) {}
+}
 
-
-
-
+function sendSplitMessages(speaker, arr, token) {
+  return new Promise(function (resolve) {
+    var box = byId("assistMsgs");
+    if (!box) return resolve(false);
+    var flat = [];
+    for (var i = 0; i < arr.length; i++) {
+      var parts = forceShortChunks(arr[i], 65);
+      for (var j = 0; j < parts.length; j++) {
+        if (parts[j]) flat.push(parts[j]);
+      }
+    }
+    var idx = 0;
+    function typeOne() {
+      if (token !== chatToken || !BRAIN.isRunning) return resolve(false);
+      if (idx >= flat.length) return resolve(true);
+      var text = flat[idx];
+      var row = makeBubbleRow(speaker, null, true);
+      box.appendChild(row);
+      var bubble = row.querySelector(".bubble");
+      var i = 0;
+      var msPerChar = 110 + Math.random() * 55;
+      function step() {
+        if (token !== chatToken || !BRAIN.isRunning) {
+          bubble.classList.remove("typing-cursor");
+          return resolve(false);
+        }
+        if (i >= text.length) {
+          bubble.classList.remove("typing-cursor");
+          idx++;
+          setTimeout(typeOne, 1400 + Math.random() * 800);
+          return;
+        }
+        bubble.innerHTML = escapeHTML(text.substring(0, i + 1)).replace(/\n/g, "<br>");
+        box.scrollTop = box.scrollHeight;
+        playTypingClick();
+        i++;
+        setTimeout(step, msPerChar);
+      }
+      step();
+    }
+    typeOne();
+  });
+}
 
 
 /* ========== Step 1c overrides ========== */
@@ -3560,19 +3667,105 @@ var NOTIFY_B64 = "data:audio/wav;base64,UklGRqQPAABXQVZFZm10IBAAAAABAAEAIlYAAESs
 var clickAudioProto = null;
 var notifyAudioProto = null;
 
-
+function primeAudio() {
+  try {
+    if (!clickAudioProto) clickAudioProto = new Audio(TYPING_CLICK_B64);
+    if (!notifyAudioProto) notifyAudioProto = new Audio(NOTIFY_B64);
+    clickAudioProto.volume = 0;
+    notifyAudioProto.volume = 0;
+    var p1 = clickAudioProto.play();
+    if (p1 && p1.then) p1.then(function(){ clickAudioProto.pause(); clickAudioProto.currentTime = 0; clickAudioProto.volume = 0.55; }).catch(function(){});
+    var p2 = notifyAudioProto.play();
+    if (p2 && p2.then) p2.then(function(){ notifyAudioProto.pause(); notifyAudioProto.currentTime = 0; notifyAudioProto.volume = 0.6; }).catch(function(){});
+  } catch (e) {}
+}
 try {
   document.addEventListener("touchstart", primeAudio, true);
   document.addEventListener("click", primeAudio, true);
   document.addEventListener("keydown", primeAudio, true);
 } catch (e) {}
 
+function playClickV4() {
+  if (!assistSoundOn) return;
+  try {
+    var a = new Audio(TYPING_CLICK_B64);
+    a.volume = 0.55;
+    var pr = a.play();
+    if (pr && pr.catch) pr.catch(function(){});
+  } catch (e) {}
+}
+function playNotifyV4() {
+  if (!assistSoundOn) return;
+  try {
+    var a = new Audio(NOTIFY_B64);
+    a.volume = 0.65;
+    var pr = a.play();
+    if (pr && pr.catch) pr.catch(function(){});
+  } catch (e) {}
+}
 
+function chunkV4(text, maxLen) {
+  maxLen = maxLen || 55;
+  var t = String(text || "");
+  var paragraphs = t.split(/\n+/);
+  var out = [];
+  for (var p = 0; p < paragraphs.length; p++) {
+    var block = paragraphs[p].replace(/\s+/g, " ").trim();
+    if (!block) continue;
+    if (block.length <= maxLen) { out.push(block); continue; }
+    var words = block.split(" ");
+    var cur = "";
+    for (var i = 0; i < words.length; i++) {
+      var w = words[i];
+      if (!cur) { cur = w; continue; }
+      if ((cur + " " + w).length <= maxLen) cur += " " + w;
+      else { out.push(cur); cur = w; }
+    }
+    if (cur) out.push(cur);
+  }
+  return out;
+}
 
-
-
-
-
+function sendSplitMessagesV4(speaker, arr, token) {
+  return new Promise(function (resolve) {
+    var box = byId("assistMsgs");
+    if (!box) return resolve(false);
+    var flat = [];
+    for (var i = 0; i < arr.length; i++) {
+      var parts = chunkV4(arr[i], 55);
+      for (var j = 0; j < parts.length; j++) if (parts[j]) flat.push(parts[j]);
+    }
+    var idx = 0;
+    function typeOne() {
+      if (token !== chatToken || !BRAIN.isRunning) return resolve(false);
+      if (idx >= flat.length) return resolve(true);
+      var text = flat[idx];
+      var row = makeBubbleRow(speaker, null, true);
+      box.appendChild(row);
+      var bubble = row.querySelector(".bubble");
+      var i = 0;
+      var msPerChar = 180 + Math.random() * 80;
+      function step() {
+        if (token !== chatToken || !BRAIN.isRunning) {
+          bubble.classList.remove("typing-cursor"); return resolve(false);
+        }
+        if (i >= text.length) {
+          bubble.classList.remove("typing-cursor");
+          idx++;
+          setTimeout(typeOne, 1800 + Math.random() * 1000);
+          return;
+        }
+        bubble.innerHTML = escapeHTML(text.substring(0, i + 1)).replace(/\n/g, "<br>");
+        box.scrollTop = box.scrollHeight;
+        playClickV4();
+        i++;
+        setTimeout(step, msPerChar);
+      }
+      step();
+    }
+    typeOne();
+  });
+}
 
 var SHORT_DIAG = {
   fear: "Root is your dream and your pocket are mixed. Separate them today.",
@@ -3622,213 +3815,7 @@ var SHORT_ACTIONS = [
   "Show your customer the outcome, not the product."
 ];
 
-
-
-
-
-
-/* ============ AJON FINAL AUDIO + TYPING (Step 1f) ============ */
-
-/* Single persistent Audio element, primed on first user gesture */
-var _clickEl = null;
-var _notifyEl = null;
-var _audioPrimed = false;
-
-function _buildClickAudio() {
-  try {
-    // 12ms 1900Hz sine with fast decay, encoded as WAV data URI
-    // Pre-computed at build time; embedded below.
-    _clickEl = new Audio();
-    _clickEl.src = "data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAESsAABErAAABAAgAZGF0YQAAAAA=";
-    _clickEl.volume = 0.7;
-    _clickEl.preload = "auto";
-  } catch (e) { _clickEl = null; }
-}
-
-function _primeAudioOnFirstTouch() {
-  if (_audioPrimed) return;
-  _audioPrimed = true;
-  try {
-    if (!_clickEl) _buildClickAudio();
-    if (_clickEl) {
-      _clickEl.volume = 0.001;
-      var p = _clickEl.play();
-      if (p && p.then) {
-        p.then(function () {
-          try { _clickEl.pause(); _clickEl.currentTime = 0; _clickEl.volume = 0.7; } catch (e) {}
-        }).catch(function () {});
-      } else {
-        try { _clickEl.pause(); _clickEl.currentTime = 0; _clickEl.volume = 0.7; } catch (e) {}
-      }
-    }
-  } catch (e) {}
-}
-
-/* Fallback: Web Audio blip if Audio element fails */
-function _webAudioBlip(freq, gainVal, dur) {
-  try {
-    if (!audioCtx) {
-      var Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      audioCtx = new Ctx();
-    }
-    if (audioCtx.state === "suspended") audioCtx.resume();
-    var now = audioCtx.currentTime;
-    var osc = audioCtx.createOscillator();
-    var g = audioCtx.createGain();
-    osc.connect(g); g.connect(audioCtx.destination);
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(freq, now);
-    g.gain.setValueAtTime(0.0001, now);
-    g.gain.exponentialRampToValueAtTime(gainVal, now + 0.002);
-    g.gain.exponentialRampToValueAtTime(0.0001, now + dur);
-    osc.start(now);
-    osc.stop(now + dur + 0.01);
-  } catch (e) {}
-}
-
-function ajonClick() {
-  if (!assistSoundOn) return;
-  try {
-    if (!_clickEl) _buildClickAudio();
-    if (_clickEl) {
-      var a = _clickEl.cloneNode();
-      a.volume = 0.7;
-      var pr = a.play();
-      if (pr && pr.catch) pr.catch(function () { _webAudioBlip(2100, 0.14, 0.035); });
-    } else {
-      _webAudioBlip(2100, 0.14, 0.035);
-    }
-  } catch (e) {
-    _webAudioBlip(2100, 0.14, 0.035);
-  }
-}
-
-function ajonNotify() {
-  if (!assistSoundOn) return;
-  _webAudioBlip(880, 0.22, 0.12);
-  setTimeout(function () { _webAudioBlip(1245, 0.22, 0.16); }, 80);
-}
-
-try {
-  document.addEventListener("touchstart", _primeAudioOnFirstTouch, true);
-  document.addEventListener("click", _primeAudioOnFirstTouch, true);
-  document.addEventListener("keydown", _primeAudioOnFirstTouch, true);
-} catch (e) {}
-
-/* ===== Short chunker: 50 chars max ===== */
-function ajonChunk(text, maxLen) {
-  maxLen = maxLen || 50;
-  var t = String(text || "");
-  var paras = t.split(/\n+/);
-  var out = [];
-  for (var p = 0; p < paras.length; p++) {
-    var block = paras[p].replace(/\s+/g, " ").trim();
-    if (!block) continue;
-    if (block.length <= maxLen) { out.push(block); continue; }
-    var words = block.split(" ");
-    var cur = "";
-    for (var i = 0; i < words.length; i++) {
-      var w = words[i];
-      if (!cur) { cur = w; continue; }
-      if ((cur + " " + w).length <= maxLen) cur += " " + w;
-      else { out.push(cur); cur = w; }
-    }
-    if (cur) out.push(cur);
-  }
-  return out;
-}
-
-/* ===== Sender: 240-320ms per char, click every char ===== */
-function ajonSendBubbles(speaker, arr, token) {
-  return new Promise(function (resolve) {
-    var box = byId("assistMsgs");
-    if (!box) return resolve(false);
-    var flat = [];
-    for (var i = 0; i < arr.length; i++) {
-      var parts = ajonChunk(arr[i], 50);
-      for (var j = 0; j < parts.length; j++) if (parts[j]) flat.push(parts[j]);
-    }
-    var idx = 0;
-    function typeOne() {
-      if (token !== chatToken || !BRAIN.isRunning) return resolve(false);
-      if (idx >= flat.length) return resolve(true);
-      var text = flat[idx];
-      var row = makeBubbleRow(speaker, null, true);
-      box.appendChild(row);
-      var bubble = row.querySelector(".bubble");
-      var i = 0;
-      var msPerChar = 240 + Math.random() * 80;
-      function step() {
-        if (token !== chatToken || !BRAIN.isRunning) {
-          bubble.classList.remove("typing-cursor"); return resolve(false);
-        }
-        if (i >= text.length) {
-          bubble.classList.remove("typing-cursor");
-          idx++;
-          setTimeout(typeOne, 1400 + Math.random() * 700);
-          return;
-        }
-        bubble.innerHTML = escapeHTML(text.substring(0, i + 1)).replace(/\n/g, "<br>");
-        box.scrollTop = box.scrollHeight;
-        ajonClick();
-        i++;
-        setTimeout(step, msPerChar);
-      }
-      step();
-    }
-    typeOne();
-  });
-}
-
-/* ===== Short reply builders ===== */
-var AJON_SHORT_DIAG = {
-  fear: "Root: you mixed your dream with your pocket. Separate them.",
-  self_doubt: "Root: you doubt yourself more than anyone else does.",
-  first_step: "Root: waiting for a perfect first step. There is only a first step.",
-  small_capital: "Root: you haven't practised with small money yet.",
-  pricing: "Root: pricing from fear, not from value.",
-  value: "Root: showing the product, not the outcome.",
-  retention: "Root: no reason given to return.",
-  customer_care: "Root: serving with resentment. Serve with joy.",
-  complaints: "Root: treating complaint as attack, not gift.",
-  cash_flow: "Root: money leaves faster than it arrives. Track it.",
-  profit_margin: "Root: hidden cost you refuse to see.",
-  unit_economics: "Root: one unit loses money. Fix the unit first.",
-  breakeven: "Root: you don't know your floor.",
-  savings: "Root: every shilling finds a mouth before a home.",
-  debt: "Root: why you took the debt, not the debt itself.",
-  discipline: "Root: no routine. Discipline is the child of routine.",
-  focus: "Root: too many yeses. Every extra yes is a slow no.",
-  family: "Root: family has needs but no plan.",
-  records: "Root: trusting your head over a book.",
-  trust: "Root: no system yet. Only good intentions.",
-  competition: "Root: you got comfortable before they came.",
-  supplier: "Root: only one source makes you weak.",
-  expansion: "Root: the original isn't stable yet.",
-  hiring: "Root: wanting hands without a system.",
-  brand: "Root: people don't know what to feel about you.",
-  quality: "Root: no routine protects quality daily.",
-  consistency: "Root: no schedule. A schedule is a promise.",
-  positioning: "Root: you haven't chosen your market position.",
-  differentiation: "Root: you haven't named your difference.",
-  cost_cutting: "Root: you haven't audited every receipt this month.",
-  scaling: "Root: stability first, not scale.",
-  second_branch: "Root: first branch isn't strong enough yet."
-};
-
-var AJON_SHORT_ACTIONS = [
-  "Write your real numbers in a small book today.",
-  "Talk to 3 real customers face to face today.",
-  "Count cash box tonight. Cost vs profit.",
-  "Buy the smallest starter kit. Test before you scale.",
-  "Charge fair price. Never below cost.",
-  "Record every shilling that leaves your pocket.",
-  "Serve one customer like they are your only one.",
-  "Show the outcome, not the product."
-];
-
-function ajonPasieTurn() {
+function buildPasieQuestionV4() {
   var lvl = BRAIN.level;
   var emotion = BRAIN.currentEmotion;
   var cap = BRAIN.capital;
@@ -3838,53 +3825,53 @@ function ajonPasieTurn() {
   var out = [];
 
   if (BRAIN.pasieLastResult) {
-    out.push(String(BRAIN.pasieLastResult).substring(0, 48));
+    out.push(String(BRAIN.pasieLastResult).slice(0, 50));
     BRAIN.pasieLastResult = null;
   }
 
   var openers = {
-    1: ["Mzee I'm scared to start " + emoji,
+    1: ["Mzee I am scared to start " + emoji,
         "Mzee I have " + fmt(cap) + " UGX only.",
-        "Mzee my heart is heavy " + emoji],
+        "Mzee my heart is heavy today " + emoji],
     2: ["Mzee customers stopped coming " + emoji,
         "Mzee my supplier raised price.",
         "Mzee someone copied my shop."],
     3: ["Mzee money keeps vanishing " + emoji,
-        "Mzee family asks for business money.",
-        "Mzee I work, end with nothing."],
+        "Mzee family keeps asking for business money.",
+        "Mzee I work all day end with nothing."],
     4: ["Mzee should I hire a worker? " + emoji,
         "Mzee I want a second stall.",
         "Mzee a shop wants goods on credit."],
-    5: ["Mzee brand grows slow " + emoji,
-        "Mzee people ask me for advice.",
-        "Mzee I'm teaching my cousin."],
-    6: ["Mzee my learners do well " + emoji,
+    5: ["Mzee my brand grows slow " + emoji,
+        "Mzee people now ask me advice.",
+        "Mzee I am teaching my cousin."],
+    6: ["Mzee my learners are doing well " + emoji,
         "Mzee what comes after teaching?"]
   }[lvl] || ["Mzee help me today " + emoji];
   out.push(openers[Math.floor(Math.random() * openers.length)]);
 
-  if (lvl === 1) out.push("I live in " + loc + ". Fear: " + topicLabel + ".");
-  else if (lvl === 2) out.push("Only 2 of 20 bought. Worry: " + topicLabel + ".");
+  if (lvl === 1) out.push("I live in " + loc + ". Main fear: " + topicLabel + ".");
+  else if (lvl === 2) out.push("Only 2 out of 20 bought. Worry: " + topicLabel + ".");
   else if (lvl === 3) out.push("Books don't match cash. Topic: " + topicLabel + ".");
   else if (lvl === 4) out.push(fmt(cap) + " UGX. Hire or expand?");
   else if (lvl === 5) out.push("Weakest: " + topicLabel + ".");
   else out.push("Next after teaching: " + topicLabel + "?");
 
   out.push(emoji + " " + (
-    emotion === "tired" ? "I'm tired." :
+    emotion === "tired" ? "I am tired." :
     emotion === "hopeful" ? "I still hope." :
     emotion === "determined" ? "I won't quit." :
-    "I'm worried."
+    "I am worried."
   ));
   return out;
 }
 
-function ajonAjonTurn() {
+function buildAjonReplyV4(pasieJoinedText) {
   var topic = BRAIN.currentTopic;
   var out = [];
 
   out.push(AJON_OPENERS[Math.floor(Math.random() * AJON_OPENERS.length)]);
-  out.push(AJON_SHORT_DIAG[topic] || "Root: the pattern behind your story.");
+  out.push(shortDiag(topic));
 
   var principle = pickFresh(BRAIN_PRINCIPLES, BRAIN.lastPrinciples, 25);
   BRAIN.lastPrinciples.push(principle);
@@ -3916,8 +3903,14 @@ function ajonAjonTurn() {
     var idea = generateBusinessIdea();
     if (idea) {
       out.push("Idea: " + idea.name + " in " + idea.location + ".");
-      out.push("Capital: " + fmt(idea.capital) + " UGX.");
+      out.push("Capital: " + fmt(idea.capital) + " UGX. Skill: " + idea.skill + ".");
     }
+  }
+
+  if (BRAIN.chatCount % 5 === 4 && typeof ALL_BUSINESSES !== "undefined" && ALL_BUSINESSES.length) {
+    var idx = Math.floor(Math.random() * ALL_BUSINESSES.length);
+    var b = ALL_BUSINESSES[idx];
+    out.push("Study: " + b.t + ". Start " + fmt(b.cost) + " UGX, profit " + fmt(b.profit) + ".");
   }
 
   if (BRAIN.chatCount % 4 === 1) {
@@ -3927,7 +3920,7 @@ function ajonAjonTurn() {
     out.push("Fun fact: " + fact);
   }
 
-  out.push(AJON_SHORT_ACTIONS[Math.floor(Math.random() * AJON_SHORT_ACTIONS.length)]);
+  out.push(SHORT_ACTIONS[Math.floor(Math.random() * SHORT_ACTIONS.length)]);
   out.push("Tonight count cash. Cost vs profit.");
 
   var proverb = pickFresh(BRAIN_PROVERBS, BRAIN.lastProverbs, 20);
