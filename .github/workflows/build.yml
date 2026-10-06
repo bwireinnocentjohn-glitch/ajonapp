@@ -36,6 +36,9 @@ jobs:
       - name: Install npm dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Generate app icons
+        run: npx @capacitor/assets generate --android || echo "Icon gen skipped"
+
       - name: Add Capacitor Android platform
         run: npx cap add android
 

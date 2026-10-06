@@ -384,7 +384,7 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
 <div id="splashScreen">
   <div class="splash-logo">💰</div>
   <div class="splash-title">AJON</div>
-  <div class="splash-sub">11500+ Ways To Make Money</div>
+  <div class="splash-sub">500+ Ways To Make Money</div>
   <div class="splash-welcome">Welcome</div>
   <div class="splash-tagline">Start Your Business Now</div>
   <div class="splash-loader"><div class="splash-bar"></div></div>
@@ -396,7 +396,7 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
     <div class="logo-mark">💰</div>
     <div>
       <div class="logo">AJON</div>
-      <div class="sub">11500+ Ways To Make Money</div>
+      <div class="sub">500+ Ways To Make Money</div>
     </div>
     <div class="hdr-right">
       <div class="user-badge" title="Active users"><span class="pulse"></span><span>👥</span><span id="userBadge">1.0k</span></div>
@@ -417,7 +417,7 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
 
     <section class="panel active" id="panel-tutorials">
       <div class="search">
-        <input id="searchInput" type="search" placeholder="🔍 Search 1500+ business ideas..." autocomplete="off" spellcheck="false">
+        <input id="searchInput" type="search" placeholder="🔍 Search 500+ business ideas..." autocomplete="off" spellcheck="false">
         <div class="count" id="tutCount"></div>
       </div>
       <div class="cat-bar" id="catBar"></div>
@@ -1884,7 +1884,7 @@ function updateTrialBar() {
   var bar = byId("trialBar"); if (!bar) return;
   if (isSubscribed()) { var daysLeft = Math.ceil((subscriptionEndDate - Date.now()) / (1000 * 60 * 60 * 24)); bar.innerHTML = '<div class="trial-bar">✅ Full access — ' + daysLeft + ' days remaining</div>'; return; }
   if (isTrialActive()) { bar.innerHTML = '<div class="trial-bar">🎁 Free preview: <span class="time">' + formatTrialTime(trialMinutesLeft()) + '</span> — enjoy all tutorials</div>'; return; }
-  bar.innerHTML = '<div class="trial-bar">🔒 Preview ended — Unlock 1500+ ideas in the Unlock tab</div>';
+  bar.innerHTML = '<div class="trial-bar">🔒 Preview ended — Unlock 500+ ideas in the Unlock tab</div>';
 }
 function startTrialTick() {
   if (trialTickTimer) clearInterval(trialTickTimer);
@@ -1936,7 +1936,7 @@ function renderTutorials(reset) {
   if (!hasFullAccess()) {
     list.insertAdjacentHTML("beforeend",
       '<div class="free-bar"><strong>🔓 Preview ended</strong>' +
-      'Unlock 1500+ ideas for ' + fmt(PAYMENT_INFO.amount) + ' ' + PAYMENT_INFO.currency + ' / month — see the Unlock tab</div>');
+      'Unlock 500+ ideas for ' + fmt(PAYMENT_INFO.amount) + ' ' + PAYMENT_INFO.currency + ' / month — see the Unlock tab</div>');
   }
 
   if (countEl) countEl.textContent = items.length + " businesses" + (query ? ' for "' + currentQuery + '"' : "");
@@ -2080,32 +2080,14 @@ function stopSpeaking() { currentlySpeakingId = null; try { if ("speechSynthesis
 function updateSpeakBtn() { var b = byId("speakBtn"); if (!b) return; b.textContent = currentlySpeakingId ? "⏸️" : "🔊"; }
 
 /* ===================== FAV / NOTES ===================== */
-function isFav(id) {
-  try {
-    if (!Array.isArray(favs)) favs = [];
-    return favs.indexOf(Number(id)) > -1;
-  } catch (e) { return false; }
-}
+function isFav(id) { return favs.indexOf(Number(id)) > -1; }
 function toggleFav(id, ev) {
   if (ev && ev.stopPropagation) ev.stopPropagation();
-  if (ev && ev.preventDefault) ev.preventDefault();
-  try {
-    if (!Array.isArray(favs)) favs = [];
-    var nid = Number(id);
-    var idx = favs.indexOf(nid);
-    var nowFav;
-    if (idx > -1) { favs.splice(idx, 1); nowFav = false; }
-    else { favs.push(nid); nowFav = true; }
-    writeJSON(LS_FAV, favs);
-    var iconFull = String.fromCodePoint(0x2764, 0xFE0F);
-    var iconEmpty = String.fromCodePoint(0x1F90D);
-    var btns = document.querySelectorAll('.fav[data-fav="' + nid + '"]');
-    for (var k = 0; k < btns.length; k++) {
-      btns[k].textContent = nowFav ? iconFull : iconEmpty;
-      btns[k].classList.add("pop");
-      (function(b){ setTimeout(function(){ b.classList.remove("pop"); }, 460); })(btns[k]);
-    }
-  } catch (e) { console.log("toggleFav error:", e); }
+  var nid = Number(id); var idx = favs.indexOf(nid);
+  if (idx > -1) favs.splice(idx, 1); else favs.push(nid);
+  writeJSON(LS_FAV, favs);
+  var btn = document.querySelector('.fav[data-fav="' + nid + '"]');
+  if (btn) { btn.classList.add("pop"); setTimeout(function () { btn.classList.remove("pop"); }, 460); }
 }
 function saveHist(q, a) { hist.unshift({ q: String(q), a: String(a), t: Date.now() }); if (hist.length > 50) hist = hist.slice(0, 50); writeJSON(LS_HIST, hist); }
 function saveNote() {
@@ -2183,7 +2165,7 @@ function renderPayment() {
     var daysLeft = Math.ceil((subscriptionEndDate - Date.now()) / (1000 * 60 * 60 * 24));
     var hoursLeft = Math.ceil((subscriptionEndDate - Date.now()) / (1000 * 60 * 60));
     var human = daysLeft >= 1 ? daysLeft + " days" : hoursLeft + " hours";
-    area.innerHTML = '<div class="paywall-wrap"><div class="paywall-active-card"><h3>✅ Unlocked</h3><div class="num">' + human + '</div><div class="lbl">REMAINING</div><div class="exp">Valid until <strong>' + escapeHTML(formatDateShort(subscriptionEndDate)) + '</strong></div><div class="paywall-divider"></div><div class="paywall-perks"><div class="pr"><span class="tick">✓</span>All 1500+ tutorials</div><div class="pr"><span class="tick">✓</span>Offline Helper</div><div class="pr"><span class="tick">✓</span>Text-to-speech on every tutorial</div><div class="pr"><span class="tick">✓</span>Notes and favourites</div></div></div></div>';
+    area.innerHTML = '<div class="paywall-wrap"><div class="paywall-active-card"><h3>✅ Unlocked</h3><div class="num">' + human + '</div><div class="lbl">REMAINING</div><div class="exp">Valid until <strong>' + escapeHTML(formatDateShort(subscriptionEndDate)) + '</strong></div><div class="paywall-divider"></div><div class="paywall-perks"><div class="pr"><span class="tick">✓</span>All 500+ tutorials</div><div class="pr"><span class="tick">✓</span>Offline Helper</div><div class="pr"><span class="tick">✓</span>Text-to-speech on every tutorial</div><div class="pr"><span class="tick">✓</span>Notes and favourites</div></div></div></div>';
     return;
   }
   var trialLeft = trialMinutesLeft();
@@ -2233,9 +2215,9 @@ function showTab(name) {
 }
 function renderCatBar() {
   var bar = byId("catBar"); if (!bar) return;
-  var html = '<div class="cat-chip active" data-cat="all" onclick="filterCat(\'all\')">All</div>';
+  var html = '<div class="cat-chip active" data-cat="all">All</div>';
   for (var i = 0; i < CATEGORIES.length; i++) {
-    html += '<div class="cat-chip" data-cat="' + CATEGORIES[i].id + '" onclick="filterCat(\'' + CATEGORIES[i].id + '\')">' + CATEGORIES[i].name + '</div>';
+    html += '<div class="cat-chip" data-cat="' + CATEGORIES[i].id + '">' + CATEGORIES[i].name + '</div>';
   }
   bar.innerHTML = html;
   if (bar._ajonBound) return;
@@ -2244,13 +2226,14 @@ function renderCatBar() {
     var chip = ev.target;
     while (chip && chip !== bar && !chip.classList.contains("cat-chip")) chip = chip.parentNode;
     if (!chip || chip === bar) return;
+    ev.preventDefault();
     var cat = chip.getAttribute("data-cat");
     if (!cat) return;
     var chips = bar.querySelectorAll(".cat-chip");
     for (var j = 0; j < chips.length; j++) {
       chips[j].classList.toggle("active", chips[j].getAttribute("data-cat") === cat);
     }
-    try { filterCat(cat); } catch (e) { console.log("filterCat err", e); }
+    filterCat(cat);
   }, false);
 }
 
@@ -2308,7 +2291,7 @@ else boot();
    AJON CHAT v9 — Mr Ajon & Pesie, clean linked Q&A
    ===================================================================== */
 
-var BRAIN_STATE_KEY = "ajon_chat_v11";
+var BRAIN_STATE_KEY = "ajon_chat_v10";
 var BRAIN = {
   chatCount: 0, level: 1, capital: 86000, location: "Busia",
   isRunning: false, isPaused: true, messages: [],
@@ -3028,15 +3011,10 @@ function avatarFallback(img, emoji) {
   } catch (e) {}
 }
 
-
-
-
 /* ========== Exit confirmation ========== */
 (function(){
-  if (window.__ajonExitV5) return;
-  window.__ajonExitV5 = true;
-
-  var lastBack = 0;
+  if (window.__ajonExitV4) return;
+  window.__ajonExitV4 = true;
 
   function doExit() {
     try {
@@ -3050,36 +3028,22 @@ function avatarFallback(img, emoji) {
   }
 
   function askExit() {
-    var now = Date.now();
-    if (now - lastBack < 1200) { doExit(); return; }
-    lastBack = now;
     var yes = false;
     try { yes = window.confirm("Exit Ajon? Tap OK to close."); } catch(e) { yes = true; }
     if (yes) doExit();
     else { try { history.pushState({a:1}, "", ""); } catch(e) {} }
   }
 
-  /* PRIMARY: Capacitor native back button */
-  function wireCapacitor() {
-    try {
-      if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App && Capacitor.Plugins.App.addListener) {
-        Capacitor.Plugins.App.addListener("backButton", function(){ askExit(); });
-        return true;
-      }
-    } catch(e) {}
-    return false;
-  }
+  /* Capacitor native back button (most reliable) */
+  try {
+    if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
+      Capacitor.Plugins.App.addListener("backButton", function(){ askExit(); });
+    }
+  } catch(e) {}
 
-  /* Wait for Capacitor to be ready (it may load after us) */
-  var tries = 0;
-  var waitId = setInterval(function(){
-    tries++;
-    if (wireCapacitor() || tries > 40) clearInterval(waitId);
-  }, 100);
-
-  /* WEB FALLBACK: popstate + keydown */
+  /* Web fallback */
   try { history.pushState({a:1}, "", ""); } catch(e) {}
-  window.addEventListener("popstate", function(){ askExit(); });
+  window.addEventListener("popstate", askExit);
   document.addEventListener("keydown", function(e){
     if (e.key === "Backspace" || e.keyCode === 8) {
       var t = e.target;
