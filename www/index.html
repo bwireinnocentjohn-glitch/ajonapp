@@ -377,31 +377,6 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
 .bubble { font-size: 14px; line-height: 1.55; }
 .bubble-row { margin-bottom: 2px; }
 
-
-/* ========== Back button improvements ========== */
-.back-btn {
-  width: 42px !important;
-  height: 42px !important;
-  border-radius: 12px !important;
-  background: linear-gradient(135deg, #00c853, #009624) !important;
-  border: 2px solid #00ff99 !important;
-  color: #ffffff !important;
-  font-size: 22px !important;
-  font-weight: 900 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 3px 10px rgba(0,200,83,.45) !important;
-  cursor: pointer !important;
-  line-height: 1 !important;
-  padding: 0 !important;
-  flex: 0 0 auto !important;
-}
-.back-btn:active {
-  transform: scale(.94) !important;
-  box-shadow: 0 1px 4px rgba(0,200,83,.3) !important;
-}
-
 </style>
 </head>
 <body>
@@ -409,7 +384,7 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
 <div id="splashScreen">
   <div class="splash-logo">💰</div>
   <div class="splash-title">AJON</div>
-  <div class="splash-sub">11500+ Ways To Make Money</div>
+  <div class="splash-sub">500+ Ways To Make Money</div>
   <div class="splash-welcome">Welcome</div>
   <div class="splash-tagline">Start Your Business Now</div>
   <div class="splash-loader"><div class="splash-bar"></div></div>
@@ -421,7 +396,7 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
     <div class="logo-mark">💰</div>
     <div>
       <div class="logo">AJON</div>
-      <div class="sub">11500+ Ways To Make Money</div>
+      <div class="sub">500+ Ways To Make Money</div>
     </div>
     <div class="hdr-right">
       <div class="user-badge" title="Active users"><span class="pulse"></span><span>👥</span><span id="userBadge">1.0k</span></div>
@@ -442,7 +417,7 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
 
     <section class="panel active" id="panel-tutorials">
       <div class="search">
-        <input id="searchInput" type="search" placeholder="🔍 Search 1500+ business ideas..." autocomplete="off" spellcheck="false">
+        <input id="searchInput" type="search" placeholder="🔍 Search 500+ business ideas..." autocomplete="off" spellcheck="false">
         <div class="count" id="tutCount"></div>
       </div>
       <div class="cat-bar" id="catBar"></div>
@@ -1909,7 +1884,7 @@ function updateTrialBar() {
   var bar = byId("trialBar"); if (!bar) return;
   if (isSubscribed()) { var daysLeft = Math.ceil((subscriptionEndDate - Date.now()) / (1000 * 60 * 60 * 24)); bar.innerHTML = '<div class="trial-bar">✅ Full access — ' + daysLeft + ' days remaining</div>'; return; }
   if (isTrialActive()) { bar.innerHTML = '<div class="trial-bar">🎁 Free preview: <span class="time">' + formatTrialTime(trialMinutesLeft()) + '</span> — enjoy all tutorials</div>'; return; }
-  bar.innerHTML = '<div class="trial-bar">🔒 Preview ended — Unlock 1500+ ideas in the Unlock tab</div>';
+  bar.innerHTML = '<div class="trial-bar">🔒 Preview ended — Unlock 500+ ideas in the Unlock tab</div>';
 }
 function startTrialTick() {
   if (trialTickTimer) clearInterval(trialTickTimer);
@@ -1961,7 +1936,7 @@ function renderTutorials(reset) {
   if (!hasFullAccess()) {
     list.insertAdjacentHTML("beforeend",
       '<div class="free-bar"><strong>🔓 Preview ended</strong>' +
-      'Unlock 1500+ ideas for ' + fmt(PAYMENT_INFO.amount) + ' ' + PAYMENT_INFO.currency + ' / month — see the Unlock tab</div>');
+      'Unlock 500+ ideas for ' + fmt(PAYMENT_INFO.amount) + ' ' + PAYMENT_INFO.currency + ' / month — see the Unlock tab</div>');
   }
 
   if (countEl) countEl.textContent = items.length + " businesses" + (query ? ' for "' + currentQuery + '"' : "");
@@ -2108,21 +2083,11 @@ function updateSpeakBtn() { var b = byId("speakBtn"); if (!b) return; b.textCont
 function isFav(id) { return favs.indexOf(Number(id)) > -1; }
 function toggleFav(id, ev) {
   if (ev && ev.stopPropagation) ev.stopPropagation();
-  if (ev && ev.preventDefault) ev.preventDefault();
-  var nid = Number(id);
-  var idx = favs.indexOf(nid);
-  var nowFav;
-  if (idx > -1) { favs.splice(idx, 1); nowFav = false; }
-  else { favs.push(nid); nowFav = true; }
+  var nid = Number(id); var idx = favs.indexOf(nid);
+  if (idx > -1) favs.splice(idx, 1); else favs.push(nid);
   writeJSON(LS_FAV, favs);
-  var iconFull = "❤️";
-  var iconEmpty = "🤍";
-  var btns = document.querySelectorAll('.fav[data-fav="' + nid + '"]');
-  for (var k = 0; k < btns.length; k++) {
-    btns[k].textContent = nowFav ? iconFull : iconEmpty;
-    btns[k].classList.add("pop");
-    (function(b){ setTimeout(function(){ b.classList.remove("pop"); }, 460); })(btns[k]);
-  }
+  var btn = document.querySelector('.fav[data-fav="' + nid + '"]');
+  if (btn) { btn.classList.add("pop"); setTimeout(function () { btn.classList.remove("pop"); }, 460); }
 }
 function saveHist(q, a) { hist.unshift({ q: String(q), a: String(a), t: Date.now() }); if (hist.length > 50) hist = hist.slice(0, 50); writeJSON(LS_HIST, hist); }
 function saveNote() {
@@ -2200,7 +2165,7 @@ function renderPayment() {
     var daysLeft = Math.ceil((subscriptionEndDate - Date.now()) / (1000 * 60 * 60 * 24));
     var hoursLeft = Math.ceil((subscriptionEndDate - Date.now()) / (1000 * 60 * 60));
     var human = daysLeft >= 1 ? daysLeft + " days" : hoursLeft + " hours";
-    area.innerHTML = '<div class="paywall-wrap"><div class="paywall-active-card"><h3>✅ Unlocked</h3><div class="num">' + human + '</div><div class="lbl">REMAINING</div><div class="exp">Valid until <strong>' + escapeHTML(formatDateShort(subscriptionEndDate)) + '</strong></div><div class="paywall-divider"></div><div class="paywall-perks"><div class="pr"><span class="tick">✓</span>All 1500+ tutorials</div><div class="pr"><span class="tick">✓</span>Offline Helper</div><div class="pr"><span class="tick">✓</span>Text-to-speech on every tutorial</div><div class="pr"><span class="tick">✓</span>Notes and favourites</div></div></div></div>';
+    area.innerHTML = '<div class="paywall-wrap"><div class="paywall-active-card"><h3>✅ Unlocked</h3><div class="num">' + human + '</div><div class="lbl">REMAINING</div><div class="exp">Valid until <strong>' + escapeHTML(formatDateShort(subscriptionEndDate)) + '</strong></div><div class="paywall-divider"></div><div class="paywall-perks"><div class="pr"><span class="tick">✓</span>All 500+ tutorials</div><div class="pr"><span class="tick">✓</span>Offline Helper</div><div class="pr"><span class="tick">✓</span>Text-to-speech on every tutorial</div><div class="pr"><span class="tick">✓</span>Notes and favourites</div></div></div></div>';
     return;
   }
   var trialLeft = trialMinutesLeft();
@@ -2259,9 +2224,7 @@ function renderCatBar() {
   bar._ajonBound = true;
   bar.addEventListener("click", function(ev){
     var chip = ev.target;
-    while (chip && chip !== bar && !chip.classList.contains("cat-chip")) {
-      chip = chip.parentNode;
-    }
+    while (chip && chip !== bar && !chip.classList.contains("cat-chip")) chip = chip.parentNode;
     if (!chip || chip === bar) return;
     ev.preventDefault();
     var cat = chip.getAttribute("data-cat");
@@ -2328,7 +2291,7 @@ else boot();
    AJON CHAT v9 — Mr Ajon & Pesie, clean linked Q&A
    ===================================================================== */
 
-var BRAIN_STATE_KEY = "ajon_chat_v9";
+var BRAIN_STATE_KEY = "ajon_chat_v10";
 var BRAIN = {
   chatCount: 0, level: 1, capital: 86000, location: "Busia",
   isRunning: false, isPaused: true, messages: [],
@@ -2769,16 +2732,20 @@ function buildMrAjonTurn() {
 function nextTopicV9() {
   var tid = BRAIN.currentTopicId || TOPIC_IDS[0];
   var t = TOPICS[tid];
-  if (!t || !t.next || !t.next.length) {
-    return TOPIC_IDS[Math.floor(Math.random() * TOPIC_IDS.length)];
-  }
   var recent = BRAIN.lastTopics || [];
-  var fresh = t.next.filter(function (x) { return recent.indexOf(x) === -1 && TOPICS[x]; });
-  if (!fresh.length) fresh = t.next.filter(function (x) { return TOPICS[x]; });
-  if (!fresh.length) return TOPIC_IDS[Math.floor(Math.random() * TOPIC_IDS.length)];
-  var nxt = fresh[Math.floor(Math.random() * fresh.length)];
-  BRAIN.lastTopics = (recent.concat([nxt])).slice(-10);
-  return nxt;
+  var pool = TOPIC_IDS.filter(function(x){ return recent.indexOf(x) === -1; });
+  if (!pool.length) pool = TOPIC_IDS.slice();
+  if (t && t.next && t.next.length) {
+    var fresh = t.next.filter(function (x) { return recent.indexOf(x) === -1 && TOPICS[x]; });
+    if (fresh.length) {
+      var nxt = fresh[Math.floor(Math.random() * fresh.length)];
+      BRAIN.lastTopics = recent.concat([nxt]).slice(-20);
+      return nxt;
+    }
+  }
+  var pick = pool[Math.floor(Math.random() * pool.length)];
+  BRAIN.lastTopics = recent.concat([pick]).slice(-20);
+  return pick;
 }
 
 /* ---------- DOM helpers ---------- */
@@ -3044,46 +3011,40 @@ function avatarFallback(img, emoji) {
   } catch (e) {}
 }
 
-/* ========== Robust exit confirmation ========== */
+/* ========== Exit confirmation ========== */
 (function(){
-  if (window.__ajonExitV2) return;
-  window.__ajonExitV2 = true;
+  if (window.__ajonExitV4) return;
+  window.__ajonExitV4 = true;
 
-  var lastBack = 0;
   function doExit() {
     try {
       if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App && Capacitor.Plugins.App.exitApp) {
         Capacitor.Plugins.App.exitApp();
-        return true;
+        return;
       }
     } catch(e) {}
-    try {
-      if (navigator.app && navigator.app.exitApp) {
-        navigator.app.exitApp();
-        return true;
-      }
-    } catch(e) {}
-    try { window.close(); return true; } catch(e) {}
-    return false;
+    try { if (navigator.app && navigator.app.exitApp) { navigator.app.exitApp(); return; } } catch(e) {}
+    try { window.close(); } catch(e) {}
   }
 
   function askExit() {
-    var now = Date.now();
-    if (now - lastBack < 1500) { doExit(); return; }
-    lastBack = now;
     var yes = false;
     try { yes = window.confirm("Exit Ajon? Tap OK to close."); } catch(e) { yes = true; }
     if (yes) doExit();
     else { try { history.pushState({a:1}, "", ""); } catch(e) {} }
   }
 
+  /* Capacitor native back button (most reliable) */
+  try {
+    if (window.Capacitor && Capacitor.Plugins && Capacitor.Plugins.App) {
+      Capacitor.Plugins.App.addListener("backButton", function(){ askExit(); });
+    }
+  } catch(e) {}
+
+  /* Web fallback */
   try { history.pushState({a:1}, "", ""); } catch(e) {}
-
-  window.addEventListener("popstate", function(e) {
-    askExit();
-  });
-
-  document.addEventListener("keydown", function(e) {
+  window.addEventListener("popstate", askExit);
+  document.addEventListener("keydown", function(e){
     if (e.key === "Backspace" || e.keyCode === 8) {
       var t = e.target;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
