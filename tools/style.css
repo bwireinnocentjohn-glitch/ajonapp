@@ -1,0 +1,141 @@
+
+/* ============ Assistant Live Chat v3 ============ */
+#panel-chat.active { display: flex; flex-direction: column; height: 100%; padding-bottom: 0; }
+
+.chat-header-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: linear-gradient(135deg, #0a2a14, #0a0a0a);
+  border-bottom: 1px solid rgba(0,200,83,.4);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.chat-avatars { position: relative; width: 52px; height: 38px; flex: 0 0 auto; }
+.chat-ava {
+  position: absolute;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #1a1a1a;
+  border: 2px solid #00c853;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.chat-ava img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ajon-ava { left: 0; top: 0; z-index: 2; }
+.pasie-ava { left: 16px; top: 2px; z-index: 1; border-color: #0a7a3a; }
+.chat-header-info { flex: 1; min-width: 0; }
+.chat-title { font-size: 13.5px; font-weight: 800; color: #fff; letter-spacing: .3px; display: flex; align-items: center; gap: 6px; }
+.live-pulse { color: #ff3d00; font-size: 10px; animation: blinkDot 1.4s infinite; }
+@keyframes blinkDot { 50% { opacity: .3; } }
+.chat-subtitle { font-size: 11px; color: #8f8f8f; font-weight: 600; margin-top: 2px; }
+.chat-hdr-btn {
+  flex: 0 0 auto;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(0,200,83,.4);
+  border-radius: 10px;
+  color: #00c853;
+  font-size: 15px;
+  padding: 7px 11px;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: 1;
+}
+.chat-hdr-btn:active { background: rgba(0,200,83,.2); }
+#soundToggleBtn { margin-right: 4px; }
+
+#assistMsgs {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 14px 12px 20px;
+  background: #0a0a0a;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.bubble-row {
+  display: flex;
+  gap: 8px;
+  animation: slideUp .3s ease both;
+  max-width: 100%;
+}
+.bubble-row.ajon { justify-content: flex-start; }
+.bubble-row.pasie { justify-content: flex-end; flex-direction: row-reverse; }
+.bubble-avatar {
+  flex: 0 0 auto;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: #1a1a1a;
+  border: 1.5px solid #00c853;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  overflow: hidden;
+}
+.bubble-row.pasie .bubble-avatar { border-color: #0a7a3a; }
+.avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.avatar-emoji { font-size: 18px; line-height: 1; }
+
+.bubble-body { max-width: 78%; min-width: 0; }
+.bubble-name {
+  font-size: 10.5px; font-weight: 800; color: #00c853;
+  letter-spacing: .3px; margin-bottom: 3px; padding-left: 4px;
+}
+.bubble-row.pasie .bubble-name { text-align: right; padding-right: 4px; color: #4cd964; }
+.bubble {
+  padding: 10px 12px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+  white-space: normal;
+  word-break: break-word;
+  position: relative;
+  min-height: 20px;
+}
+.bubble.ajon {
+  background: #142e1c;
+  color: #e6f7ea;
+  border-left: 3px solid #00c853;
+  border-top-left-radius: 4px;
+}
+.bubble.pasie {
+  background: #1a3a24;
+  color: #d6f0dc;
+  border-right: 3px solid #4cd964;
+  border-top-right-radius: 4px;
+}
+.bubble.typing-cursor::after {
+  content: "\25CD";
+  color: #00c853;
+  margin-left: 1px;
+  animation: blinkCur .7s steps(1,end) infinite;
+  font-weight: 400;
+}
+@keyframes blinkCur { 50% { opacity: 0; } }
+
+.bubble-typing {
+  display: inline-flex;
+  gap: 4px;
+  padding: 12px 14px;
+  align-items: center;
+}
+.bubble-typing .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #00c853;
+  display: inline-block;
+  animation: bounceDot 1.2s infinite ease-in-out;
+}
+.bubble-typing .dot:nth-child(2) { animation-delay: .2s; }
+.bubble-typing .dot:nth-child(3) { animation-delay: .4s; }
+@keyframes bounceDot { 0%,60%,100% { transform: translateY(0); opacity: .4;} 30% { transform: translateY(-4px); opacity: 1;} }
+.typing-mini {
+  font-size: 9.5px;
+  color: #8f8f8f;
+  font-style: italic;
+  font-weight: 500;
+  margin-left: 4px;
+}
