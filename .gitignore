@@ -1,0 +1,10 @@
+node_modules/
+android/
+.gradle/
+.idea/
+*.iml
+*.apk
+*.aab
+*.keystore
+local.properties
+.DS_Store
