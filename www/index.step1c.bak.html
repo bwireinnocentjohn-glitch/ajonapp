@@ -360,23 +360,6 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
 .bubble { font-size: 14px; line-height: 1.55; }
 .bubble-row { margin-bottom: 2px; }
 
-
-/* ========== Step 1c: distinct bubbles + tighter grouping ========== */
-.bubble.ajon {
-  background: #1a3a24 !important;
-  color: #e6f7ea !important;
-  border-left: 3px solid #00c853 !important;
-}
-.bubble.pasie {
-  background: #006b4f !important;
-  color: #ffffff !important;
-  border-right: 3px solid #00ff99 !important;
-}
-.bubble-row.pasie .bubble-name { color: #00ff99 !important; }
-.bubble-row.ajon .bubble-name { color: #00c853 !important; }
-.bubble { font-size: 14px; line-height: 1.55; }
-.bubble-row { margin-bottom: 2px; }
-
 </style>
 </head>
 <body>
@@ -3467,101 +3450,6 @@ function clearAssistantChat() {
   var box = byId("assistMsgs");
   if (box) box.innerHTML = "";
   setTimeout(function () { startAssistantChat(); }, 700);
-}
-
-
-/* ========== Step 1c overrides ========== */
-function forceShortChunks(text, maxLen) {
-  maxLen = maxLen || 65;
-  var out = [];
-  var blocks = String(text || "").split(/\n+/);
-  for (var b = 0; b < blocks.length; b++) {
-    var block = blocks[b].trim();
-    if (!block) continue;
-    if (block.length <= maxLen) { out.push(block); continue; }
-    var sentences = block.match(/[^.!?]+[.!?]+/g) || [block];
-    for (var s = 0; s < sentences.length; s++) {
-      var sen = sentences[s].trim();
-      if (!sen) continue;
-      if (sen.length <= maxLen) { out.push(sen); continue; }
-      var words = sen.split(/\s+/);
-      var cur = "";
-      for (var w = 0; w < words.length; w++) {
-        if (!cur) { cur = words[w]; continue; }
-        if ((cur + " " + words[w]).length <= maxLen) cur += " " + words[w];
-        else { out.push(cur); cur = words[w]; }
-      }
-      if (cur) out.push(cur);
-    }
-  }
-  return out;
-}
-
-function playTypingClick() {
-  if (!assistSoundOn) return;
-  try {
-    if (!audioCtx) {
-      var Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      audioCtx = new Ctx();
-    }
-    if (audioCtx.state === "suspended") audioCtx.resume();
-    var now = audioCtx.currentTime;
-    var osc = audioCtx.createOscillator();
-    var gain = audioCtx.createGain();
-    osc.connect(gain); gain.connect(audioCtx.destination);
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(2400 + Math.random() * 600, now);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(0.22, now + 0.003);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.045);
-    osc.start(now);
-    osc.stop(now + 0.05);
-  } catch (e) {}
-}
-
-function sendSplitMessages(speaker, arr, token) {
-  return new Promise(function (resolve) {
-    var box = byId("assistMsgs");
-    if (!box) return resolve(false);
-    var flat = [];
-    for (var i = 0; i < arr.length; i++) {
-      var parts = forceShortChunks(arr[i], 65);
-      for (var j = 0; j < parts.length; j++) {
-        if (parts[j]) flat.push(parts[j]);
-      }
-    }
-    var idx = 0;
-    function typeOne() {
-      if (token !== chatToken || !BRAIN.isRunning) return resolve(false);
-      if (idx >= flat.length) return resolve(true);
-      var text = flat[idx];
-      var row = makeBubbleRow(speaker, null, true);
-      box.appendChild(row);
-      var bubble = row.querySelector(".bubble");
-      var i = 0;
-      var msPerChar = 110 + Math.random() * 55;
-      function step() {
-        if (token !== chatToken || !BRAIN.isRunning) {
-          bubble.classList.remove("typing-cursor");
-          return resolve(false);
-        }
-        if (i >= text.length) {
-          bubble.classList.remove("typing-cursor");
-          idx++;
-          setTimeout(typeOne, 1400 + Math.random() * 800);
-          return;
-        }
-        bubble.innerHTML = escapeHTML(text.substring(0, i + 1)).replace(/\n/g, "<br>");
-        box.scrollTop = box.scrollHeight;
-        playTypingClick();
-        i++;
-        setTimeout(step, msPerChar);
-      }
-      step();
-    }
-    typeOne();
-  });
 }
 
 
