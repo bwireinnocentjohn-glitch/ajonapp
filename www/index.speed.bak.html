@@ -2236,7 +2236,6 @@ function updateNet() { var online = navigator.onLine; var dot = byId("netDot"); 
 
 /* ===================== TABS ===================== */
 function showTab(name) {
-  if (typeof resumeAudio === "function") resumeAudio();
   if (name !== "tutorials") stopSpeaking();
   currentTab = name;
   var panels = document.querySelectorAll(".panel");
@@ -2340,51 +2339,41 @@ try {
   document.addEventListener("keydown", primeAssistAudio, true);
 } catch (e) {}
 
-/* ===== Robust audio: global ctx + resume on any interaction ===== */
-var globalAudioCtx = null;
-function getAudioCtx() {
-  if (globalAudioCtx) return globalAudioCtx;
-  try {
-    var Ctx = window.AudioContext || window.webkitAudioContext;
-    if (Ctx) globalAudioCtx = new Ctx();
-  } catch (e) {}
-  return globalAudioCtx;
-}
-function resumeAudio() {
-  var c = getAudioCtx();
-  if (c && c.state === "suspended") {
-    try { c.resume(); } catch (e) {}
-  }
-}
-try {
-  ["touchstart","touchend","click","keydown"].forEach(function(ev){
-    document.addEventListener(ev, resumeAudio, true);
-  });
-} catch (e) {}
-
 function playNotify() {
   if (!assistSoundOn) return;
-  var c = getAudioCtx();
-  if (!c) return;
-  if (c.state === "suspended") { try { c.resume(); } catch (e) {} }
   try {
-    var now = c.currentTime;
-    var o1 = c.createOscillator(), g1 = c.createGain();
-    o1.connect(g1); g1.connect(c.destination);
-    o1.type = "sine";
-    o1.frequency.setValueAtTime(880, now);
-    g1.gain.setValueAtTime(0.0001, now);
-    g1.gain.exponentialRampToValueAtTime(0.45, now + 0.008);
-    g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.13);
-    o1.start(now); o1.stop(now + 0.15);
-    var o2 = c.createOscillator(), g2 = c.createGain();
-    o2.connect(g2); g2.connect(c.destination);
-    o2.type = "sine";
-    o2.frequency.setValueAtTime(1245, now + 0.10);
-    g2.gain.setValueAtTime(0.0001, now + 0.10);
-    g2.gain.exponentialRampToValueAtTime(0.45, now + 0.11);
-    g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
-    o2.start(now + 0.10); o2.stop(now + 0.30);
+    if (!audioCtx) {
+      var Ctx = window.AudioContext || window.webkitAudioContext;
+      if (Ctx) audioCtx = new Ctx();
+    }
+    if (audioCtx) {
+      if (audioCtx.state === "suspended") audioCtx.resume();
+      var now = audioCtx.currentTime;
+      var o1 = audioCtx.createOscillator();
+      var g1 = audioCtx.createGain();
+      o1.connect(g1); g1.connect(audioCtx.destination);
+      o1.type = "sine"; o1.frequency.setValueAtTime(880, now);
+      g1.gain.setValueAtTime(0.0001, now);
+      g1.gain.exponentialRampToValueAtTime(0.28, now + 0.01);
+      g1.gain.exponentialRampToValueAtTime(0.0001, now + 0.10);
+      o1.start(now); o1.stop(now + 0.12);
+      var o2 = audioCtx.createOscillator();
+      var g2 = audioCtx.createGain();
+      o2.connect(g2); g2.connect(audioCtx.destination);
+      o2.type = "sine"; o2.frequency.setValueAtTime(1245, now + 0.09);
+      g2.gain.setValueAtTime(0.0001, now + 0.09);
+      g2.gain.exponentialRampToValueAtTime(0.28, now + 0.10);
+      g2.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+      o2.start(now + 0.09); o2.stop(now + 0.25);
+      return;
+    }
+  } catch (e) {}
+  try {
+    if (!_notifyAudio) _notifyAudio = new Audio(NOTIFY_WAV);
+    var a = _notifyAudio.cloneNode();
+    a.volume = 0.6;
+    var pr = a.play();
+    if (pr && pr.catch) pr.catch(function () {});
   } catch (e) {}
 }
 
@@ -2611,7 +2600,7 @@ function ajon_send(speaker, bubbles, token) {
       box.appendChild(row);
       var bubble = row.querySelector(".bubble");
       var i = 0;
-      var speed = 110 + Math.random() * 50;
+      var speed = 220 + Math.random() * 80;
       function step() {
         if (token !== chatToken || !BRAIN.isRunning) {
           bubble.classList.remove("typing-cursor");
@@ -2675,7 +2664,6 @@ function pauseAssistantChat() {
 }
 
 function openAssistantTab() {
-  if (typeof resumeAudio === "function") resumeAudio();
   primeAssistAudio();
   var box = byId("assistMsgs");
   if (!box) return;
