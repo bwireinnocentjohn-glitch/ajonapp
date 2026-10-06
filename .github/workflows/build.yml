@@ -27,8 +27,11 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
+      # ✅ THIS IS THE FIX: Upgraded to v4 and tell it to install only platform-tools
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
+        with:
+          packages: 'platform-tools'
 
       - name: Install npm dependencies
         run: npm install --no-audit --no-fund
