@@ -4650,9 +4650,9 @@ function exStartQuoteTimer() {
   EXPERT.quoteTimer = setInterval(function(){ exRotateQuote(); }, 15000);
 }
 
-function askExpert() { /* __REMOVED_OLD_BRAIN__ */
+function askExpert() {
   try {
-    if (typeof hasFullAccess === "function" && !hasFullAccess()) { expertGate(); return; }
+    if (!hasFullAccess()) { expertGate(); return; }
     if (EXPERT.busy) return;
     var inp = byId("aiInput");
     if (!inp) return;
@@ -4666,29 +4666,14 @@ function askExpert() { /* __REMOVED_OLD_BRAIN__ */
     var typing = exShowTyping();
     setTimeout(function(){
       if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
-      var replies = null;
-      try {
-        if (typeof window.buildExpertReply === "function") {
-          replies = window.buildExpertReply(q);
-        }
-      } catch(e) { try { console.log("[Expert] brain error:", e); } catch(x) {} }
-      if (!replies || !replies.length) {
-        replies = [
-          "I am here. 🙂 Let me help you.",
-          "Try asking: 'how do I make soap?' or 'how do I make honey?'",
-          "Or a business term like 'cash flow' or 'profit margin'."
-        ];
-      }
+      var replies = exComposeReply(q);
       var idx = 0;
       function sendNext() {
         if (idx >= replies.length) { EXPERT.busy = false; return; }
         var text = replies[idx];
         var bubble = exAddBubble("ex", "");
         EXPERT.msgs.push({ s: "ex", t: text });
-        exTypeInto(bubble, text, function(){
-          idx++;
-          setTimeout(sendNext, 250);
-        });
+        exTypeInto(bubble, text, function(){ idx++; setTimeout(sendNext, 250); });
       }
       sendNext();
     }, 600 + Math.random() * 500);
