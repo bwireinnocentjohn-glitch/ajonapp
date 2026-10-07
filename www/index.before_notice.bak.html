@@ -482,63 +482,6 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
     0 0 5px rgba(90,180,255,.8); }
 }
 
-
-/* ========== Notes tab: estimate notice ========== */
-.notes-estimate-notice {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-  margin: 14px 16px 6px;
-  padding: 12px 14px;
-  background: linear-gradient(135deg, #2a1a00, #1a0f00);
-  border-left: 4px solid #ffb300;
-  border-radius: 12px;
-  box-shadow: 0 4px 14px rgba(255,179,0,.15);
-  animation: slideUp .35s ease both;
-}
-.notes-estimate-notice .notice-icon {
-  font-size: 22px;
-  line-height: 1;
-  flex: 0 0 auto;
-  margin-top: 1px;
-}
-.notes-estimate-notice .notice-text {
-  font-size: 12.5px;
-  color: #f3e4c8;
-  line-height: 1.55;
-  font-weight: 500;
-}
-.notes-estimate-notice .notice-text strong {
-  display: block;
-  color: #ffb300;
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: .4px;
-  margin-bottom: 3px;
-  text-transform: uppercase;
-}
-
-
-/* ========== Creator card: emergency contact ========== */
-.creator-tel-label {
-  display: block;
-  font-size: 10.5px;
-  color: #ffb300;
-  font-weight: 800;
-  letter-spacing: .8px;
-  text-transform: uppercase;
-  margin: 4px 0 6px;
-  opacity: .9;
-}
-.creator-tel.creator-tel-alt {
-  background: rgba(255,179,0,.12);
-  border-color: rgba(255,179,0,.5);
-  color: #ffb300;
-}
-.creator-tel.creator-tel-alt:active {
-  background: rgba(255,179,0,.25);
-}
-
 </style>
 </head>
 <body>
@@ -615,14 +558,6 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
 </section>
 
     <section class="panel" id="panel-notes">
-      <div class="notes-estimate-notice">
-        <div class="notice-icon">&#x26A0;&#xFE0F;</div>
-        <div class="notice-text">
-          <strong>Please Note</strong>
-          Prices, Capital and Profits in the Businesses are close estimates.
-          Please check daily prices before starting a business.
-        </div>
-      </div>
       <div class="notes-editor">
         <input id="noteTitle" type="text" placeholder="📝 Note title..." autocomplete="off">
         <textarea id="noteBody" placeholder="Write your idea, customer contact, or reminder..."></textarea>
@@ -2319,7 +2254,7 @@ function renderNotes() {
 }
 function renderCreatorCard() {
   var slot = byId("creatorSlot"); if (!slot) return;
-  slot.innerHTML = '<div class="creator-card"><div class="creator-logo">AJON</div><div class="creator-name">App made by Ajon Inno aka B.Innocent John</div><a class="creator-tel" href="tel:+256768207738">📞 +256 768 207 738</a><div class="creator-tel-label">Emergency / Any Query</div><a class="creator-tel creator-tel-alt" href="tel:+256793787131">📞 0793 787 131</a><div class="creator-divider"></div><div class="mission">Its Time To Devorce from Poverty Later might be Never</div><div class="creator-copy">© 2025 Ajon • com.ajon.makemoney</div></div>';
+  slot.innerHTML = '<div class="creator-card"><div class="creator-logo">AJON</div><div class="creator-name">App made by Ajon Inno aka B.Innocent John</div><a class="creator-tel" href="tel:+256768207738">📞 +256 768 207 738</a><div class="creator-divider"></div><div class="mission">Its Time To Devorce from Poverty Later might be Never</div><div class="creator-copy">© 2025 Ajon • com.ajon.makemoney</div></div>';
 }
 
 /* ===================== HELPER ===================== */

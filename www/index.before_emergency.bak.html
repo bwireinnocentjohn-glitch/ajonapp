@@ -518,27 +518,6 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
   text-transform: uppercase;
 }
 
-
-/* ========== Creator card: emergency contact ========== */
-.creator-tel-label {
-  display: block;
-  font-size: 10.5px;
-  color: #ffb300;
-  font-weight: 800;
-  letter-spacing: .8px;
-  text-transform: uppercase;
-  margin: 4px 0 6px;
-  opacity: .9;
-}
-.creator-tel.creator-tel-alt {
-  background: rgba(255,179,0,.12);
-  border-color: rgba(255,179,0,.5);
-  color: #ffb300;
-}
-.creator-tel.creator-tel-alt:active {
-  background: rgba(255,179,0,.25);
-}
-
 </style>
 </head>
 <body>
@@ -2319,7 +2298,7 @@ function renderNotes() {
 }
 function renderCreatorCard() {
   var slot = byId("creatorSlot"); if (!slot) return;
-  slot.innerHTML = '<div class="creator-card"><div class="creator-logo">AJON</div><div class="creator-name">App made by Ajon Inno aka B.Innocent John</div><a class="creator-tel" href="tel:+256768207738">📞 +256 768 207 738</a><div class="creator-tel-label">Emergency / Any Query</div><a class="creator-tel creator-tel-alt" href="tel:+256793787131">📞 0793 787 131</a><div class="creator-divider"></div><div class="mission">Its Time To Devorce from Poverty Later might be Never</div><div class="creator-copy">© 2025 Ajon • com.ajon.makemoney</div></div>';
+  slot.innerHTML = '<div class="creator-card"><div class="creator-logo">AJON</div><div class="creator-name">App made by Ajon Inno aka B.Innocent John</div><a class="creator-tel" href="tel:+256768207738">📞 +256 768 207 738</a><div class="creator-divider"></div><div class="mission">Its Time To Devorce from Poverty Later might be Never</div><div class="creator-copy">© 2025 Ajon • com.ajon.makemoney</div></div>';
 }
 
 /* ===================== HELPER ===================== */
