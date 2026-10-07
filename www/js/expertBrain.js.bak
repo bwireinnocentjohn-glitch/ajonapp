@@ -1,0 +1,170 @@
+/* ==========================================================
+   Ajon Expert Brain — search + teach engine
+   Uses window.BIZ_BATCH and window.WISDOM_BATCH
+   ========================================================== */
+(function(){
+  if (window.__ajonExpertBrainV1) return;
+  window.__ajonExpertBrainV1 = true;
+
+  var BIZ = window.BIZ_BATCH || [];
+  var WIS = window.WISDOM_BATCH || [];
+
+  /* Synonyms map */
+  var SYN = {
+    "bsf":"black soldier fly", "black soldier":"black soldier fly",
+    "cricket":"cricket", "crickets":"cricket",
+    "boda":"motorcycle", "rolex":"chapati egg",
+    "power bank":"battery bank", "incubator":"hatchery",
+    "mushroom":"oyster mushroom", "poultry":"chicken",
+    "wifi":"internet", "mommy":"money", "capita":"capital",
+    "cassava":"cassava", "posho":"maize flour",
+    "soap":"soap", "candle":"candle", "brick":"briquette",
+    "briquette":"briquette", "charcoal":"briquette"
+  };
+
+  function norm(t){
+    t = String(t||"").toLowerCase()
+      .replace(/[^a-z0-9\s]/g," ")
+      .replace(/\s+/g," ").trim();
+    var words = t.split(" ");
+    for (var i=0;i<words.length;i++){
+      if (SYN[words[i]]) words[i] = SYN[words[i]];
+    }
+    return words.join(" ");
+  }
+
+  function scoreBiz(biz, q){
+    var hay = (biz.name + " " + biz.category + " " + biz.whyNow2026 + " " + (biz.tags||[]).join(" ")).toLowerCase();
+    var words = q.split(" ").filter(function(w){return w.length>=3;});
+    if (!words.length) return 0;
+    var s = 0;
+    for (var i=0;i<words.length;i++){
+      if (hay.indexOf(words[i]) > -1) s += 2;
+      if (biz.name.toLowerCase().indexOf(words[i]) > -1) s += 3;
+    }
+    return s;
+  }
+
+  function searchBusinesses(query){
+    var q = norm(query);
+    if (!q) return [];
+    var scored = [];
+    for (var i=0;i<BIZ.length;i++){
+      var s = scoreBiz(BIZ[i], q);
+      if (s >= 2) scored.push({biz:BIZ[i], score:s});
+    }
+    scored.sort(function(a,b){ return b.score - a.score; });
+    return scored.slice(0,3).map(function(x){ return x.biz; });
+  }
+
+  function searchWisdom(query){
+    var q = norm(query);
+    if (!q) return null;
+    var best = null, bestScore = 0;
+    for (var i=0;i<WIS.length;i++){
+      var w = WIS[i];
+      var s = 0;
+      for (var j=0;j<w.keywords.length;j++){
+        if (q.indexOf(norm(w.keywords[j])) > -1) s += 3;
+      }
+      if (q.indexOf(w.intent) > -1) s += 5;
+      if (s > bestScore){ bestScore = s; best = w; }
+    }
+    return bestScore >= 3 ? best : null;
+  }
+
+  function fmtBiz(biz){
+    var out = [];
+    out.push(biz.emoji + " " + biz.name.toUpperCase() + " \u2014 " + biz.capital + " Start \u2014 " + biz.timeToMoney + " to first money");
+    out.push("");
+    var _why = biz.whyNow || biz.whyNow2026 || "Strong daily demand in local markets.";
+    out.push("\uD83C\uDFAF Why It Sells Well: " + _why);
+    out.push("");
+    out.push("\uD83D\uDCB0 Capital Breakdown:");
+    for (var i=0;i<biz.capitalBreakdown.length;i++) out.push("\u2022 " + biz.capitalBreakdown[i]);
+    out.push("");
+    out.push("\uD83D\uDEE0\uFE0F 5 Steps To Start Today:");
+    for (var j=0;j<biz.steps.length;j++) out.push((j+1) + ". " + biz.steps[j]);
+    out.push("");
+    out.push("\uD83D\uDCC8 Profit Math:");
+    out.push(biz.profitMath);
+    out.push("");
+    out.push("\uD83C\uDFEA Where To Sell Tomorrow Morning:");
+    out.push(biz.market);
+    out.push("");
+    out.push("\u26A0\uFE0F 3 Mistakes That Kill Beginners:");
+    for (var k=0;k<Math.min(3,biz.mistakes.length);k++) out.push((k+1) + ". " + biz.mistakes[k]);
+    out.push("");
+    out.push("\uD83D\uDE80 How To Scale:");
+    out.push(biz.scaling);
+    out.push("");
+    out.push("\u2705 Your Task Before 6pm Today:");
+    out.push(biz.homework);
+    return out.join("\n");
+  }
+
+  function fmtWisdom(w){
+    var out = [];
+    out.push("\uD83D\uDCA1 " + w.principle);
+    out.push("");
+    out.push(w.explanation);
+    out.push("");
+    out.push("\uD83D\uDD27 3 Steps:");
+    for (var i=0;i<w.steps.length;i++) out.push((i+1) + ". " + w.steps[i]);
+    out.push("");
+    out.push("\uD83C\uDF0D Example: " + w.example);
+    return out.join("\n");
+  }
+
+  function buildExpertReply(q){
+    try {
+      var query = String(q||"").trim();
+      if (!query) return null;
+
+      /* 1. Business search */
+      var bizzes = searchBusinesses(query);
+      if (bizzes.length) {
+        var out = [fmtBiz(bizzes[0])];
+        if (bizzes.length > 1) {
+          out.push("\uD83D\uDCA1 Other related: " + bizzes.slice(1).map(function(b){ return b.emoji + " " + b.name; }).join(" | "));
+        }
+        return out;
+      }
+
+      /* 2. Wisdom search */
+      var w = searchWisdom(query);
+      if (w) return [fmtWisdom(w)];
+
+      /* 3. Not found - return null so old logic runs */
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /* Expose to window */
+  window.searchBusinesses = searchBusinesses;
+  window.searchWisdom = searchWisdom;
+  window.buildExpertReply = buildExpertReply;
+  window.fmtBiz = fmtBiz;
+
+  /* Memory (minimal) */
+  try {
+    window.getBrainMemory = function(){
+      try { return JSON.parse(localStorage.getItem("ajon_brain_mem")||"[]"); }
+      catch(e){ return []; }
+    };
+    window.saveBrainMemory = function(q, id){
+      try {
+        var m = window.getBrainMemory();
+        m.unshift({q:q, id:id, t:Date.now()});
+        if (m.length > 20) m = m.slice(0,20);
+        localStorage.setItem("ajon_brain_mem", JSON.stringify(m));
+      } catch(e){}
+    };
+  } catch(e){}
+
+  try { console.log("[Ajon Brain] Loaded " + BIZ.length + " businesses, " + WIS.length + " wisdom entries"); } catch(e){}
+})();
+
+/* __ajonWhyNowV1 */
