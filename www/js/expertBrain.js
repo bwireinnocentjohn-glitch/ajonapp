@@ -9,6 +9,20 @@
   var BIZ = window.BIZ_BATCH || [];
   var WIS = window.WISDOM_BATCH || [];
 
+  var NAME_WORD_FREQ = null;
+  function buildNameFreq() {
+    if (NAME_WORD_FREQ) return;
+    NAME_WORD_FREQ = {};
+    for (var i = 0; i < BIZ.length; i++) {
+      var toks = String(BIZ[i].name || "").toLowerCase().split(/[^a-z0-9]+/).filter(function(t){ return t.length >= 4; });
+      var seen = {};
+      for (var j = 0; j < toks.length; j++) {
+        if (!seen[toks[j]]) { NAME_WORD_FREQ[toks[j]] = (NAME_WORD_FREQ[toks[j]] || 0) + 1; seen[toks[j]] = 1; }
+      }
+    }
+  }
+  buildNameFreq();
+
   /* Synonyms map */
   var SYN = {
     "bsf":"black soldier fly", "black soldier":"black soldier fly",
@@ -70,17 +84,35 @@
       else if (hay.indexOf(phrase) > -1) s += 20;
     }
 
-    var nameHits = 0, hayHits = 0;
+    var nameHits = 0, hayHits = 0, rareBoost = 0;
     for (var i = 0; i < words.length; i++) {
       var w = words[i];
-      if (nameLow.indexOf(w) > -1) nameHits++;
-      else if (hay.indexOf(w) > -1) hayHits++;
+      if (nameLow.indexOf(w) > -1) {
+        nameHits++;
+        var freq = (NAME_WORD_FREQ && NAME_WORD_FREQ[w]) || 99;
+        if (freq <= 2) rareBoost += 60;
+        else if (freq <= 5) rareBoost += 25;
+      } else if (hay.indexOf(w) > -1) hayHits++;
     }
     if (words.length > 0 && nameHits === words.length) s += 60;
     s += nameHits * 15;
     s += hayHits * 2;
+    s += rareBoost;
 
     if (nameLow.length >= 4 && q.indexOf(nameLow) > -1) s += 80;
+
+    /* SCORE_BOOST_V2 — query-side phrase priority */
+    if (words.length >= 1) {
+      var nameTokens = nameLow.split(/[^a-z0-9]+/).filter(function(t){ return t.length >= 3; });
+      var qSet = {};
+      for (var k = 0; k < words.length; k++) qSet[words[k]] = 1;
+      var nameMatched = 0;
+      for (var n = 0; n < nameTokens.length; n++) {
+        if (qSet[nameTokens[n]] || q.indexOf(nameTokens[n]) > -1) nameMatched++;
+      }
+      if (nameTokens.length > 0 && nameMatched === nameTokens.length) s += 40;
+      else s += nameMatched * 5;
+    }
 
     return s;
   }
@@ -156,10 +188,56 @@
     return out.join("\n");
   }
 
+
+
+  var BRAIN_TERMS = {
+    "cash flow": "The daily movement of money in and out of your business. Not the same as profit. Track every shilling leaving your pocket tonight.",
+    "profit margin": "The percentage of money you keep after costs. Sell at 10,000, cost 7,000, margin is 30%.",
+    "break even": "The point where sales equal costs. Below it you lose. Above it you profit. Know your floor.",
+    "kpi": "Key Performance Indicator. The one number you watch daily. Sales, repeat buyers, cash in hand.",
+    "usp": "Unique Selling Point. The one thing you offer that others do not.",
+    "cac": "Customer Acquisition Cost. Money spent to get one customer.",
+    "ltv": "Lifetime Value. Total money a customer spends with you over years.",
+    "churn": "Customers who leave and never come back.",
+    "roi": "Return on Investment. What you gain from what you spent.",
+    "b2b": "Business to Business. You sell to other businesses.",
+    "b2c": "Business to Consumer. You sell to individual people.",
+    "mvp": "Minimum Viable Product. The smallest version that tests your idea.",
+    "caustic soda": "Sodium hydroxide. Strong chemical. In soap it turns oil into soap. Always wear gloves.",
+    "shea butter": "Fat from shea nuts. Used in cosmetics for skin and hair.",
+    "bsf": "Black Soldier Fly. Larvae convert food waste into animal feed.",
+    "gross profit": "Sales minus cost of goods sold.",
+    "net profit": "What remains after all costs, taxes, and interest.",
+    "fixed cost": "A cost that does not change with sales. Rent, licence, salary.",
+    "variable cost": "A cost that changes with every sale. Materials, packaging, transport.",
+    "working capital": "Money available for daily running. Stock plus cash minus debts."
+  };
+
+  function brainMatchTerm(q) {
+    var low = " " + String(q || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim() + " ";
+    var keys = Object.keys(BRAIN_TERMS);
+    var best = null, bestLen = 0;
+    for (var i = 0; i < keys.length; i++) {
+      var k = keys[i];
+      if (low.indexOf(" " + k + " ") > -1 || low.indexOf(" " + k) > -1) {
+        if (k.length > bestLen) { bestLen = k.length; best = k; }
+      }
+    }
+    return best;
+  }
+
+
   function buildExpertReply(q){
     try {
       var query = String(q||"").trim();
       if (!query) return null;
+
+      /* 0. Term lookup (defined phrases FIRST) */
+      var termHit = brainMatchTerm(query);
+      if (termHit) {
+        var def = BRAIN_TERMS[termHit];
+        return ["\uD83D\uDCD8 " + termHit.charAt(0).toUpperCase() + termHit.slice(1) + ":\n\n" + def];
+      }
 
       /* 1. Business search */
       var bizzes = searchBusinesses(query);
