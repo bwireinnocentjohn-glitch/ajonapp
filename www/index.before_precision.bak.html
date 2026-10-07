@@ -4159,14 +4159,9 @@ function exRenderSuggestions() {
     "tell me a fact",
     "share a bible verse"
 ];
-  var picked = {};
   var out = [];
-  var attempts = 0;
-  while (out.length < 6 && attempts < 300) {
-    attempts++;
-    var ri = Math.floor(Math.random() * pool.length);
-    if (!picked[ri]) { picked[ri] = 1; out.push(pool[ri]); }
-  }
+  for (var i = 0; i < 6; i++) out.push(pool[(EXPERT.sugsIdx + i) % pool.length]);
+  EXPERT.sugsIdx = (EXPERT.sugsIdx + 6) % pool.length;
   var html = "";
   for (var j = 0; j < out.length; j++) {
     html += '<div class="sug-chip" data-q="' + out[j].replace(/"/g, "&quot;") + '">' + out[j] + '</div>';

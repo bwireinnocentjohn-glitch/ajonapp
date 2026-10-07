@@ -22,30 +22,6 @@
     "briquette":"briquette", "charcoal":"briquette"
   };
 
-  var STOPS = {
-    "how":1,"do":1,"what":1,"is":1,"the":1,"a":1,"an":1,"can":1,
-    "i":1,"my":1,"me":1,"you":1,"we":1,"they":1,"he":1,"she":1,
-    "to":1,"for":1,"of":1,"in":1,"on":1,"at":1,"by":1,"with":1,
-    "and":1,"or":1,"but":1,"if":1,"so":1,
-    "this":1,"that":1,"these":1,"those":1,"it":1,"its":1,
-    "be":1,"am":1,"are":1,"was":1,"were":1,"been":1,
-    "make":1,"makes":1,"making":1,"made":1,
-    "start":1,"starts":1,"starting":1,
-    "want":1,"wants":1,"need":1,"needs":1,
-    "give":1,"gives":1,"get":1,"gets":1,
-    "help":1,"please":1,"tell":1,"show":1,"teach":1,"explain":1,
-    "about":1,"from":1,"into":1,"than":1,"then":1,
-    "any":1,"all":1,"some":1,"more":1,"most":1,
-    "good":1,"best":1,"great":1,"nice":1
-  };
-
-  function stopFilter(s){
-    return String(s||"").split(" ").filter(function(w){
-      return w.length >= 2 && !STOPS[w];
-    });
-  }
-
-
   function norm(t){
     t = String(t||"").toLowerCase()
       .replace(/[^a-z0-9\s]/g," ")
@@ -57,31 +33,15 @@
     return words.join(" ");
   }
 
-  function scoreBiz(biz, qRaw){
-    var q = norm(qRaw);
-    var words = stopFilter(q);
-    var nameLow = String(biz.name||"").toLowerCase();
+  function scoreBiz(biz, q){
     var hay = (biz.name + " " + biz.category + " " + (biz.whyNow||biz.whyNow2026||"") + " " + (biz.tags||[]).join(" ")).toLowerCase();
+    var words = q.split(" ").filter(function(w){return w.length>=3;});
+    if (!words.length) return 0;
     var s = 0;
-
-    if (words.length >= 2) {
-      var phrase = words.join(" ");
-      if (nameLow.indexOf(phrase) > -1) s += 100;
-      else if (hay.indexOf(phrase) > -1) s += 20;
+    for (var i=0;i<words.length;i++){
+      if (hay.indexOf(words[i]) > -1) s += 2;
+      if (biz.name.toLowerCase().indexOf(words[i]) > -1) s += 3;
     }
-
-    var nameHits = 0, hayHits = 0;
-    for (var i = 0; i < words.length; i++) {
-      var w = words[i];
-      if (nameLow.indexOf(w) > -1) nameHits++;
-      else if (hay.indexOf(w) > -1) hayHits++;
-    }
-    if (words.length > 0 && nameHits === words.length) s += 60;
-    s += nameHits * 15;
-    s += hayHits * 2;
-
-    if (nameLow.length >= 4 && q.indexOf(nameLow) > -1) s += 80;
-
     return s;
   }
 
@@ -91,7 +51,7 @@
     var scored = [];
     for (var i=0;i<BIZ.length;i++){
       var s = scoreBiz(BIZ[i], q);
-      if (s >= 8) scored.push({biz:BIZ[i], score:s});
+      if (s >= 2) scored.push({biz:BIZ[i], score:s});
     }
     scored.sort(function(a,b){ return b.score - a.score; });
     return scored.slice(0,3).map(function(x){ return x.biz; });
