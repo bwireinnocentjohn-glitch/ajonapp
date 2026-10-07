@@ -1992,14 +1992,7 @@ function startUserTick() {
 /* ===================== TRIAL ===================== */
 function trialMinutesLeft() { var trialMs = (appConfig.trialMinutes || 5) * 60 * 1000; return Math.max(0, trialMs - (Date.now() - installTime)); }
 function isTrialActive() { return trialMinutesLeft() > 0; }
-function isSubscribed() {
-  try {
-    if (typeof subscriptionEndDate !== "number") return false;
-    if (isNaN(subscriptionEndDate)) return false;
-    if (subscriptionEndDate <= 0) return false;
-    return subscriptionEndDate > Date.now();
-  } catch (e) { return false; }
-}
+function isSubscribed() { return subscriptionEndDate && subscriptionEndDate > Date.now(); }
 function hasFullAccess() { return isSubscribed() || isTrialActive(); }
 function canAccess(tut) { if (hasFullAccess()) return true; return Number(tut.id) <= 2; }
 function formatTrialTime(ms) { var s = Math.ceil(ms / 1000); var m = Math.floor(s / 60); var sec = s % 60; return m + ":" + (sec < 10 ? "0" : "") + sec; }
@@ -2362,22 +2355,20 @@ function renderCatBar() {
     h += '<div class="cat-chip" data-cat="' + CATEGORIES[i].id + '">' + CATEGORIES[i].name + '</div>';
   }
   bar.innerHTML = h;
-  var chips = bar.querySelectorAll(".cat-chip");
-  for (var k = 0; k < chips.length; k++) {
-    (function(chip){
-      chip.onclick = function(ev){
-        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
-        var c = chip.getAttribute("data-cat");
-        if (c) { try { window.filterCat(c); } catch(e) {} }
-        return false;
-      };
-      chip.addEventListener("click", function(ev){
-        if (ev) { ev.preventDefault(); ev.stopPropagation(); }
-        var c = chip.getAttribute("data-cat");
-        if (c) { try { window.filterCat(c); } catch(e) {} }
-      }, false);
-    })(chips[k]);
-  }
+  if (bar._ajonCat) return;
+  bar._ajonCat = true;
+  bar.addEventListener("click", function(ev){
+    try {
+      var t = ev.target;
+      while (t && t !== bar && !t.classList.contains("cat-chip")) t = t.parentNode;
+      if (!t || t === bar) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      var cat = t.getAttribute("data-cat");
+      if (!cat) return;
+      filterCat(cat);
+    } catch(e) { try { console.log("cat click err:", e); } catch(x){} }
+  }, true);
 }
 
 /* ===================== SPLASH ===================== */
@@ -2412,8 +2403,6 @@ function boot() {
     renderPayment();
     updateTrialBar();
     startTrialTick();
-    try { if (typeof ensureSubscriptionStatus === "function") ensureSubscriptionStatus(); } catch(e) {}
-    try { if (typeof startSubscriptionCheck === "function") startSubscriptionCheck(); } catch(e) {}
     setTimeout(hideSplash, 2400);
   } catch (e) { try { console.log("Ajon boot:", e && e.message); } catch (x) {} hideSplash(); }
 }
@@ -3113,43 +3102,29 @@ async function runTurn(token) {
 
 function clearAssistantChat() {
   if (!hasFullAccess()) return;
-  try { pauseAssistantChat(); } catch(e) {}
-  /* Only remove chat-specific keys. Preserve trial, subscription, favorites, notes, config. */
+  pauseAssistantChat();
   try {
-    var chatKeys = [
-      "ajon_chat_v12","ajon_chat_v11","ajon_chat_v10","ajon_chat_v9",
-      "ajon_chat_v8","ajon_chat_v5",
-      "ajon_brain_state_v3","ajon_brain_state_v2"
-    ];
-    for (var i = 0; i < chatKeys.length; i++) {
-      try { localStorage.removeItem(chatKeys[i]); } catch(e) {}
+    var keys = [];
+    for (var i = 0; i < localStorage.length; i++) {
+      var k = localStorage.key(i);
+      if (k && k.indexOf("ajon_") === 0) keys.push(k);
     }
+    for (var j = 0; j < keys.length; j++) localStorage.removeItem(keys[j]);
   } catch (e) {}
-  /* Reset in-memory chat state only */
-  try {
-    if (typeof BRAIN !== "undefined") {
-      BRAIN.messages = [];
-      BRAIN.chatCount = 0;
-      BRAIN.level = 1;
-      BRAIN.capital = 86000;
-      BRAIN.pasieResult = null;
-      BRAIN.currentTopicId = null;
-      BRAIN.lastTopics = [];
-      BRAIN.lastPrinciple = null;
-      BRAIN.pendingBiz = null;
-      BRAIN.bizIdx = {};
-      BRAIN.rotIdx = {};
-      BRAIN.lastMode = "question";
-    }
-  } catch (e) {}
-  /* Clear only the visible DOM area of the assistant tab */
-  try {
-    var box = byId("assistMsgs");
-    if (box) box.innerHTML = "";
-  } catch (e) {}
-  setTimeout(function () {
-    try { startAssistantChat(); } catch(e) {}
-  }, 700);
+  BRAIN.messages = [];
+  BRAIN.chatCount = 0;
+  BRAIN.level = 1;
+  BRAIN.capital = 86000;
+  BRAIN.currentTopicId = null;
+  BRAIN.lastTopics = [];
+  BRAIN.lastPrinciple = null;
+  BRAIN.pendingBiz = null;
+  BRAIN.bizIdx = {};
+  BRAIN.rotIdx = {};
+  BRAIN.lastMode = "question";
+  var box = byId("assistMsgs");
+  if (box) box.innerHTML = "";
+  setTimeout(function () { startAssistantChat(); }, 700);
 }
 
 function toggleAssistSound() {
@@ -4175,152 +4150,6 @@ try { exBuildVocab(); } catch (e) {}
   }
   ["ajon_send","sendSplitMessages","sendSplitMessagesV4","sendSplitMessagesFinal","sendSplitMessagesV2"]
     .forEach(wrapSender);
-})();
-
-
-/* ============================================================
-   Subscription expiry enforcement — locks app after 30 days
-   ============================================================ */
-var _ajonSubTimer = null;
-var _ajonLastKnownSub = -1;
-
-function ensureSubscriptionStatus() {
-  try {
-    /* Defensive: force number */
-    if (typeof subscriptionEndDate !== "number" || isNaN(subscriptionEndDate)) {
-      subscriptionEndDate = 0;
-    }
-    var now = Date.now();
-    var subscribedNow = subscriptionEndDate > now;
-    var changed = (subscribedNow !== (_ajonLastKnownSub === 1));
-    _ajonLastKnownSub = subscribedNow ? 1 : 0;
-
-    /* When subscription just expired, kick out of gated tabs */
-    if (changed && !subscribedNow) {
-      try { if (typeof pauseAssistantChat === "function") pauseAssistantChat(); } catch(e) {}
-      try {
-        var panelChat = byId("panel-chat");
-        var panelAi = byId("panel-ai");
-        if (panelChat && panelChat.classList.contains("active")) {
-          try { showTab("tutorials"); } catch(e) {}
-        }
-        if (panelAi && panelAi.classList.contains("active")) {
-          try { if (typeof expertGate === "function") expertGate(); } catch(e) {}
-        }
-      } catch(e) {}
-    }
-    /* Refresh UI so locks/unlocks reflect reality */
-    try { if (typeof updateTrialBar === "function") updateTrialBar(); } catch(e) {}
-    try { if (typeof renderPayment === "function") renderPayment(); } catch(e) {}
-    try {
-      /* If subscription expired, re-render tutorials so locked cards appear */
-      if (changed && !subscribedNow) {
-        if (typeof tutOffset !== "undefined") tutOffset = 0;
-        if (typeof renderTutorials === "function") renderTutorials(true);
-      }
-    } catch(e) {}
-  } catch (e) {}
-}
-
-function startSubscriptionCheck() {
-  try {
-    if (_ajonSubTimer) clearInterval(_ajonSubTimer);
-    _ajonSubTimer = setInterval(ensureSubscriptionStatus, 60000);
-  } catch(e) {}
-}
-
-/* Re-check when app returns to foreground */
-try {
-  document.addEventListener("visibilitychange", function () {
-    try { if (!document.hidden) ensureSubscriptionStatus(); } catch(e) {}
-  });
-} catch(e) {}
-
-
-/* ==========================================================
-   filterCat — authoritative override
-   Declared after all other scripts so it wins every time.
-   ========================================================== */
-(function(){
-  if (window.__ajonFilterOverrideV1) return;
-  window.__ajonFilterOverrideV1 = true;
-
-  function safeRender() {
-    try {
-      var fn = window.renderTutorials;
-      if (typeof fn === "function") { fn(true); return true; }
-    } catch (e) {}
-    return false;
-  }
-
-  function safeRenderFallback() {
-    /* If renderTutorials is not global, try calling through the app's closure
-       via a click on the search clear path — but safest is to just call it
-       through window if available, else silently do nothing. */
-    try {
-      if (typeof renderTutorials === "function") { renderTutorials(true); return true; }
-    } catch (e) {}
-    return false;
-  }
-
-  window.filterCat = function(cat) {
-    try {
-      cat = String(cat == null ? "all" : cat).toLowerCase();
-      /* Validate against known categories if CATEGORIES exists */
-      try {
-        if (typeof CATEGORIES !== "undefined" && cat !== "all") {
-          var ok = false;
-          for (var k = 0; k < CATEGORIES.length; k++) {
-            if (CATEGORIES[k].id === cat) { ok = true; break; }
-          }
-          if (!ok) cat = "all";
-        }
-      } catch(e) {}
-
-      /* Set currentCategory if the variable is accessible */
-      try { currentCategory = cat; } catch(e) {}
-
-      /* Update chip active classes */
-      var chips = document.querySelectorAll(".cat-chip");
-      for (var i = 0; i < chips.length; i++) {
-        if (chips[i].getAttribute("data-cat") === cat) chips[i].classList.add("active");
-        else chips[i].classList.remove("active");
-      }
-
-      /* Reset scroll offset if accessible */
-      try { tutOffset = 0; } catch(e) {}
-      try { currentItems = []; } catch(e) {}
-
-      /* Re-render */
-      var done = safeRender();
-      if (!done) safeRenderFallback();
-    } catch (e) {
-      try { console.log("filterCat override error:", e); } catch(x) {}
-    }
-  };
-
-  /* Rebind existing chips on load */
-  function rebind() {
-    try {
-      var chips = document.querySelectorAll(".cat-chip");
-      for (var i = 0; i < chips.length; i++) {
-        (function(chip){
-          chip.onclick = function(ev){
-            if (ev) { ev.preventDefault(); ev.stopPropagation(); }
-            var c = chip.getAttribute("data-cat");
-            if (c) window.filterCat(c);
-            return false;
-          };
-        })(chips[i]);
-      }
-    } catch(e) {}
-  }
-
-  if (document.readyState === "complete") {
-    setTimeout(rebind, 500);
-  } else {
-    window.addEventListener("load", function(){ setTimeout(rebind, 500); });
-  }
 })();
 
 </script>
