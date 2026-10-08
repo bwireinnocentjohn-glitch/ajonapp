@@ -675,125 +675,6 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
   letter-spacing: .3px;
 }
 
-
-/* ===== Unlock tab: switch + loan notice ===== */
-.unlock-top-controls {
-  padding: 12px 16px 6px;
-  display: flex;
-  justify-content: flex-end;
-}
-.loan-switch-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: #1a1a1a;
-  border: 1px solid rgba(0,200,83,.4);
-  border-radius: 999px;
-  padding: 6px 12px;
-}
-.loan-switch-label {
-  font-size: 12px;
-  font-weight: 800;
-  color: #00c853;
-  letter-spacing: .3px;
-}
-.round-switch {
-  width: 44px;
-  height: 24px;
-  border-radius: 999px;
-  background: #333;
-  border: 0;
-  position: relative;
-  cursor: pointer;
-  padding: 0;
-  transition: background .2s;
-  flex: 0 0 auto;
-}
-.round-switch.on { background: #00c853; }
-.round-knob {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: #fff;
-  transition: transform .2s;
-  box-shadow: 0 2px 4px rgba(0,0,0,.3);
-}
-.round-switch.on .round-knob { transform: translateX(20px); }
-
-.loan-notice-card {
-  margin: 4px 16px 14px;
-  padding: 14px;
-  background: linear-gradient(135deg,#001a0a,#003d14);
-  border: 1px solid #00c853;
-  border-radius: 14px;
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-.loan-notice-card.hidden { display: none; }
-.loan-icon {
-  font-size: 32px;
-  line-height: 1;
-  flex: 0 0 auto;
-  filter: drop-shadow(0 0 10px rgba(0,200,83,.5));
-}
-.loan-title {
-  font-size: 15px;
-  font-weight: 900;
-  color: #00c853;
-  letter-spacing: .3px;
-  margin-bottom: 6px;
-}
-.loan-text {
-  font-size: 12.5px;
-  color: #e6f7ea;
-  line-height: 1.55;
-  margin-bottom: 10px;
-}
-.loan-text b { color: #00c853; }
-.loan-cta {
-  display: inline-block;
-  background: linear-gradient(135deg,#00c853,#009624);
-  color: #fff;
-  font-size: 13px;
-  font-weight: 800;
-  padding: 9px 14px;
-  border-radius: 999px;
-  text-decoration: none;
-  letter-spacing: .3px;
-}
-.loan-cta:active { transform: scale(.97); }
-
-
-/* ===== Notes sub-tabs + Money Quiz ===== */
-.notes-sub-tabs { display: flex; gap: 8px; padding: 12px 16px 8px; background: #0a0a0a; border-bottom: 1px solid rgba(0,200,83,.25); }
-.notes-sub-btn { flex: 1; background: #1a1a1a; border: 1px solid rgba(0,200,83,.35); color: #a8a8a8; border-radius: 10px; padding: 9px 8px; font-size: 12.5px; font-weight: 800; font-family: inherit; cursor: pointer; letter-spacing: .2px; }
-.notes-sub-btn.active { background: linear-gradient(135deg,#00c853,#009624); color: #000; border-color: #00c853; }
-.notes-view.hidden { display: none; }
-.quiz-header { padding: 16px 16px 10px; text-align: center; }
-.quiz-title { font-size: 22px; font-weight: 900; color: #00c853; letter-spacing: 1px; margin-bottom: 4px; }
-.quiz-sub { font-size: 12px; color: #8f8f8f; font-weight: 600; }
-.quiz-stats { display: flex; gap: 8px; padding: 6px 16px 14px; }
-.quiz-stat { flex: 1; background: #1a1a1a; border: 1px solid rgba(0,200,83,.35); border-radius: 10px; padding: 8px 6px; text-align: center; }
-.quiz-stat-label { display: block; font-size: 10px; color: #8f8f8f; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 2px; }
-.quiz-stat-val { font-size: 16px; font-weight: 900; color: #00c853; }
-.quiz-card { background: #141414; border: 1px solid rgba(0,200,83,.35); border-left: 4px solid #00c853; border-radius: 14px; padding: 16px; margin: 0 16px 16px; }
-.quiz-q { font-size: 14.5px; color: #fff; font-weight: 700; line-height: 1.5; margin-bottom: 14px; }
-.quiz-answers { display: flex; flex-direction: column; gap: 8px; }
-.quiz-ans { background: #1f1f1f; border: 1px solid rgba(0,200,83,.35); border-radius: 10px; padding: 11px 13px; color: #e6e6e6; font-size: 13.5px; font-weight: 600; font-family: inherit; cursor: pointer; text-align: left; }
-.quiz-ans:active { background: #003d14; }
-.quiz-ans.correct { background: #003d14; border-color: #00c853; color: #00c853; }
-.quiz-ans.wrong { background: #2a0a00; border-color: #ff3d00; color: #ff3d00; }
-.quiz-ans:disabled { cursor: default; opacity: .85; }
-.quiz-feedback { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: #0f2a17; border-left: 3px solid #00c853; font-size: 12.5px; color: #e6f7ea; line-height: 1.55; }
-.quiz-feedback.bad { background: #2a0a00; border-left-color: #ff3d00; color: #ffd7c2; }
-.quiz-feedback b { color: #00c853; }
-.quiz-feedback.bad b { color: #ff3d00; }
-.quiz-next { display: block; width: 100%; margin-top: 12px; background: linear-gradient(135deg,#00c853,#009624); color: #fff; font-weight: 800; font-size: 14px; border: 0; border-radius: 10px; padding: 12px 16px; font-family: inherit; cursor: pointer; letter-spacing: .3px; }
-.quiz-next:active { transform: scale(.97); }
 </style>
 </head>
 <body>
@@ -846,25 +727,7 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
       <div id="loadSentinel" class="load-sentinel" style="display:none;">Loading more...</div>
     </section>
 
-    <section class="panel" id="panel-video">
-      <div class="unlock-top-controls">
-        <div class="loan-switch-wrap">
-          <span class="loan-switch-label">💰 Loan Notice</span>
-          <button class="round-switch on" id="loanSwitch" onclick="toggleLoanNotice()" aria-label="Toggle loan notice">
-            <span class="round-knob"></span>
-          </button>
-        </div>
-      </div>
-      <div class="loan-notice-card" id="loanNoticeCard">
-        <div class="loan-icon">💰</div>
-        <div class="loan-body">
-          <div class="loan-title">Get A Business Loan</div>
-          <div class="loan-text">From <b>50,000 UGX</b> to <b>1,200,000 UGX</b>. Start paying after 30 days. Remember to pay in time for your loan amount to increase.</div>
-          <a class="loan-cta" href="tel:+256768207738">📞 Call CEO to Apply</a>
-        </div>
-      </div>
-      <div id="videoArea"></div>
-    </section>
+    <section class="panel" id="panel-video"><div id="videoArea"></div></section>
 
     <section class="panel" id="panel-ai">
   <div class="expert-lock" id="expertLock" style="display:none;">
@@ -892,12 +755,6 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
 </section>
 
     <section class="panel" id="panel-notes">
-      <div class="notes-sub-tabs">
-        <button class="notes-sub-btn active" data-notes="editor" onclick="switchNotesView('editor')">📝 Notes</button>
-        <button class="notes-sub-btn" data-notes="quiz" onclick="switchNotesView('quiz')">💰 Dream Money Game</button>
-      </div>
-      <div class="notes-view" id="notesEditorView">
-
       <div class="notes-estimate-notice">
         <div class="notice-icon">&#x26A0;&#xFE0F;</div>
         <div class="notice-text">
@@ -913,22 +770,7 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
       </div>
       <div class="notes-list" id="notesList"></div>
       <div id="creatorSlot"></div>
-    </div>
-      <div class="notes-view hidden" id="notesQuizView">
-        <div class="quiz-header">
-          <div class="quiz-title">💰 Dream Money</div>
-          <div class="quiz-sub">Answer money questions. Earn coins. Level up.</div>
-        </div>
-        <div class="quiz-stats">
-          <div class="quiz-stat"><span class="quiz-stat-label">Coins</span><span class="quiz-stat-val" id="quizCoins">0</span></div>
-          <div class="quiz-stat"><span class="quiz-stat-label">Streak</span><span class="quiz-stat-val" id="quizStreak">0</span></div>
-          <div class="quiz-stat"><span class="quiz-stat-label">Round</span><span class="quiz-stat-val" id="quizRound">1</span></div>
-        </div>
-        <div class="quiz-card" id="quizCard">
-          <button class="btn" onclick="startQuiz()">🚀 Start Game</button>
-        </div>
-      </div>
-      </section>
+    </section>
 
     <section class="panel" id="panel-chat">
       <div class="chat-header-bar">
@@ -2664,8 +2506,7 @@ function renderPayment() { /* __FINAL_POLISH__ */
   if (!area) return;
   var coins = 0;
   try { coins = readJSON("ajon_coins", 0) || 0; } catch(e) {}
-  var tier = getCoinTier(coins);
-  var coinsHtml = '<div style="text-align:center;"><div class="coins-badge">🪙 Coins: <b>' + coins + '</b> UGX<br><span style="font-size:11px;color:' + tier.color + ';margin-top:4px;display:inline-block;">' + tier.label + '</span></div></div>';
+  var coinsHtml = '<div style="text-align:center;"><div class="coins-badge">🪙 Coins: <b>' + coins + '</b> \u2014 Share more to earn</div></div>';
 
   if (!isDateValid()) {
     area.innerHTML = '<div class="paywall-wrap">' + coinsHtml +
@@ -2860,7 +2701,6 @@ function boot() {
     renderPayment();
     updateTrialBar();
     startTrialTick();
-    try { if (typeof initLoanNoticeState === "function") initLoanNoticeState(); } catch(e) {}
     try { if (typeof ensureSubscriptionStatus === "function") ensureSubscriptionStatus(); } catch(e) {}
     try { if (typeof startSubscriptionCheck === "function") startSubscriptionCheck(); } catch(e) {}
     setTimeout(hideSplash, 2400);
@@ -5399,167 +5239,6 @@ try {
 
 /* ===== End of expert timestamps patch ===== */
 window.__ajonTimestampsV1 = true;
-
-/* __UNLOCK_V2__ */
-
-
-/* ===== Money Quiz (Dream Money Game) ===== */
-var QUIZ = {
-  coins: 0,
-  streak: 0,
-  bestStreak: 0,
-  round: 1,
-  current: null,
-  busy: false,
-  usedIds: []
-};
-
-var QUIZ_BANK = [
-  {q:"You buy 10kg tomatoes at 15,000 UGX. You sell at 20,000 UGX. What is your profit?",
-   a:["5,000 UGX","10,000 UGX","15,000 UGX","20,000 UGX"], c:0,
-   ex:"Profit = Sales minus Cost = 20,000 - 15,000 = 5,000 UGX."},
-  {q:"You start a business with 50,000 UGX. After 30 days you have 80,000 UGX. What is your profit?",
-   a:["20,000 UGX","30,000 UGX","80,000 UGX","50,000 UGX"], c:1,
-   ex:"Profit = 80,000 - 50,000 = 30,000 UGX."},
-  {q:"A customer buys on credit and never pays. What is this called?",
-   a:["Profit","Bad debt","Capital","Equity"], c:1,
-   ex:"Unpaid credit becomes bad debt - money lost."},
-  {q:"You pay 10,000 for rent every month. Is this a fixed or variable cost?",
-   a:["Fixed","Variable","Profit","Loss"], c:0,
-   ex:"Rent does not change with sales - it is fixed."},
-  {q:"Cash flow means:",
-   a:["Total profit at year end","Money moving in and out daily","Stock on shelf","Debt owed to you"], c:1,
-   ex:"Cash flow is daily movement - not the same as profit."},
-  {q:"A customer wants a 5,000 UGX discount. Best reply?",
-   a:["Give the discount at once","Say no","Add value instead (extra service)","Increase price"], c:2,
-   ex:"Add value instead of dropping price - protects margin."},
-  {q:"You take a 50,000 UGX loan at 20 percent monthly interest. Repayment after 30 days?",
-   a:["50,000","55,000","60,000","70,000"], c:2,
-   ex:"Interest = 50,000 x 20% = 10,000. Total = 60,000."},
-  {q:"What is working capital?",
-   a:["Stock plus Cash minus Debts","Profit only","Loan amount","Your salary"], c:0,
-   ex:"Working capital = money available for daily running."},
-  {q:"If you sell 100 units a day and each unit earns 500 UGX, what is your daily profit?",
-   a:["500","5,000","50,000","500,000"], c:2,
-   ex:"100 x 500 = 50,000 UGX per day."},
-  {q:"Your break-even point is:",
-   a:["Sales equal costs","Profit is highest","Loss is smallest","Cash is zero"], c:0,
-   ex:"Break-even = sales exactly cover costs."},
-  {q:"Best way to keep loyal customers?",
-   a:["Give lowest price","Add surprises and good service","Close early","Ignore complaints"], c:1,
-   ex:"Small surprises and great service keep customers."},
-  {q:"You make 50,000 profit. You spend 40,000 on food. What remains for savings?",
-   a:["10,000","40,000","50,000","90,000"], c:0,
-   ex:"50,000 - 40,000 = 10,000 to save."},
-  {q:"What is CAC?",
-   a:["Cost of goods sold","Customer Acquisition Cost","Cash at closing","Capital add"], c:1,
-   ex:"CAC = money spent to get one customer."},
-  {q:"You buy 5kg sugar at 4,500 per kg. Total cost?",
-   a:["9,000","18,000","22,500","25,000"], c:2,
-   ex:"5 x 4,500 = 22,500 UGX."},
-  {q:"More cash going out than in. This is:",
-   a:["Positive cash flow","Negative cash flow","Break even","Profit"], c:1,
-   ex:"More out than in = negative cash flow - danger zone."}
-];
-
-function quizRenderCoins() {
-  try {
-    var total = (typeof getCoins === "function") ? getCoins() : 0;
-    var el1 = byId("quizCoins");
-    var el2 = byId("quizStreak");
-    var el3 = byId("quizRound");
-    if (el1) el1.textContent = total;
-    if (el2) el2.textContent = QUIZ.streak;
-    if (el3) el3.textContent = QUIZ.round;
-  } catch(e) {}
-}
-
-function startQuiz() {
-  QUIZ.usedIds = [];
-  QUIZ.streak = 0;
-  QUIZ.round = 1;
-  nextQuizQ();
-}
-
-function pickQuiz() {
-  var pool = [];
-  for (var i = 0; i < QUIZ_BANK.length; i++) {
-    if (QUIZ.usedIds.indexOf(i) === -1) pool.push(i);
-  }
-  if (!pool.length) {
-    QUIZ.usedIds = [];
-    for (var k = 0; k < QUIZ_BANK.length; k++) pool.push(k);
-  }
-  var idx = pool[Math.floor(Math.random() * pool.length)];
-  QUIZ.usedIds.push(idx);
-  return { idx: idx, q: QUIZ_BANK[idx] };
-}
-
-function nextQuizQ() {
-  QUIZ.busy = false;
-  QUIZ.current = pickQuiz();
-  quizRenderCoins();
-  var card = byId("quizCard");
-  if (!card) return;
-  var q = QUIZ.current.q;
-  var h = '<div class="quiz-q">' + QUIZ.round + '. ' + escapeHTML(q.q) + '</div>';
-  h += '<div class="quiz-answers">';
-  for (var i = 0; i < q.a.length; i++) {
-    h += '<button class="quiz-ans" onclick="submitQuiz(' + i + ')">' + escapeHTML(q.a[i]) + '</button>';
-  }
-  h += '</div><div id="quizFeedback"></div>';
-  card.innerHTML = h;
-}
-
-function submitQuiz(picked) {
-  if (QUIZ.busy) return;
-  QUIZ.busy = true;
-  var q = QUIZ.current.q;
-  var buttons = document.querySelectorAll("#quizCard .quiz-ans");
-  for (var i = 0; i < buttons.length; i++) {
-    buttons[i].disabled = true;
-    if (i === q.c) buttons[i].classList.add("correct");
-    else if (i === picked) buttons[i].classList.add("wrong");
-  }
-  var fb = byId("quizFeedback");
-  if (picked === q.c) {
-    QUIZ.streak++;
-    if (QUIZ.streak > QUIZ.bestStreak) QUIZ.bestStreak = QUIZ.streak;
-    var reward = 100 + (QUIZ.streak >= 3 ? 50 : 0);
-    try {
-      var total = (typeof getCoins === "function" ? getCoins() : 0) + reward;
-      writeJSON("ajon_coins", total);
-    } catch(e) {}
-    if (fb) { fb.className = "quiz-feedback"; fb.innerHTML = '<b>Correct! +' + reward + ' coins</b><br>' + escapeHTML(q.ex); }
-  } else {
-    QUIZ.streak = 0;
-    if (fb) { fb.className = "quiz-feedback bad"; fb.innerHTML = '<b>Wrong answer</b><br>' + escapeHTML(q.ex); }
-  }
-  quizRenderCoins();
-  var nxt = document.createElement("button");
-  nxt.className = "quiz-next";
-  nxt.textContent = "Next Question";
-  nxt.onclick = function () { QUIZ.round++; nextQuizQ(); };
-  var card = byId("quizCard");
-  if (card) card.appendChild(nxt);
-}
-
-function switchNotesView(view) {
-  try {
-    var btns = document.querySelectorAll(".notes-sub-btn");
-    for (var i = 0; i < btns.length; i++) {
-      btns[i].classList.toggle("active", btns[i].getAttribute("data-notes") === view);
-    }
-    var ed = byId("notesEditorView");
-    var qz = byId("notesQuizView");
-    if (ed) ed.classList.toggle("hidden", view !== "editor");
-    if (qz) qz.classList.toggle("hidden", view !== "quiz");
-    if (view === "quiz") quizRenderCoins();
-  } catch(e) {}
-}
-
-
-/* __QUIZ_V1__ */
 </script>
 
 <div class="credits-modal" id="creditsModal">
