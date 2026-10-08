@@ -5840,5 +5840,44 @@ function switchNotesView(view) {
 })();
 </script>
 
+<style>
+.likes-badge { display: inline-flex; align-items: center; gap: 4px; background: rgba(0,200,83,.1); border: 1px solid rgba(0,200,83,.35); color: #00c853; border-radius: 999px; padding: 3px 10px; font-size: 11px; font-weight: 800; margin: 4px 0 8px; letter-spacing: .3px; }
+</style>
+<script>
+/* __LIKES_MIN__ */
+(function(){
+try {
+  var installTime = Number(localStorage.getItem('ajon_likes_t')) || Date.now();
+  localStorage.setItem('ajon_likes_t', String(installTime));
+  function upd(){
+    var cards = document.querySelectorAll('.card');
+    for (var i = 0; i < cards.length; i++){
+      var card = cards[i];
+      var title = card.querySelector('.card-title');
+      if (!title) continue;
+      var t = title.textContent.trim();
+      var h = 0;
+      for (var j = 0; j < t.length; j++){ h = ((h<<5)-h)+t.charCodeAt(j); h |= 0; }
+      h = Math.abs(h);
+      var base = 10000 + (h % 10000);
+      var rate = 20000 + (h % 50000);
+      var hours = (Date.now() - installTime) / 3600000;
+      var likes = base + Math.floor(hours * rate);
+      var txt = '❤️ ' + (likes >= 1000 ? (likes/1000).toFixed(1)+'k' : String(likes)) + ' likes';
+      var ex = card.querySelector('.likes-badge');
+      if (ex) { ex.textContent = txt; continue; }
+      var badge = document.createElement('div');
+      badge.className = 'likes-badge';
+      badge.textContent = txt;
+      var chip = card.querySelector('.chip');
+      if (chip && chip.parentNode === card) chip.parentNode.insertBefore(badge, chip.nextSibling);
+      else title.parentNode.insertBefore(badge, title.nextSibling);
+    }
+  }
+  setInterval(upd, 3000);
+  upd();
+} catch(e) { console.log('likes min err', e); }
+})();
+</script>
 </body>
 </html>
