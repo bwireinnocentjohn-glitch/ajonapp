@@ -1,0 +1,81 @@
+/* __EXPERT_ENHANCEMENTS_V1__ */
+#aiInput {
+  resize: none !important;
+  overflow: hidden !important;
+  min-height: 42px !important;
+  max-height: 140px !important;
+  line-height: 1.35 !important;
+  padding: 10px 12px !important;
+  border-radius: 12px !important;
+  box-sizing: border-box !important;
+  font-family: inherit !important;
+}
+.ajon-thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  margin: 8px 12px 8px 0;
+  border-radius: 14px;
+  background: linear-gradient(90deg, #0d1f1a 0%, #122a23 25%, #1f4a3d 50%, #122a23 75%, #0d1f1a 100%);
+  background-size: 220% 100%;
+  animation: ajonThinkShimmer 2.4s linear infinite;
+  border: 1px solid rgba(0,200,83,.35);
+  box-shadow: 0 3px 10px rgba(0,200,83,.15);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: .4px;
+}
+.ajon-think-text {
+  background: linear-gradient(90deg, #00c853 0%, #69f0ae 50%, #00c853 100%);
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: ajonThinkShimmer 2.4s linear infinite;
+}
+.ajon-think-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #00e676;
+  animation: ajonThinkPulse 1.2s ease-in-out infinite;
+  box-shadow: 0 0 8px rgba(0,230,118,.8);
+}
+.ajon-think-dot:nth-child(2){ animation-delay: .2s; }
+.ajon-think-dot:nth-child(3){ animation-delay: .4s; }
+@keyframes ajonThinkShimmer {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 220% 50%; }
+}
+@keyframes ajonThinkPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.5); opacity: .55; }
+}
+.expert-send-btn {
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #00c853, #00a844) !important;
+  color: #fff !important;
+  font-size: 22px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  flex: 0 0 auto !important;
+  box-shadow: 0 2px 10px rgba(0,200,83,.35) !important;
+}
+.expert-send-btn:active { transform: scale(.94); }
+.ajon-thumb {
+  display: block;
+  margin-top: 10px;
+  max-width: 100%;
+  max-height: 180px;
+  border-radius: 10px;
+  border: 1px solid rgba(0,200,83,.35);
+  object-fit: cover;
+}
+.ex-bubble b, .msg-ex b { color: #69f0ae; font-weight: 800; }
