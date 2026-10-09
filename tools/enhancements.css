@@ -1,151 +1,300 @@
 /* __EXPERT_ENHANCEMENTS_V1__ */
 
+/* ---------- INPUT PILL ---------- */
 .expert-input-row {
-  display: flex !important; align-items: flex-end !important; gap: 8px !important;
-  background: #071612 !important; border: 1px solid rgba(0,200,83,0.35) !important;
-  border-radius: 24px !important; padding: 6px 6px 6px 16px !important;
-  margin: 8px 12px !important; position: relative !important;
-  box-shadow: 0 0 0 1px rgba(0,200,83,0.06), 0 4px 14px rgba(0,0,0,0.35) !important;
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 2px !important;
+  background: linear-gradient(180deg, #071612 0%, #0a1c16 100%) !important;
+  border: 1px solid rgba(0,200,83,0.28) !important;
+  border-radius: 24px !important;
+  padding: 4px 6px 4px 16px !important;
+  margin: 6px 10px !important;
+  position: relative !important;
+  min-height: 46px !important;
+  box-sizing: border-box !important;
+  box-shadow:
+    0 4px 16px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.03) !important;
+  transition: border-color .18s, box-shadow .18s !important;
 }
 .expert-input-row:focus-within {
-  border-color: #00c853 !important;
-  box-shadow: 0 0 0 1px rgba(0,200,83,0.28), 0 4px 16px rgba(0,200,83,0.18) !important;
+  border-color: rgba(110,231,183,0.7) !important;
+  box-shadow:
+    0 4px 20px rgba(0,0,0,0.5),
+    0 0 0 3px rgba(110,231,183,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.05) !important;
 }
+
+/* ---------- TEXTAREA ---------- */
 #aiInput, textarea#aiInput, input#aiInput {
-  flex: 1 1 auto !important; width: auto !important; min-width: 0 !important;
-  background: transparent !important; border: 0 !important; color: #e8fff4 !important;
-  outline: none !important; padding: 9px 4px !important; margin: 0 !important;
-  min-height: 28px !important; max-height: 140px !important;
-  resize: none !important; overflow-y: auto !important;
-  font-family: inherit !important; font-size: 14px !important; line-height: 1.4 !important;
-  box-shadow: none !important; box-sizing: border-box !important; -webkit-appearance: none !important;
+  order: 1 !important;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  width: auto !important;
+  background: transparent !important;
+  border: 0 !important;
+  color: #e8fff4 !important;
+  padding: 12px 0 !important;
+  margin: 0 !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  line-height: 20px !important;
+  min-height: 20px !important;
+  max-height: 100px !important;
+  resize: none !important;
+  overflow-y: auto !important;
+  outline: none !important;
+  box-shadow: none !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+  box-sizing: border-box !important;
 }
-#aiInput:focus { background: transparent !important; border: 0 !important; box-shadow: none !important; }
-#aiInput::placeholder { color: rgba(0,230,118,0.5) !important; }
+#aiInput:focus { background: transparent !important; outline: none !important; }
+#aiInput::placeholder { color: rgba(0,230,118,0.42) !important; }
 
-.expert-send-btn {
-  order: 5 !important; width: 40px !important; height: 40px !important;
-  min-width: 40px !important; max-width: 40px !important; border-radius: 50% !important;
-  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 40%, #34d399 100%) !important;
-  color: #052e16 !important; font-size: 20px !important; font-weight: 900 !important;
-  padding: 0 !important; margin: 0 !important; border: 0 !important; flex: 0 0 auto !important;
-  display: inline-flex !important; align-items: center !important; justify-content: center !important;
-  box-shadow: 0 2px 10px rgba(110,231,183,.45), inset 0 1px 0 rgba(255,255,255,.4) !important;
-}
-.expert-send-btn:active { transform: scale(0.9) !important; }
-
+/* ---------- SMALL TRANSPARENT ACTION BUTTONS ---------- */
+.ajon-attach-btn,
+.ajon-mic-btn,
 .kb-toggle {
-  order: 4 !important; width: 40px !important; height: 40px !important;
-  min-width: 40px !important; max-width: 40px !important; border-radius: 50% !important;
-  background: rgba(0,200,83,.12) !important; color: #6ee7b7 !important; font-size: 16px !important;
-  padding: 0 !important; margin: 0 !important; border: 1px solid rgba(0,200,83,.25) !important;
-  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  max-width: 28px !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  border: 0 !important;
+  color: rgba(110,231,183,0.55) !important;
+  font-size: 14px !important;
+  padding: 0 !important;
+  margin: 0 0 8px 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   flex: 0 0 auto !important;
+  cursor: pointer !important;
+  transition: color .15s, transform .12s, background .15s !important;
 }
-.kb-toggle:active { transform: scale(0.92) !important; }
+.ajon-attach-btn { order: 2 !important; }
+.ajon-mic-btn    { order: 3 !important; }
+.kb-toggle       { order: 4 !important; }
 
-.ajon-attach-btn {
-  order: 3 !important; width: 40px !important; height: 40px !important;
-  min-width: 40px !important; max-width: 40px !important; border-radius: 50% !important;
-  background: rgba(0,200,83,.12) !important; color: #6ee7b7 !important; font-size: 17px !important;
-  padding: 0 !important; margin: 0 !important; border: 1px solid rgba(0,200,83,.25) !important;
-  display: inline-flex !important; align-items: center !important; justify-content: center !important;
+.ajon-attach-btn:active,
+.ajon-mic-btn:active,
+.kb-toggle:active {
+  transform: scale(0.85) !important;
+  color: #6ee7b7 !important;
+}
+.ajon-mic-btn.listening {
+  color: #ff8a80 !important;
+  background: rgba(255,82,82,0.12) !important;
+  animation: ajonMicPulse 1.2s ease-in-out infinite !important;
+}
+@keyframes ajonMicPulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,82,82,.5); }
+  50%     { box-shadow: 0 0 0 6px rgba(255,82,82,0); }
+}
+
+/* ---------- SEND ARROW (only strong colored element) ---------- */
+.expert-send-btn {
+  order: 5 !important;
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  max-width: 34px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #d1fae5 0%, #6ee7b7 45%, #34d399 100%) !important;
+  color: #052e16 !important;
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  padding: 0 !important;
+  margin: 0 0 6px 0 !important;
+  border: 0 !important;
   flex: 0 0 auto !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow:
+    0 3px 12px rgba(110,231,183,0.5),
+    0 0 0 1px rgba(255,255,255,0.15) inset,
+    0 1px 2px rgba(255,255,255,0.4) inset !important;
+  transition: transform .12s !important;
 }
-.ajon-attach-btn:active { transform: scale(0.92) !important; }
+.expert-send-btn:active { transform: scale(0.88) !important; }
 
+/* ---------- TRASH (small, above pill top-right) ---------- */
+.ajon-clear-btn {
+  position: absolute !important;
+  top: -24px !important;
+  right: 4px !important;
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,0.04) !important;
+  color: rgba(110,231,183,0.55) !important;
+  border: 1px solid rgba(0,200,83,0.18) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 10px !important;
+  padding: 0 !important;
+  z-index: 6 !important;
+  transition: opacity .22s, transform .12s, color .15s !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.35) !important;
+}
+.ajon-clear-btn:active { transform: scale(0.82) !important; color: #6ee7b7 !important; }
+.ajon-clear-btn.hidden-by-quote { opacity: 0 !important; pointer-events: none !important; }
+
+/* ---------- TIER BADGE — small icon only ---------- */
 .ajon-tier-badge {
-  order: 6 !important; flex: 0 0 auto !important;
-  display: inline-flex !important; align-items: center !important;
-  padding: 5px 9px !important; border-radius: 999px !important;
-  font-size: 10px !important; font-weight: 900 !important;
-  letter-spacing: .3px !important; margin: 0 4px !important;
-  background: rgba(0,200,83,.10) !important; color: #6ee7b7 !important;
-  border: 1px solid rgba(0,200,83,.30) !important;
+  position: absolute !important;
+  top: -23px !important;
+  left: 6px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  padding: 0 6px !important;
+  border-radius: 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0 !important;
+  background: rgba(0,0,0,0.42) !important;
+  color: #6ee7b7 !important;
+  border: 1px solid rgba(0,200,83,0.28) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  z-index: 6 !important;
   white-space: nowrap !important;
 }
 .ajon-tier-badge.master {
-  background: linear-gradient(135deg,rgba(110,231,183,.25),rgba(52,211,153,.25)) !important;
+  background: linear-gradient(135deg, rgba(110,231,183,0.22), rgba(52,211,153,0.22)) !important;
   color: #a7f3d0 !important;
-  border-color: rgba(110,231,183,.6) !important;
+  border-color: rgba(110,231,183,0.55) !important;
+  box-shadow: 0 0 8px rgba(110,231,183,0.35) !important;
 }
-.ajon-tier-badge.low { background: rgba(255,82,82,.15) !important; color: #ff8a80 !important; border-color: rgba(255,82,82,.4) !important; }
+.ajon-tier-badge.low {
+  color: #ff8a80 !important;
+  border-color: rgba(255,82,82,0.4) !important;
+}
 
+/* ---------- IMAGE PREVIEW ---------- */
 .ajon-img-preview {
-  position: absolute !important; top: -54px !important; left: 12px !important;
-  width: 46px !important; height: 46px !important; border-radius: 10px !important;
-  border: 2px solid #6ee7b7 !important; background: #0d1f1a !important;
-  object-fit: cover !important; box-shadow: 0 4px 12px rgba(0,0,0,.5) !important; z-index: 6 !important;
+  position: absolute !important;
+  top: -60px !important;
+  left: 10px !important;
+  width: 48px !important;
+  height: 48px !important;
+  border-radius: 10px !important;
+  border: 2px solid #6ee7b7 !important;
+  background: #0d1f1a !important;
+  object-fit: cover !important;
+  z-index: 6 !important;
+  box-shadow: 0 4px 14px rgba(110,231,183,0.35) !important;
 }
 .ajon-img-clear {
-  position: absolute !important; top: -58px !important; left: 54px !important;
-  width: 20px !important; height: 20px !important; border-radius: 50% !important;
-  background: #ff5252 !important; color: #fff !important; border: 0 !important;
-  font-size: 12px !important; font-weight: 900 !important; line-height: 1 !important;
-  display: flex !important; align-items: center !important; justify-content: center !important;
+  position: absolute !important;
+  top: -64px !important;
+  left: 56px !important;
+  width: 20px !important;
+  height: 20px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg,#ff8a80,#ff5252) !important;
+  color: #fff !important;
+  border: 0 !important;
+  font-size: 11px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   z-index: 7 !important;
+  box-shadow: 0 2px 8px rgba(255,82,82,0.5) !important;
 }
 
-.ajon-clear-btn {
-  position: absolute !important; top: 12px !important; right: 12px !important;
-  width: 34px !important; height: 34px !important; border-radius: 50% !important;
-  background: rgba(0,0,0,0.35) !important; color: rgba(110,231,183,0.9) !important;
-  border: 1px solid rgba(0,200,83,0.28) !important; z-index: 20 !important;
-  display: flex !important; align-items: center !important; justify-content: center !important;
-  font-size: 15px !important; padding: 0 !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,.35) !important;
-}
-.ajon-clear-btn:active { transform: scale(0.9) !important; }
-
+/* ---------- COPY BUTTON ---------- */
 .ajon-copy-btn {
-  position: absolute !important; top: 6px !important; right: 6px !important;
-  width: 26px !important; height: 26px !important; border-radius: 50% !important;
-  background: rgba(0,0,0,0.25) !important; color: rgba(110,231,183,0.75) !important;
-  border: 1px solid rgba(0,200,83,0.2) !important;
-  display: flex !important; align-items: center !important; justify-content: center !important;
-  font-size: 12px !important; padding: 0 !important; opacity: 0.55 !important;
-  transition: opacity .15s, transform .12s !important; z-index: 4 !important;
+  position: absolute !important;
+  top: 6px !important;
+  right: 6px !important;
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 50% !important;
+  background: rgba(0,0,0,0.30) !important;
+  color: rgba(110,231,183,0.65) !important;
+  border: 1px solid rgba(0,200,83,0.15) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  padding: 0 !important;
+  opacity: 0.5 !important;
+  transition: opacity .15s, transform .12s !important;
+  z-index: 4 !important;
 }
-.ajon-copy-btn:active { transform: scale(0.88) !important; opacity: 1 !important; }
+.ajon-copy-btn:active { transform: scale(0.85) !important; opacity: 1 !important; }
 .ajon-bubble-rel { position: relative !important; }
 
+/* ---------- THINKING ---------- */
 .ajon-thinking {
-  display: inline-flex !important; align-items: center !important; gap: 8px !important;
-  padding: 10px 18px !important; margin: 8px 12px 8px 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  padding: 9px 16px !important;
+  margin: 8px 12px 8px 0 !important;
   border-radius: 14px !important;
   background: linear-gradient(90deg, #0d1f1a 0%, #122a23 25%, #1f4a3d 50%, #122a23 75%, #0d1f1a 100%) !important;
   background-size: 220% 100% !important;
   animation: ajonThinkShimmer 2.4s linear infinite !important;
-  border: 1px solid rgba(0,200,83,.35) !important;
-  box-shadow: 0 3px 10px rgba(0,200,83,.15) !important;
-  font-weight: 800 !important; font-size: 13px !important;
+  border: 1px solid rgba(110,231,183,.30) !important;
+  box-shadow: 0 3px 12px rgba(110,231,183,0.12) !important;
+  font-weight: 800 !important;
+  font-size: 12px !important;
 }
 .ajon-think-text {
-  background: linear-gradient(90deg, #00c853 0%, #69f0ae 50%, #00c853 100%);
+  background: linear-gradient(90deg, #00c853 0%, #a7f3d0 50%, #00c853 100%);
   background-size: 220% 100% !important;
-  -webkit-background-clip: text !important; background-clip: text !important;
-  -webkit-text-fill-color: transparent !important; color: transparent !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
   animation: ajonThinkShimmer 2.4s linear infinite !important;
 }
 .ajon-think-dot {
-  width: 6px !important; height: 6px !important; border-radius: 50% !important;
-  background: #00e676 !important;
+  width: 5px !important;
+  height: 5px !important;
+  border-radius: 50% !important;
+  background: #6ee7b7 !important;
+  box-shadow: 0 0 6px rgba(110,231,183,0.8) !important;
   animation: ajonThinkPulse 1.2s ease-in-out infinite !important;
-  box-shadow: 0 0 8px rgba(0,230,118,.8) !important;
 }
 .ajon-think-dot:nth-child(2){ animation-delay: .2s !important; }
 .ajon-think-dot:nth-child(3){ animation-delay: .4s !important; }
 @keyframes ajonThinkShimmer { 0%{background-position:0% 50%} 100%{background-position:220% 50%} }
-@keyframes ajonThinkPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.55} }
+@keyframes ajonThinkPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.6} }
 
+/* ---------- WIKI THUMB ---------- */
 .ajon-thumb {
-  display: block !important; margin-top: 10px !important;
-  max-width: 100% !important; max-height: 200px !important;
-  border-radius: 10px !important; border: 1px solid rgba(0,200,83,.35) !important;
-  object-fit: cover !important; background: #0d1f1a !important;
+  display: block !important;
+  margin-top: 10px !important;
+  max-width: 100% !important;
+  max-height: 200px !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(110,231,183,0.30) !important;
+  object-fit: cover !important;
+  background: #0d1f1a !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.35) !important;
 }
 .ajon-thumb-fail { display: none !important; }
 
-.ajon-pressing { outline: 2px solid #34d399 !important; outline-offset: 2px !important; }
+.ajon-pressing { outline: 2px solid #6ee7b7 !important; outline-offset: 2px !important; }
+.ex-bubble b, .msg-ex b, .bubble b, [class*="bubble"] b, [class*="msg"] b {
+  color: #6ee7b7 !important; font-weight: 800 !important;
+}
 
-.ex-bubble b, .msg-ex b, .bubble b, [class*="bubble"] b, [class*="msg"] b { color: #6ee7b7 !important; font-weight: 800 !important; }
+/* ---------- KEYBOARD SAFE AREA (JS sets --ajon-kb) ---------- */
+body.ajon-kb-open .expert-main {
+  padding-bottom: var(--ajon-kb, 0px) !important;
+}

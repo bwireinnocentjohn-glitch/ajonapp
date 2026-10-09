@@ -1,93 +1,108 @@
 /* __EXPERT_ENHANCEMENTS_V1__ */
 (function(){
   "use strict";
-  if (window.__ajonEnhV5) return;
-  window.__ajonEnhV5 = true;
+  if (window.__ajonEnhV8) return;
+  window.__ajonEnhV8 = true;
 
+  var DAILY_LIMIT_STANDARD = 20;
   function byId(id){ return document.getElementById(id); }
   function $(s){ return document.querySelector(s); }
   function now(){ return Date.now(); }
-
-  var DAILY_LIMIT_STANDARD = 20;
 
   function toast(msg, ms){
     var t = byId("ajonEnhToast");
     if (!t){
       t = document.createElement("div");
       t.id = "ajonEnhToast";
-      t.style.cssText = "position:fixed;bottom:170px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#a7f3d0,#34d399);color:#052e16;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:900;z-index:99999;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 4px 14px rgba(52,211,153,.5);max-width:80vw;text-align:center;";
+      t.style.cssText = "position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#a7f3d0,#34d399);color:#052e16;padding:9px 16px;border-radius:999px;font-size:12px;font-weight:900;z-index:99999;opacity:0;transition:opacity .2s;pointer-events:none;max-width:80vw;text-align:center;box-shadow:0 4px 14px rgba(110,231,183,.45);";
       document.body.appendChild(t);
     }
     t.textContent = msg;
     t.style.opacity = "1";
     clearTimeout(t._tid);
-    t._tid = setTimeout(function(){ t.style.opacity = "0"; }, ms || 2200);
+    t._tid = setTimeout(function(){ t.style.opacity = "0"; }, ms || 2000);
   }
 
-  /* ================= TIER DETECTION ================= */
+  /* ================= KEYBOARD VIEWPORT FIX ================= */
+  function installViewportFix(){
+    try {
+      if (!window.visualViewport) return;
+      var vv = window.visualViewport;
+      function apply(){
+        try {
+          var kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+          document.documentElement.style.setProperty("--ajon-kb", kb + "px");
+          var body = document.body;
+          if (!body) return;
+          if (kb > 60){
+            body.classList.add("ajon-kb-open");
+          } else {
+            body.classList.remove("ajon-kb-open");
+          }
+          try {
+            var inp = byId("aiInput");
+            if (inp && document.activeElement === inp){
+              setTimeout(function(){
+                try { inp.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch(e){}
+              }, 50);
+            }
+          } catch(e){}
+        } catch(e){}
+      }
+      vv.addEventListener("resize", apply);
+      vv.addEventListener("scroll", apply);
+      window.addEventListener("orientationchange", function(){ setTimeout(apply, 250); });
+      apply();
+    } catch(e){}
+  }
+
+  /* ================= TIER ================= */
   function detectTier(){
     try {
-      var candidates = ["ajon_plan","ajon_tier","ajon_sub_type","ajon_subscription","ajon_membership","ajon_sub_tier"];
-      for (var i=0; i<candidates.length; i++){
+      var cands = ["ajon_plan","ajon_tier","ajon_sub_type","ajon_subscription","ajon_membership","ajon_sub_tier"];
+      for (var i=0;i<cands.length;i++){
         var v = null;
-        try { v = localStorage.getItem(candidates[i]); } catch(e){}
+        try { v = localStorage.getItem(cands[i]); } catch(e){}
         if (!v) continue;
         v = String(v).toLowerCase();
         if (/master|15000|unlimited|premium|vip/.test(v)) return "master";
         if (/standard|5000|basic|pro/.test(v)) return "standard";
       }
       var amt = 0;
-      try {
-        amt = Number(localStorage.getItem("ajon_sub_amount") || localStorage.getItem("ajon_sub_price") || localStorage.getItem("ajon_sub_paid") || 0);
-      } catch(e){}
+      try { amt = Number(localStorage.getItem("ajon_sub_amount") || localStorage.getItem("ajon_sub_price") || localStorage.getItem("ajon_sub_paid") || 0); } catch(e){}
       if (amt >= 15000) return "master";
       if (amt >= 5000) return "standard";
-
       var title = "";
       try { title = String(localStorage.getItem("ajon_sub_title") || "").toLowerCase(); } catch(e){}
       if (/master|unlimited/.test(title)) return "master";
-
       var subEnd = 0;
-      try {
-        subEnd = Number(
-          localStorage.getItem("ajon_sub_end_v12") ||
-          localStorage.getItem("ajon_sub_end_v11") ||
-          localStorage.getItem("ajon_sub_end_v10") ||
-          localStorage.getItem("ajon_sub_end_v9") ||
-          0
-        );
-      } catch(e){}
+      try { subEnd = Number(localStorage.getItem("ajon_sub_end_v12") || localStorage.getItem("ajon_sub_end_v11") || localStorage.getItem("ajon_sub_end_v10") || localStorage.getItem("ajon_sub_end_v9") || 0); } catch(e){}
       if (subEnd > now()) return "standard";
       return "none";
     } catch(e){ return "none"; }
   }
 
-  /* ============ TAP DETECTOR (Unlock tab) ============ */
   function installTapDetector(){
     try {
       if (window.__ajonTapDetected) return;
       window.__ajonTapDetected = true;
       document.addEventListener("click", function(ev){
         try {
-          var el = ev.target;
-          var hops = 0;
+          var el = ev.target, hops = 0;
           while (el && el !== document.body && hops < 6){
-            if (el.tagName === "BUTTON" || el.tagName === "A"){
-              break;
-            }
-            el = el.parentNode;
-            hops++;
+            if (el.tagName === "BUTTON" || el.tagName === "A") break;
+            el = el.parentNode; hops++;
           }
           if (!el || el === document.body) return;
           var txt = (el.innerText || el.textContent || "").toLowerCase();
           if (!txt) return;
           if (txt.indexOf("15000") > -1 || txt.indexOf("15,000") > -1 || txt.indexOf("master") > -1 || txt.indexOf("unlimited") > -1 || txt.indexOf("vip") > -1){
-            try { localStorage.setItem("ajon_plan", "master"); } catch(e){}
-            try { localStorage.setItem("ajon_sub_amount", "15000"); } catch(e){}
+            try { localStorage.setItem("ajon_plan","master"); } catch(e){}
+            try { localStorage.setItem("ajon_sub_amount","15000"); } catch(e){}
             setTimeout(updateTierBadge, 100);
           } else if (txt.indexOf("5000") > -1 || txt.indexOf("5,000") > -1 || txt.indexOf("standard") > -1 || txt.indexOf("basic") > -1){
-            try { localStorage.setItem("ajon_plan", "standard"); } catch(e){}
-            try { localStorage.setItem("ajon_sub_amount", "5000"); } catch(e){}
+            try { localStorage.setItem("ajon_plan","standard"); } catch(e){}
+            try { localStorage.setItem("ajon_sub_amount","5000"); } catch(e){}
             setTimeout(updateTierBadge, 100);
           }
         } catch(e){}
@@ -95,37 +110,27 @@
     } catch(e){}
   }
 
-  /* ============ DAILY COUNTER ============ */
-  function dailyKey(){
-    var d = new Date();
-    return "ajon_expert_daily_" + d.getFullYear() + "_" + (d.getMonth()+1) + "_" + d.getDate();
-  }
-  function dailyCount(){
-    try { return Number(localStorage.getItem(dailyKey())) || 0; } catch(e){ return 0; }
-  }
+  function dailyKey(){ var d = new Date(); return "ajon_expert_daily_" + d.getFullYear() + "_" + (d.getMonth()+1) + "_" + d.getDate(); }
+  function dailyCount(){ try { return Number(localStorage.getItem(dailyKey())) || 0; } catch(e){ return 0; } }
   function dailyBump(){
     try {
       var n = dailyCount() + 1;
       localStorage.setItem(dailyKey(), String(n));
       try {
-        for (var i=0; i<localStorage.length; i++){
+        for (var i=0;i<localStorage.length;i++){
           var k = localStorage.key(i);
-          if (k && k.indexOf("ajon_expert_daily_") === 0 && k !== dailyKey()){
-            localStorage.removeItem(k);
-          }
+          if (k && k.indexOf("ajon_expert_daily_") === 0 && k !== dailyKey()) localStorage.removeItem(k);
         }
       } catch(e){}
       return n;
     } catch(e){ return 0; }
   }
   function dailyRemaining(){
-    var tier = detectTier();
-    if (tier === "master") return Infinity;
-    var c = dailyCount();
-    return Math.max(0, DAILY_LIMIT_STANDARD - c);
+    if (detectTier() === "master") return Infinity;
+    return Math.max(0, DAILY_LIMIT_STANDARD - dailyCount());
   }
 
-  /* ============ TIER BADGE ============ */
+  /* ---------- Tier badge: small icon only ---------- */
   function updateTierBadge(){
     try {
       var row = document.querySelector(".expert-input-row");
@@ -138,17 +143,19 @@
       b.className = "ajon-tier-badge";
       if (tier === "master"){
         b.classList.add("master");
-        b.textContent = "\u267E\uFE0F MASTER";
+        b.textContent = "\u267E";           /* ♾ */
+        b.title = "Master \u2014 unlimited";
       } else {
         var left = dailyRemaining();
         if (left <= 3) b.classList.add("low");
-        b.textContent = "\u23F1 " + left + "/" + DAILY_LIMIT_STANDARD;
+        b.textContent = String(left);
+        b.title = left + " of " + DAILY_LIMIT_STANDARD + " left today";
       }
       row.appendChild(b);
     } catch(e){}
   }
 
-  /* ============ ARROW SEND ============ */
+  /* ================= ARROW SEND ================= */
   function installArrow(){
     try {
       var btn = document.querySelector(".expert-send-btn");
@@ -159,7 +166,7 @@
     } catch(e){}
   }
 
-  /* ============ ANIMATED THINKING ============ */
+  /* ================= THINKING ================= */
   function installThinking(){
     try {
       if (typeof window.exShowTyping !== "function" || window.exShowTyping._ajonEnh) return;
@@ -181,15 +188,14 @@
     } catch(e){}
   }
 
-  /* ============ TEXTAREA + AUTOGROW ============ */
-  var WORDS = ["soap","honey","beeswax","oil","compost","biogas","solar","candle","yoghurt","bread","cake","juice","jam","tea","spice","paper","grow","make","sell","start","price","profit","capital","mask","brush","ghee","jelly","cheese","butter","ginger","garlic","aloe","neem","shea","coconut","mushroom","bees","rabbit","chicken","fish","goat","pig","charcoal","herbal","detergent","bleach","filter","stove","sauce"];
+  /* ================= TEXTAREA ================= */
   function autoGrow(ta){
     try {
       if (!ta || ta.tagName !== "TEXTAREA") return;
       ta.style.height = "auto";
       var h = ta.scrollHeight;
-      if (h < 28) h = 28;
-      if (h > 140) h = 140;
+      if (h < 20) h = 20;
+      if (h > 100) h = 100;
       ta.style.height = h + "px";
     } catch(e){}
   }
@@ -197,7 +203,16 @@
     if (ta._ajonBound) return;
     ta._ajonBound = true;
     ta.addEventListener("input", function(){ autoGrow(ta); });
-    ta.addEventListener("focus", function(){ autoGrow(ta); });
+    ta.addEventListener("focus", function(){
+      autoGrow(ta);
+      setTimeout(function(){
+        try {
+          var kb = 0;
+          try { kb = Number(getComputedStyle(document.documentElement).getPropertyValue("--ajon-kb").replace("px","")) || 0; } catch(e){}
+          if (kb > 60){ try { ta.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch(e){} }
+        } catch(e){}
+      }, 300);
+    });
     ta.addEventListener("keydown", function(ev){
       if (ev.key === "Enter" && !ev.shiftKey){
         ev.preventDefault();
@@ -224,14 +239,13 @@
     } catch(e){}
   }
 
-  /* ============ RICH FORMAT ============ */
+  /* ================= FORMAT ================= */
   function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function formatText(raw){
     var s = esc(raw);
     s = s.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
-    var lines = s.split("\n");
-    var out = []; var boldDone = false;
-    for (var i=0; i<lines.length; i++){
+    var lines = s.split("\n"), out = [], boldDone = false;
+    for (var i=0;i<lines.length;i++){
       var line = lines[i];
       var t = line.replace(/^\s+|\s+$/g, "");
       if (!t){ out.push(""); continue; }
@@ -263,7 +277,7 @@
     } catch(e){}
   }
 
-  /* ============ COPY BUTTON ============ */
+  /* ================= COPY ================= */
   function copyText(text){
     try {
       if (navigator.clipboard && navigator.clipboard.writeText){
@@ -305,9 +319,8 @@
     } catch(e){}
   }
 
-  /* ============ WIKI IMAGES (robust) ============ */
+  /* ================= WIKI THUMBS ================= */
   var lastQuestion = "";
-
   function hookAskTrack(){
     try {
       if (typeof window.askExpert !== "function" || window.askExpert._ajonTrackQ) return;
@@ -320,7 +333,6 @@
       window.askExpert = w;
     } catch(e){}
   }
-
   function attachImg(bubble, src, fallbackSrc){
     try {
       if (!bubble || bubble.querySelector("img.ajon-thumb")) return;
@@ -330,11 +342,7 @@
       img.loading = "lazy";
       img.onerror = function(){
         try {
-          if (fallbackSrc && img.src !== fallbackSrc){
-            img.src = fallbackSrc;
-            fallbackSrc = null;
-            return;
-          }
+          if (fallbackSrc && img.src !== fallbackSrc){ img.src = fallbackSrc; fallbackSrc = null; return; }
           img.className = "ajon-thumb-fail";
         } catch(e){}
       };
@@ -342,7 +350,6 @@
       bubble.appendChild(img);
     } catch(e){}
   }
-
   function fetchWikiThumb(question, bubble){
     try {
       if (!question || !bubble || bubble._thumbTry) return;
@@ -360,10 +367,10 @@
           chain = chain.catch(function(){
             var sumUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(t);
             return fetch(sumUrl).then(function(r){ return r.json(); }).then(function(s){
-              if (!s) throw new Error("no summary");
+              if (!s) throw new Error("no sum");
               var thumb = s.thumbnail && s.thumbnail.source;
               var orig  = s.originalimage && s.originalimage.source;
-              if (!thumb && !orig) throw new Error("no image");
+              if (!thumb && !orig) throw new Error("no img");
               var t1 = thumb ? String(thumb) : String(orig);
               var t2 = orig ? String(orig) : null;
               if (t1.indexOf("//") === 0) t1 = "https:" + t1;
@@ -377,46 +384,40 @@
       }).catch(function(){});
     } catch(e){}
   }
-
   function watchNewBubbles(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
-      if (!c || c._ajonObsV5) return;
-      c._ajonObsV5 = true;
+      if (!c || c._ajonObsV8) return;
+      c._ajonObsV8 = true;
       var obs = new MutationObserver(function(muts){
-        for (var i=0; i<muts.length; i++){
-          for (var j=0; j<muts[i].addedNodes.length; j++){
+        for (var i=0;i<muts.length;i++){
+          for (var j=0;j<muts[i].addedNodes.length;j++){
             var n = muts[i].addedNodes[j];
             if (n.nodeType !== 1) continue;
             var cls = n.className || "";
             if (cls.indexOf("ajon-thinking") > -1) continue;
             if (/user|me\b|sent/i.test(cls)) continue;
             if (!/bubble|msg|ex-/i.test(cls)) continue;
-            (function(node){
-              setTimeout(function(){
-                try {
-                  ensureCopyBtn(node);
-                  if (node.querySelector("img.ajon-thumb")) return;
-                  if (!lastQuestion) return;
-                  var txt = (node.innerText || node.textContent || "").trim();
-                  if (txt.length < 40) return;
-                  fetchWikiThumb(lastQuestion, node);
-                } catch(e){}
-              }, 800);
-            })(n);
+            ensureCopyBtn(n);
+            if (!n._thumbTry && lastQuestion){
+              var txt = (n.innerText || n.textContent || "").trim();
+              if (txt.length > 40) {
+                var q = lastQuestion;
+                setTimeout(function(){ fetchWikiThumb(q, n); }, 700);
+              }
+            }
           }
         }
       });
       obs.observe(c, { childList: true, subtree: false });
     } catch(e){}
   }
-
   function addCopyToExisting(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
       if (!c) return;
       var nodes = c.children;
-      for (var i=0; i<nodes.length; i++){
+      for (var i=0;i<nodes.length;i++){
         var n = nodes[i];
         if (!n.classList) continue;
         if (n.classList.contains("ajon-thinking")) continue;
@@ -426,14 +427,13 @@
     } catch(e){}
   }
 
-  /* ============ CLEAR CHAT ============ */
+  /* ================= CLEAR ================= */
   function doClear(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
       if (c) c.innerHTML = "";
       try { if (window.EXPERT) window.EXPERT.msgs = []; } catch(e){}
-      var cleared = false;
-      try { if (typeof window.clearAssistantChat === "function"){ window.clearAssistantChat(); cleared = true; } } catch(e){}
+      try { if (typeof window.clearAssistantChat === "function") window.clearAssistantChat(); } catch(e){}
       setTimeout(function(){
         try {
           if (typeof exAddBubble === "function"){
@@ -448,25 +448,46 @@
   }
   function installClearBtn(){
     try {
-      var panel = $(".expert-main") || byId("expertMain");
-      if (!panel || panel.querySelector(".ajon-clear-btn")) return;
-      try { panel.style.position = "relative"; } catch(e){}
+      var row = document.querySelector(".expert-input-row");
+      if (!row || row.querySelector(".ajon-clear-btn")) return;
       var btn = document.createElement("button");
       btn.className = "ajon-clear-btn";
       btn.type = "button";
       btn.textContent = "\uD83D\uDDD1";
+      btn.setAttribute("aria-label", "Clear chat");
       btn.onclick = function(ev){
         ev.stopPropagation();
         if (!confirm("Clear this chat?")) return;
         doClear();
       };
-      panel.appendChild(btn);
+      row.appendChild(btn);
+    } catch(e){}
+  }
+  function watchQuoteCard(){
+    try {
+      var qc = byId("expertQuoteCard");
+      if (!qc || qc._ajonQuoteWatch) return;
+      qc._ajonQuoteWatch = true;
+      var sync = function(){
+        try {
+          var btn = document.querySelector(".ajon-clear-btn");
+          if (!btn) return;
+          var hidden = qc.classList.contains("hidden") || qc.style.display === "none" || qc.offsetParent === null;
+          if (hidden) btn.classList.remove("hidden-by-quote");
+          else btn.classList.add("hidden-by-quote");
+        } catch(e){}
+      };
+      try {
+        var obs = new MutationObserver(sync);
+        obs.observe(qc, { attributes: true, attributeFilter: ["class","style"] });
+      } catch(e){}
+      setInterval(sync, 1500);
+      sync();
     } catch(e){}
   }
 
-  /* ============ IMAGE ATTACH + VISION ============ */
+  /* ================= IMAGE VISION ================= */
   var currentImage = null;
-
   function installAttachBtn(){
     try {
       var row = document.querySelector(".expert-input-row");
@@ -475,6 +496,7 @@
       btn.className = "ajon-attach-btn";
       btn.type = "button";
       btn.textContent = "\uD83D\uDCCE";
+      btn.setAttribute("aria-label","Attach image");
       btn.onclick = openPicker;
       row.appendChild(btn);
     } catch(e){}
@@ -533,13 +555,8 @@
     } catch(e){}
   }
   function getKeys(){
-    try {
-      if (typeof window.__ajonGetKeys === "function"){
-        var k = window.__ajonGetKeys();
-        if (k) return k;
-      }
-    } catch(e){}
-    var o = { groq: "", gemini: "" };
+    try { if (typeof window.__ajonGetKeys === "function"){ var k = window.__ajonGetKeys(); if (k) return k; } } catch(e){}
+    var o = { groq:"", gemini:"" };
     try { o.groq = localStorage.getItem("ajon_groq_key") || ""; } catch(e){}
     try { o.gemini = localStorage.getItem("ajon_gemini_key") || ""; } catch(e){}
     return o;
@@ -553,7 +570,7 @@
         { text: text || "Describe this image briefly and suggest how I can use it for business in Uganda." },
         { inlineData: { mimeType: mime || "image/jpeg", data: b64 } }
       ]}],
-      systemInstruction: { parts: [{ text: "You are Mr Expert, a wise African business mentor. Describe the image briefly, then give practical advice in 3-5 sentences. Warm, direct, actionable." }]},
+      systemInstruction: { parts: [{ text: "You are Mr Expert, a wise African business mentor. Describe the image briefly, then give practical advice in 3-5 sentences." }]},
       generationConfig: { temperature: 0.6, maxOutputTokens: 600 }
     };
     return fetch(url, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) })
@@ -573,14 +590,13 @@
       currentImage = null; removePreview();
       if (!img) return;
       if (typeof hasFullAccess === "function" && !hasFullAccess()){ expertGate(); return; }
-      var check = enforceLimit();
-      if (!check.ok){ return; }
+      if (!enforceLimit()) return;
       if (window.EXPERT && window.EXPERT.busy) return;
       try { window.EXPERT.busy = true; } catch(e){}
       try { exHideQuote(); } catch(e){}
       var lbl = (txt || "Sent an image") + "  \uD83D\uDDBC\uFE0F";
       try { exAddBubble("me", lbl); } catch(e){}
-      try { window.EXPERT.msgs.push({ s: "me", t: lbl }); } catch(e){}
+      try { window.EXPERT.msgs.push({ s:"me", t:lbl }); } catch(e){}
       if (inp) inp.value = "";
       setTimeout(function(){ try { autoGrow(inp); } catch(e){} }, 50);
       var typing = null;
@@ -588,7 +604,7 @@
       callVision(txt, img.base64, img.mime).then(function(text){
         try { if (typing && typing.parentNode) typing.parentNode.removeChild(typing); } catch(e){}
         var bb = exAddBubble("ex", "");
-        try { window.EXPERT.msgs.push({ s: "ex", t: text }); } catch(e){}
+        try { window.EXPERT.msgs.push({ s:"ex", t:text }); } catch(e){}
         try { exTypeInto(bb, text, function(){ try { window.EXPERT.busy = false; } catch(e){} }); } catch(e){}
         dailyBump(); updateTierBadge();
       }).catch(function(){
@@ -596,37 +612,30 @@
         var msg = "I couldn't analyze that image right now. Please try a smaller photo or check your connection.";
         try {
           var eb = exAddBubble("ex", "");
-          try { window.EXPERT.msgs.push({ s: "ex", t: msg }); } catch(e){}
+          try { window.EXPERT.msgs.push({ s:"ex", t:msg }); } catch(e){}
           exTypeInto(eb, msg, function(){ try { window.EXPERT.busy = false; } catch(e){} });
         } catch(e){ try { window.EXPERT.busy = false; } catch(e){} }
       });
     } catch(e){ try { window.EXPERT.busy = false; } catch(e){} }
   }
 
-  /* ============ DAILY LIMIT ============ */
+  /* ================= LIMIT ================= */
   function enforceLimit(){
-    var tier = detectTier();
-    if (tier === "master") return { ok: true };
-    var c = dailyCount();
-    if (c >= DAILY_LIMIT_STANDARD){
-      toast("Daily limit reached (" + DAILY_LIMIT_STANDARD + "/day). Tap the 15,000/= Master plan in Unlock for unlimited.", 4000);
-      return { ok: false };
+    if (detectTier() === "master") return true;
+    if (dailyCount() >= DAILY_LIMIT_STANDARD){
+      toast("Daily limit reached (" + DAILY_LIMIT_STANDARD + "/day). Tap 15,000/= Master in Unlock for unlimited.", 3500);
+      return false;
     }
-    return { ok: true };
+    return true;
   }
-
-  /* ============ WRAP askExpert (limits + image) ============ */
   function hookAskLimit(){
     try {
       if (typeof window.askExpert !== "function" || window.askExpert._ajonLimitWrap) return;
       var orig = window.askExpert;
       var w = function(){
         if (currentImage) return sendImage();
-        try {
-          if (typeof hasFullAccess === "function" && !hasFullAccess()) return orig.apply(this, arguments);
-        } catch(e){}
-        var check = enforceLimit();
-        if (!check.ok) return;
+        try { if (typeof hasFullAccess === "function" && !hasFullAccess()) return orig.apply(this, arguments); } catch(e){}
+        if (!enforceLimit()) return;
         try { dailyBump(); updateTierBadge(); } catch(e){}
         return orig.apply(this, arguments);
       };
@@ -635,19 +644,117 @@
     } catch(e){}
   }
 
-  /* ============ LONG PRESS SAVE ============ */
+  /* ================= VOICE ================= */
+  var MIC = { listening: false, webRec: null };
+  function setMic(on){
+    MIC.listening = !!on;
+    try {
+      var b = document.querySelector(".ajon-mic-btn");
+      if (!b) return;
+      if (on){ b.classList.add("listening"); b.textContent = "\u23F9"; }
+      else { b.classList.remove("listening"); b.textContent = "\uD83C\uDFA4"; }
+    } catch(e){}
+  }
+  function fillInput(t){
+    try {
+      var inp = byId("aiInput");
+      if (!inp || !t) return;
+      var v = String(inp.value || "").trim();
+      inp.value = v ? (v + " " + t) : t;
+      try { autoGrow(inp); } catch(e){}
+      try { inp.focus(); } catch(e){}
+    } catch(e){}
+  }
+  function getSpeech(){
+    try {
+      var C = window.Capacitor;
+      if (C && C.Plugins && C.Plugins.SpeechRecognition) return C.Plugins.SpeechRecognition;
+    } catch(e){}
+    return null;
+  }
+  function stopVoice(){
+    try {
+      var p = getSpeech();
+      if (p && typeof p.stop === "function"){ p.stop().catch(function(){}); }
+    } catch(e){}
+    try { if (MIC.webRec){ MIC.webRec.stop(); MIC.webRec = null; } } catch(e){}
+    setMic(false);
+  }
+  function startWebVoice(){
+    try {
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR){ toast("Voice not supported"); setMic(false); return; }
+      var rec = new SR();
+      rec.lang = "en-US";
+      rec.interimResults = false;
+      rec.maxAlternatives = 1;
+      MIC.webRec = rec;
+      rec.onresult = function(ev){
+        try { var t = ev.results[0][0].transcript; setMic(false); if (t) fillInput(t); } catch(e){ setMic(false); }
+      };
+      rec.onerror = function(ev){
+        setMic(false);
+        var m = ev && ev.error ? ev.error : "unknown";
+        if (m === "not-allowed" || m === "service-not-allowed") toast("Microphone permission denied");
+        else toast("Voice error: " + m);
+      };
+      rec.onend = function(){ setMic(false); MIC.webRec = null; };
+      setMic(true);
+      toast("Listening...");
+      rec.start();
+    } catch(e){ setMic(false); toast("Voice failed"); }
+  }
+  function startVoice(){
+    if (MIC.listening) return stopVoice();
+    var p = getSpeech();
+    if (p && typeof p.start === "function"){
+      try {
+        var pr = p.requestPermissions ? p.requestPermissions() : Promise.resolve({});
+        pr.then(function(perm){
+          var granted = perm && (perm.speechRecognition === "granted" || perm.recordAudio === "granted" || perm.microphone === "granted");
+          if (!granted && perm && (perm.speechRecognition === "denied" || perm.recordAudio === "denied")){
+            toast("Microphone permission denied"); return;
+          }
+          setMic(true);
+          toast("Listening...");
+          p.start({ language: "en-US", maxResults: 1, partialResults: false, popup: false })
+            .then(function(res){
+              setMic(false);
+              var t = res && res.matches && res.matches[0];
+              if (t) fillInput(t);
+            })
+            .catch(function(){ setMic(false); startWebVoice(); });
+        }).catch(function(){ startWebVoice(); });
+        return;
+      } catch(e){}
+    }
+    startWebVoice();
+  }
+  function installMicBtn(){
+    try {
+      var row = document.querySelector(".expert-input-row");
+      if (!row || row.querySelector(".ajon-mic-btn")) return;
+      var btn = document.createElement("button");
+      btn.className = "ajon-mic-btn";
+      btn.type = "button";
+      btn.textContent = "\uD83C\uDFA4";
+      btn.setAttribute("aria-label", "Voice");
+      btn.onclick = function(ev){ ev.stopPropagation(); ev.preventDefault(); startVoice(); };
+      var attach = row.querySelector(".ajon-attach-btn");
+      if (attach && attach.parentNode === row) attach.parentNode.insertBefore(btn, attach.nextSibling);
+      else row.insertBefore(btn, row.firstChild);
+    } catch(e){}
+  }
+
+  /* ================= LONG PRESS SAVE ================= */
   function trySave(text){
     if (typeof window.saveNote === "function"){
       try { window.saveNote(text); return true; } catch(e){
         try { window.saveNote({ text: text, body: text, content: text }); return true; } catch(e2){}
       }
     }
-    if (typeof window.addNote === "function"){
-      try { window.addNote(text); return true; } catch(e){}
-    }
-    if (typeof window.ajonSaveNote === "function"){
-      try { window.ajonSaveNote(text); return true; } catch(e){}
-    }
+    if (typeof window.addNote === "function"){ try { window.addNote(text); return true; } catch(e){} }
+    if (typeof window.ajonSaveNote === "function"){ try { window.ajonSaveNote(text); return true; } catch(e){} }
     return false;
   }
   function saveBubble(bubble){
@@ -719,8 +826,9 @@
     } catch(e){}
   }
 
-  /* ============ INIT ============ */
+  /* ================= INIT ================= */
   function init(){
+    installViewportFix();
     installTapDetector();
     installArrow();
     installThinking();
@@ -728,32 +836,30 @@
     hookAskTrack();
     hookAskLimit();
     installAttachBtn();
+    installMicBtn();
     installClearBtn();
+    watchQuoteCard();
     watchNewBubbles();
     addCopyToExisting();
     attachLongPress();
     updateTierBadge();
   }
-
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
-  else setTimeout(init, 500);
+  else setTimeout(init, 300);
 
-  var tries = 0;
-  var iv = setInterval(function(){
-    tries++;
+  setTimeout(function(){
     installArrow();
     installThinking();
     hookAskTrack();
     hookAskLimit();
     installAttachBtn();
+    installMicBtn();
     installClearBtn();
-    watchNewBubbles();
-    addCopyToExisting();
     try { var el = byId("aiInput"); if (el && el.tagName === "INPUT") upgradeInput(); } catch(e){}
+    watchNewBubbles();
     attachLongPress();
     updateTierBadge();
-    if (tries >= 20) clearInterval(iv);
-  }, 900);
+  }, 2500);
 
-  try { console.log("[Ajon Enhancements V5] loaded"); } catch(e){}
+  try { console.log("[Ajon Enhancements V8] loaded"); } catch(e){}
 })();
