@@ -3,10 +3,18 @@
   "appName": "Ajon",
   "webDir": "www",
   "bundledWebRuntime": false,
-  "server": { "androidScheme": "https" },
+  "server": {
+    "androidScheme": "https",
+    "allowNavigation": [
+      "api.groq.com",
+      "generativelanguage.googleapis.com",
+      "*.googleapis.com",
+      "*.groq.com"
+    ]
+  },
   "android": {
     "allowMixedContent": false,
     "captureInput": true,
-    "webContentsDebuggingEnabled": false
+    "webContentsDebuggingEnabled": true
   }
 }
