@@ -13,7 +13,11 @@
       "en.wikipedia.org",
       "*.wikipedia.org",
       "*.wikimedia.org",
-      "upload.wikimedia.org"
+      "upload.wikimedia.org",
+      "commons.wikimedia.org",
+      "api.openverse.org",
+      "image.pollinations.ai",
+      "*.pollinations.ai"
     ]
   },
   "android": {

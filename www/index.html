@@ -6997,10 +6997,10 @@ try {
 /* __EXPERT_ENHANCEMENTS_V1__ */
 (function(){
   "use strict";
-  if (window.__ajonEnhV8) return;
-  window.__ajonEnhV8 = true;
+  if (window.__ajonEnhV9) return;
+  window.__ajonEnhV9 = true;
 
-  var DAILY_LIMIT_STANDARD = 20;
+  var DAILY_LIMIT_STANDARD = Infinity;  /* UNLIMITED — no daily cap */
   function byId(id){ return document.getElementById(id); }
   function $(s){ return document.querySelector(s); }
   function now(){ return Date.now(); }
@@ -7019,6 +7019,7 @@ try {
     t._tid = setTimeout(function(){ t.style.opacity = "0"; }, ms || 2000);
   }
 
+  /* ================= VIEWPORT ================= */
   function installViewportFix(){
     try {
       if (!window.visualViewport) return;
@@ -7026,7 +7027,6 @@ try {
       function apply(){
         try {
           var kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
-          document.documentElement.style.setProperty("--ajon-kb", kb + "px");
           var b = document.body;
           if (b){
             b.style.paddingBottom = kb > 20 ? (kb + 4) + "px" : "0px";
@@ -7042,6 +7042,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= TIER (unlimited now) ================= */
   function detectTier(){
     try {
       var cands = ["ajon_plan","ajon_tier","ajon_sub_type","ajon_subscription","ajon_membership","ajon_sub_tier"];
@@ -7092,46 +7093,16 @@ try {
     } catch(e){}
   }
 
-  function dailyKey(){ var d = new Date(); return "ajon_expert_daily_" + d.getFullYear() + "_" + (d.getMonth()+1) + "_" + d.getDate(); }
-  function dailyCount(){ try { return Number(localStorage.getItem(dailyKey())) || 0; } catch(e){ return 0; } }
-  function dailyBump(){
-    try {
-      var n = dailyCount() + 1;
-      localStorage.setItem(dailyKey(), String(n));
-      try {
-        for (var i=0;i<localStorage.length;i++){
-          var k = localStorage.key(i);
-          if (k && k.indexOf("ajon_expert_daily_") === 0 && k !== dailyKey()) localStorage.removeItem(k);
-        }
-      } catch(e){}
-      return n;
-    } catch(e){ return 0; }
-  }
-  function dailyRemaining(){
-    if (detectTier() === "master") return Infinity;
-    return Math.max(0, DAILY_LIMIT_STANDARD - dailyCount());
-  }
-
   function updateTierBadge(){
     try {
       var hdr = document.querySelector(".expert-header");
       if (!hdr) return;
       var old = hdr.querySelector(".ajon-tier-badge-header");
       if (old) old.parentNode.removeChild(old);
-      var tier = detectTier();
-      if (tier === "none") return;
       var badge = document.createElement("span");
-      badge.className = "ajon-tier-badge-header";
-      if (tier === "master"){
-        badge.classList.add("master");
-        badge.textContent = "\u267E\uFE0F";
-        badge.setAttribute("aria-label", "Master: unlimited");
-      } else {
-        var left = dailyRemaining();
-        if (left <= 3) badge.classList.add("low");
-        badge.textContent = "\u23F1 " + left;
-        badge.setAttribute("aria-label", left + " of " + DAILY_LIMIT_STANDARD + " left");
-      }
+      badge.className = "ajon-tier-badge-header master";
+      badge.textContent = "\u267E\uFE0F";
+      badge.setAttribute("aria-label", "Unlimited questions");
       var badgeEl = hdr.querySelector(".expert-badge");
       var earth   = hdr.querySelector(".expert-earth");
       if (badgeEl && badgeEl.parentNode === hdr){
@@ -7143,6 +7114,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= ARROW ================= */
   function installArrow(){
     try {
       var btn = document.querySelector(".expert-send-btn");
@@ -7153,6 +7125,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= THINKING ================= */
   function installThinking(){
     try {
       if (typeof window.exShowTyping !== "function" || window.exShowTyping._ajonEnh) return;
@@ -7174,6 +7147,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= TEXTAREA ================= */
   function autoGrow(ta){
     try {
       if (!ta || ta.tagName !== "TEXTAREA") return;
@@ -7218,6 +7192,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= FORMAT ================= */
   function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function formatText(raw){
     var s = esc(raw);
@@ -7255,6 +7230,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= COPY ================= */
   function copyText(text){
     try {
       if (navigator.clipboard && navigator.clipboard.writeText){
@@ -7296,7 +7272,9 @@ try {
     } catch(e){}
   }
 
+  /* ================= IMAGE CHAIN (4 sources) ================= */
   var lastQuestion = "";
+
   function hookAskTrack(){
     try {
       if (typeof window.askExpert !== "function" || window.askExpert._ajonTrackQ) return;
@@ -7310,92 +7288,134 @@ try {
     } catch(e){}
   }
 
-  function looksFactual(q){
-    var s = String(q||"").toLowerCase().trim();
-    if (!s) return false;
-    if (/^(how do i|how can i|how to)\s+(make|start|sell|grow|build|cook|prepare|open|run)/.test(s)) return false;
-    if (/\b(business idea|profit|capital|loan|price my|my business)\b/.test(s)) return false;
-    return true;
-  }
-
-  function loadImgAsBlob(imgEl, url, fallback){
+  function attachImg(bubble, src){
     try {
-      fetch(url, { mode: "cors" }).then(function(r){
-        if (!r.ok) throw new Error("img " + r.status);
-        return r.blob();
-      }).then(function(blob){
-        try { imgEl.src = URL.createObjectURL(blob); }
-        catch(e){ imgEl.src = url; }
-      }).catch(function(){
-        if (fallback && fallback !== url) imgEl.src = fallback;
-        else imgEl.src = url;
-      });
-    } catch(e){ imgEl.src = url; }
-  }
-  function attachImg(bubble, src, fallbackSrc){
-    try {
-      if (!bubble || bubble.querySelector("img.ajon-thumb")) return;
+      if (!bubble || !src) return false;
+      if (bubble.querySelector("img.ajon-thumb")) return false;
       var img = document.createElement("img");
       img.className = "ajon-thumb";
       img.alt = "";
+      img.referrerPolicy = "no-referrer";
+      img.loading = "lazy";
       img.onerror = function(){
-        try {
-          if (fallbackSrc && img.src !== fallbackSrc){ img.src = fallbackSrc; fallbackSrc = null; return; }
-          img.className = "ajon-thumb-fail";
-        } catch(e){}
+        try { img.className = "ajon-thumb-fail"; } catch(e){}
       };
+      img.src = src;
       bubble.appendChild(img);
-      loadImgAsBlob(img, src, fallbackSrc);
-    } catch(e){}
+      return true;
+    } catch(e){ return false; }
   }
-  function fetchWikiThumb(question, bubble){
-    try {
-      if (!question || !bubble || bubble._thumbTry) return;
-      if (!looksFactual(question)) return;
-      bubble._thumbTry = true;
+
+  function tryWikipediaImage(q){
+    return new Promise(function(resolve, reject){
       var url = "https://en.wikipedia.org/w/api.php?" + new URLSearchParams({
-        action: "query", generator: "search", gsrsearch: question, gsrlimit: "3",
-        prop: "pageimages|info", piprop: "thumbnail|original", pithumbsize: "480",
+        action: "query", generator: "search", gsrsearch: q, gsrlimit: "3",
+        prop: "pageimages", piprop: "thumbnail|original", pithumbsize: "480",
         format: "json", origin: "*"
       });
       fetch(url).then(function(r){ return r.json(); }).then(function(j){
         var pages = j && j.query && j.query.pages;
-        if (!pages) throw new Error("no pages");
+        if (!pages) return reject("no pages");
         var arr = [];
         for (var k in pages){ if (pages.hasOwnProperty(k)) arr.push(pages[k]); }
         for (var i=0;i<arr.length;i++){
           var p = arr[i];
           if (p.thumbnail && p.thumbnail.source){
-            var t1 = String(p.thumbnail.source);
-            var t2 = p.original && p.original.source ? String(p.original.source) : null;
-            if (t1.indexOf("//") === 0) t1 = "https:" + t1;
-            if (t2 && t2.indexOf("//") === 0) t2 = "https:" + t2;
-            attachImg(bubble, t1, t2);
-            return;
+            var u = String(p.thumbnail.source);
+            if (u.indexOf("//") === 0) u = "https:" + u;
+            return resolve(u);
           }
         }
-        if (arr[0] && arr[0].title){
-          var sumUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(arr[0].title);
-          fetch(sumUrl).then(function(r){ return r.json(); }).then(function(s){
-            var thumb = s && s.thumbnail && s.thumbnail.source;
-            var orig  = s && s.originalimage && s.originalimage.source;
-            if (!thumb && !orig) return;
-            var t1 = thumb ? String(thumb) : String(orig);
-            var t2 = orig ? String(orig) : null;
-            if (t1.indexOf("//") === 0) t1 = "https:" + t1;
-            if (t2 && t2.indexOf("//") === 0) t2 = "https:" + t2;
-            attachImg(bubble, t1, t2);
-          }).catch(function(){});
+        reject("no thumb");
+      }).catch(reject);
+    });
+  }
+
+  function tryCommonsImage(q){
+    return new Promise(function(resolve, reject){
+      var url = "https://commons.wikimedia.org/w/api.php?" + new URLSearchParams({
+        action: "query", generator: "search", gsrsearch: q,
+        gsrnamespace: "6", gsrlimit: "5",
+        prop: "imageinfo", iiprop: "url|mime", iiurlwidth: "480",
+        format: "json", origin: "*"
+      });
+      fetch(url).then(function(r){ return r.json(); }).then(function(j){
+        var pages = j && j.query && j.query.pages;
+        if (!pages) return reject("no pages");
+        var arr = [];
+        for (var k in pages){ if (pages.hasOwnProperty(k)) arr.push(pages[k]); }
+        for (var i=0;i<arr.length;i++){
+          var p = arr[i];
+          var info = p.imageinfo && p.imageinfo[0];
+          if (!info) continue;
+          var u = info.thumburl || info.url;
+          if (!u) continue;
+          if (u.indexOf("//") === 0) u = "https:" + u;
+          var mime = String(info.mime || "");
+          if (mime && mime.indexOf("image/") !== 0) continue;
+          if (/\.(svg|pdf|ogv|webm|ogg|tiff?)$/i.test(u)) continue;
+          return resolve(u);
         }
-      }).catch(function(){});
+        reject("no image");
+      }).catch(reject);
+    });
+  }
+
+  function tryOpenverseImage(q){
+    return new Promise(function(resolve, reject){
+      var url = "https://api.openverse.org/v1/images/?q=" + encodeURIComponent(q) + "&page_size=3";
+      fetch(url).then(function(r){ return r.json(); }).then(function(j){
+        var results = j && j.results;
+        if (!results || !results.length) return reject("no results");
+        for (var i=0;i<results.length;i++){
+          var r = results[i];
+          var u = r.thumbnail || r.url;
+          if (u) return resolve(u);
+        }
+        reject("no url");
+      }).catch(reject);
+    });
+  }
+
+  function pollinationsUrl(q, model){
+    var clean = String(q||"").replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim().slice(0, 180);
+    var prompt = clean + ", illustration, high quality, detailed";
+    return "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt)
+      + "?width=480&height=320&nologo=true&model=" + (model || "flux")
+      + "&seed=" + Math.floor(Math.random() * 1000000);
+  }
+
+  function fetchResponseImage(question, bubble){
+    try {
+      if (!question || !bubble || bubble._thumbTry) return;
+      bubble._thumbTry = true;
+      var sources = [
+        function(){ return tryWikipediaImage(question); },
+        function(){ return tryCommonsImage(question); },
+        function(){ return tryOpenverseImage(question); },
+        function(){ return Promise.resolve(pollinationsUrl(question, "flux")); },
+        function(){ return Promise.resolve(pollinationsUrl(question, "turbo")); }
+      ];
+      var i = 0;
+      function run(){
+        if (i >= sources.length) return;
+        sources[i]().then(function(url){
+          if (!url) throw new Error("empty");
+          attachImg(bubble, url);
+        }).catch(function(){
+          i++;
+          run();
+        });
+      }
+      run();
     } catch(e){}
   }
 
   function watchNewBubbles(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
-      if (!c || c._ajonObsV8) return;
-      c._ajonObsV8 = true;
+      if (!c || c._ajonObsV9) return;
+      c._ajonObsV9 = true;
       var obs = new MutationObserver(function(muts){
         for (var i=0;i<muts.length;i++){
           for (var j=0;j<muts[i].addedNodes.length;j++){
@@ -7410,7 +7430,7 @@ try {
               var txt = (n.innerText || n.textContent || "").trim();
               if (txt.length > 40){
                 var q = lastQuestion;
-                setTimeout(function(){ fetchWikiThumb(q, n); }, 700);
+                setTimeout(function(){ fetchResponseImage(q, n); }, 700);
               }
             }
           }
@@ -7419,6 +7439,29 @@ try {
       obs.observe(c, { childList: true, subtree: false });
     } catch(e){}
   }
+
+  /* Safety net: scan for last bubble without image every 6s */
+  function imageSafetyNet(){
+    setInterval(function(){
+      try {
+        var c = byId("expertMsgs") || $(".expert-msgs");
+        if (!c || !lastQuestion) return;
+        var bubbles = c.querySelectorAll("[class*='bubble'], [class*='msg']");
+        if (!bubbles.length) return;
+        for (var i = bubbles.length - 1; i >= 0; i--){
+          var b = bubbles[i];
+          if (b.classList && b.classList.contains("ajon-thinking")) continue;
+          if (/user|me\b|sent/i.test(b.className || "")) continue;
+          if (b._thumbTry) return;
+          var txt = (b.innerText || b.textContent || "").trim();
+          if (txt.length < 40) return;
+          fetchResponseImage(lastQuestion, b);
+          return;
+        }
+      } catch(e){}
+    }, 6000);
+  }
+
   function addCopyToExisting(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
@@ -7434,6 +7477,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= CLEAR CHAT ================= */
   function doClear(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
@@ -7492,6 +7536,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= IMAGE ATTACH (vision) ================= */
   var currentImage = null;
   function installAttachBtn(){
     try {
@@ -7501,7 +7546,6 @@ try {
       btn.className = "ajon-attach-btn";
       btn.type = "button";
       btn.textContent = "\uD83D\uDCCE";
-      btn.setAttribute("aria-label","Attach image");
       btn.onclick = openPicker;
       row.appendChild(btn);
     } catch(e){}
@@ -7541,7 +7585,6 @@ try {
       var img = document.createElement("img");
       img.className = "ajon-img-preview";
       img.src = currentImage.previewUrl;
-      img.alt = "";
       row.appendChild(img);
       var clr = document.createElement("button");
       clr.className = "ajon-img-clear";
@@ -7595,7 +7638,6 @@ try {
       currentImage = null; removePreview();
       if (!img) return;
       if (typeof hasFullAccess === "function" && !hasFullAccess()){ expertGate(); return; }
-      if (!enforceLimit()) return;
       if (window.EXPERT && window.EXPERT.busy) return;
       try { window.EXPERT.busy = true; } catch(e){}
       try { exHideQuote(); } catch(e){}
@@ -7611,7 +7653,6 @@ try {
         var bb = exAddBubble("ex", "");
         try { window.EXPERT.msgs.push({ s:"ex", t:text }); } catch(e){}
         try { exTypeInto(bb, text, function(){ try { window.EXPERT.busy = false; } catch(e){} }); } catch(e){}
-        dailyBump(); updateTierBadge();
       }).catch(function(){
         try { if (typing && typing.parentNode) typing.parentNode.removeChild(typing); } catch(e){}
         var msg = "I couldn't analyze that image right now. Please try a smaller photo or check your connection.";
@@ -7624,23 +7665,13 @@ try {
     } catch(e){ try { window.EXPERT.busy = false; } catch(e){} }
   }
 
-  function enforceLimit(){
-    if (detectTier() === "master") return true;
-    if (dailyCount() >= DAILY_LIMIT_STANDARD){
-      toast("Daily limit reached. Tap 15,000/= Master plan for unlimited.", 3500);
-      return false;
-    }
-    return true;
-  }
+  /* ================= LIMIT (UNLIMITED) ================= */
   function hookAskLimit(){
     try {
       if (typeof window.askExpert !== "function" || window.askExpert._ajonLimitWrap) return;
       var orig = window.askExpert;
       var w = function(){
         if (currentImage) return sendImage();
-        try { if (typeof hasFullAccess === "function" && !hasFullAccess()) return orig.apply(this, arguments); } catch(e){}
-        if (!enforceLimit()) return;
-        try { dailyBump(); updateTierBadge(); } catch(e){}
         return orig.apply(this, arguments);
       };
       w._ajonLimitWrap = true;
@@ -7648,6 +7679,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= VOICE ================= */
   var MIC = { listening: false, webRec: null };
   function setMic(on){
     MIC.listening = !!on;
@@ -7716,7 +7748,7 @@ try {
         pr.then(function(perm){
           var granted = perm && (perm.speechRecognition === "granted" || perm.recordAudio === "granted" || perm.microphone === "granted");
           if (!granted && perm && (perm.speechRecognition === "denied" || perm.recordAudio === "denied")){
-            toast("Microphone permission denied - check app settings"); return;
+            toast("Microphone permission denied"); return;
           }
           setMic(true);
           toast("Listening...");
@@ -7741,7 +7773,6 @@ try {
       btn.className = "ajon-mic-btn";
       btn.type = "button";
       btn.textContent = "\uD83C\uDFA4";
-      btn.setAttribute("aria-label", "Voice");
       btn.onclick = function(ev){ ev.stopPropagation(); ev.preventDefault(); startVoice(); };
       var attach = row.querySelector(".ajon-attach-btn");
       if (attach && attach.parentNode === row) attach.parentNode.insertBefore(btn, attach.nextSibling);
@@ -7749,6 +7780,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= LONG PRESS SAVE ================= */
   function trySave(text){
     if (typeof window.saveNote === "function"){
       try { window.saveNote(text); return true; } catch(e){
@@ -7828,6 +7860,7 @@ try {
     } catch(e){}
   }
 
+  /* ================= INIT ================= */
   function init(){
     installViewportFix();
     installTapDetector();
@@ -7844,6 +7877,7 @@ try {
     addCopyToExisting();
     attachLongPress();
     updateTierBadge();
+    imageSafetyNet();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else setTimeout(init, 300);
@@ -7862,7 +7896,7 @@ try {
     updateTierBadge();
   }, 2500);
 
-  try { console.log("[Ajon Enhancements V8] loaded"); } catch(e){}
+  try { console.log("[Ajon Enhancements V9] loaded — unlimited, 5-source image chain"); } catch(e){}
 })();
 
 </script>
