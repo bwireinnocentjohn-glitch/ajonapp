@@ -8,3 +8,9 @@ android/
 *.keystore
 local.properties
 .DS_Store
+
+# Never bundle backups into the APK
+www/*.bak.html
+www/*.backup.html
+www/index.html.bak.*
+www/*.bak.*.html

@@ -27,7 +27,6 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      # ✅ THIS IS THE FIX: Upgraded to v4 and tell it to install only platform-tools
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
         with:
@@ -35,6 +34,31 @@ jobs:
 
       - name: Install npm dependencies
         run: npm install --no-audit --no-fund
+
+      - name: Inject API keys
+        env:
+          GROQ_KEY:   ${{ secrets.GROQ_API_KEY }}
+          GEMINI_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 - << 'PY'
+          import io, os
+          p = 'www/index.html'
+          html = io.open(p, encoding='utf-8').read()
+          g = os.environ.get('GROQ_KEY', '')
+          m = os.environ.get('GEMINI_KEY', '')
+          if not g or not m:
+              raise SystemExit('ERROR: one or both secrets missing')
+          g_before = html.count('PASTE_YOUR_GROQ_KEY_HERE')
+          m_before = html.count('PASTE_YOUR_GEMINI_KEY_HERE')
+          html = html.replace('PASTE_YOUR_GROQ_KEY_HERE', g)
+          html = html.replace('PASTE_YOUR_GEMINI_KEY_HERE', m)
+          io.open(p, 'w', encoding='utf-8').write(html)
+          print('Groq placeholder found: %d' % g_before)
+          print('Gemini placeholder found: %d' % m_before)
+          if g_before == 0 or m_before == 0:
+              raise SystemExit('ERROR: placeholder missing - aborting')
+          print('Keys injected OK.')
+          PY
 
       - name: Add Capacitor Android platform
         run: npx cap add android
