@@ -6000,18 +6000,115 @@ function switchNotesView(view) {
 .kb-ctrl.flip { background: linear-gradient(135deg,#00c853,#00a844); color: #fff; border-color: #00a844; }
 
 
+
 /* __EXPERT_ENHANCEMENTS_V1__ */
-#aiInput {
-  resize: none !important;
-  overflow: hidden !important;
-  min-height: 42px !important;
-  max-height: 140px !important;
-  line-height: 1.35 !important;
-  padding: 10px 12px !important;
-  border-radius: 12px !important;
-  box-sizing: border-box !important;
-  font-family: inherit !important;
+
+/* ---- Input row = one rounded dark pill, DeepSeek style ---- */
+.expert-input-row {
+  display: flex !important;
+  align-items: flex-end !important;
+  gap: 8px !important;
+  background: #071612 !important;
+  border: 1px solid rgba(0, 200, 83, 0.35) !important;
+  border-radius: 24px !important;
+  padding: 6px 6px 6px 16px !important;
+  margin: 8px 12px !important;
+  box-shadow: 0 0 0 1px rgba(0, 200, 83, 0.06), 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+  transition: border-color .18s, box-shadow .18s !important;
 }
+.expert-input-row:focus-within {
+  border-color: #00c853 !important;
+  box-shadow: 0 0 0 1px rgba(0, 200, 83, 0.28), 0 4px 16px rgba(0, 200, 83, 0.18) !important;
+}
+
+/* ---- Input itself: transparent inside the pill ---- */
+#aiInput, textarea#aiInput, input#aiInput {
+  flex: 1 1 auto !important;
+  width: auto !important;
+  min-width: 0 !important;
+  background: transparent !important;
+  border: 0 !important;
+  color: #e8fff4 !important;
+  outline: none !important;
+  padding: 9px 4px !important;
+  margin: 0 !important;
+  min-height: 28px !important;
+  max-height: 140px !important;
+  resize: none !important;
+  overflow-y: auto !important;
+  font-family: inherit !important;
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+#aiInput:focus, #aiInput:active {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+#aiInput::placeholder {
+  color: rgba(0, 230, 118, 0.5) !important;
+}
+
+/* ---- Send button: circle, light green gradient, order last ---- */
+.expert-send-btn {
+  order: 3 !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
+  border-radius: 50% !important;
+  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 40%, #34d399 100%) !important;
+  color: #052e16 !important;
+  font-size: 20px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 0 !important;
+  flex: 0 0 auto !important;
+  box-shadow: 0 2px 10px rgba(110, 231, 183, 0.45), inset 0 1px 0 rgba(255,255,255,.4) !important;
+  transition: transform .12s ease, box-shadow .15s !important;
+  cursor: pointer !important;
+}
+.expert-send-btn:active {
+  transform: scale(0.9) !important;
+  box-shadow: 0 1px 6px rgba(110, 231, 183, 0.35), inset 0 1px 0 rgba(255,255,255,.35) !important;
+}
+
+/* ---- Keyboard toggle: subtle circle, order middle ---- */
+.kb-toggle {
+  order: 2 !important;
+  width: 40px !important;
+  height: 40px !important;
+  min-width: 40px !important;
+  max-width: 40px !important;
+  border-radius: 50% !important;
+  background: rgba(0, 200, 83, 0.12) !important;
+  color: #6ee7b7 !important;
+  font-size: 16px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: 1px solid rgba(0, 200, 83, 0.25) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 auto !important;
+  cursor: pointer !important;
+  transition: transform .12s ease, background .15s !important;
+}
+.kb-toggle:active {
+  transform: scale(0.92) !important;
+  background: rgba(0, 200, 83, 0.25) !important;
+}
+
+/* ---- Thinking pill (already working) ---- */
 .ajon-thinking {
   display: inline-flex;
   align-items: center;
@@ -6053,24 +6150,8 @@ function switchNotesView(view) {
   0%, 100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.5); opacity: .55; }
 }
-.expert-send-btn {
-  width: 42px !important;
-  height: 42px !important;
-  border-radius: 50% !important;
-  background: linear-gradient(135deg, #00c853, #00a844) !important;
-  color: #fff !important;
-  font-size: 22px !important;
-  font-weight: 900 !important;
-  line-height: 1 !important;
-  padding: 0 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  border: 0 !important;
-  flex: 0 0 auto !important;
-  box-shadow: 0 2px 10px rgba(0,200,83,.35) !important;
-}
-.expert-send-btn:active { transform: scale(.94); }
+
+/* ---- Wiki thumbnail ---- */
 .ajon-thumb {
   display: block;
   margin-top: 10px;
@@ -6079,8 +6160,21 @@ function switchNotesView(view) {
   border-radius: 10px;
   border: 1px solid rgba(0,200,83,.35);
   object-fit: cover;
+  background: #0d1f1a;
 }
-.ex-bubble b, .msg-ex b { color: #69f0ae; font-weight: 800; }
+
+/* ---- Long-press highlight ---- */
+.ajon-pressing {
+  outline: 2px solid #34d399 !important;
+  outline-offset: 2px;
+  transition: outline .15s;
+}
+
+/* ---- Bold text in answers ---- */
+.ex-bubble b, .msg-ex b, .bubble b, [class*="bubble"] b, [class*="msg"] b {
+  color: #6ee7b7;
+  font-weight: 800;
+}
 
 </style>
 <script>
@@ -6819,82 +6913,112 @@ try {
 /* __EXPERT_ENHANCEMENTS_V1__ */
 (function(){
   "use strict";
-  if (window.__ajonExpertEnhancements) return;
-  window.__ajonExpertEnhancements = true;
+  if (window.__ajonEnhV3) return;
+  window.__ajonEnhV3 = true;
 
   function byId(id){ return document.getElementById(id); }
   function $(s){ return document.querySelector(s); }
 
-  /* ---------- TOAST ---------- */
-  function toast(msg){
+  function toast(msg, ms){
     var t = byId("ajonEnhToast");
     if (!t){
       t = document.createElement("div");
       t.id = "ajonEnhToast";
-      t.style.cssText = "position:fixed;bottom:150px;left:50%;transform:translateX(-50%);background:#00c853;color:#00220e;padding:8px 16px;border-radius:999px;font-size:13px;font-weight:800;z-index:99999;opacity:0;transition:opacity .25s;pointer-events:none;";
+      t.style.cssText = "position:fixed;bottom:170px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#a7f3d0,#34d399);color:#052e16;padding:10px 18px;border-radius:999px;font-size:13px;font-weight:900;z-index:99999;opacity:0;transition:opacity .25s;pointer-events:none;box-shadow:0 4px 14px rgba(52,211,153,.5);";
       document.body.appendChild(t);
     }
     t.textContent = msg;
     t.style.opacity = "1";
     clearTimeout(t._tid);
-    t._tid = setTimeout(function(){ t.style.opacity = "0"; }, 1600);
+    t._tid = setTimeout(function(){ t.style.opacity = "0"; }, ms || 1700);
   }
 
-  /* ---------- 4. ARROW SEND BUTTON ---------- */
-  function installArrowButton(){
+  /* ========== 1. Arrow send button ========== */
+  function installArrow(){
     try {
       var btn = document.querySelector(".expert-send-btn");
-      if (!btn) return false;
-      if (btn._ajonArrow) return true;
+      if (!btn || btn._ajonArrow) return;
       btn._ajonArrow = true;
       btn.textContent = "\u2191";
       btn.setAttribute("aria-label", "Send");
-      return true;
-    } catch(e){ return false; }
+    } catch(e){}
   }
 
-  /* ---------- 5. ANIMATED THINKING ---------- */
-  function installThinkingOverride(){
+  /* ========== 2. Animated thinking ========== */
+  function installThinking(){
     try {
-      if (typeof window.exShowTyping !== "function") return false;
-      if (window.exShowTyping._ajonEnh) return true;
+      if (typeof window.exShowTyping !== "function" || window.exShowTyping._ajonEnh) return;
       var orig = window.exShowTyping;
-      var wrapped = function(){
+      var w = function(){
         try {
-          var container = byId("expertMsgs") || document.querySelector(".expert-msgs");
-          if (!container) return orig.apply(this, arguments);
-          var wrap = document.createElement("div");
-          wrap.className = "ajon-thinking";
-          wrap.innerHTML = '<span class="ajon-think-dot"></span>'
-            + '<span class="ajon-think-dot"></span>'
-            + '<span class="ajon-think-dot"></span>'
-            + '<span class="ajon-think-text">Am Thinking Dear</span>';
-          container.appendChild(wrap);
-          try { container.scrollTop = container.scrollHeight; } catch(e){}
-          return wrap;
-        } catch(e){
-          return orig.apply(this, arguments);
-        }
+          var c = byId("expertMsgs") || $(".expert-msgs");
+          if (!c) return orig.apply(this, arguments);
+          var el = document.createElement("div");
+          el.className = "ajon-thinking";
+          el.innerHTML = '<span class="ajon-think-dot"></span><span class="ajon-think-dot"></span><span class="ajon-think-dot"></span><span class="ajon-think-text">Am Thinking Dear</span>';
+          c.appendChild(el);
+          try { c.scrollTop = c.scrollHeight; } catch(e){}
+          return el;
+        } catch(e){ return orig.apply(this, arguments); }
       };
-      wrapped._ajonEnh = true;
-      window.exShowTyping = wrapped;
-      return true;
-    } catch(e){ return false; }
+      w._ajonEnh = true;
+      window.exShowTyping = w;
+    } catch(e){}
   }
 
-  /* ---------- 1. AUTO-GROW TEXTAREA ---------- */
-  var FALLBACK_WORDS = ["soap","honey","beeswax","oil","compost","biogas","solar","candle",
-    "yoghurt","bread","cake","juice","jam","tea","spice","paper","grow","make","sell",
-    "start","price","profit","capital","mask","brush","ghee","jelly","cheese","butter",
-    "ginger","garlic","aloe","neem","shea","coconut","mushroom","bees","rabbit","chicken",
-    "fish","goat","pig","charcoal","herbal","detergent","bleach","filter","stove","sauce"];
+  /* ========== 3. Textarea + auto-grow ========== */
+  var WORDS = ["soap","honey","beeswax","oil","compost","biogas","solar","candle","yoghurt","bread","cake","juice","jam","tea","spice","paper","grow","make","sell","start","price","profit","capital","mask","brush","ghee","jelly","cheese","butter","ginger","garlic","aloe","neem","shea","coconut","mushroom","bees","rabbit","chicken","fish","goat","pig","charcoal","herbal","detergent","bleach","filter","stove","sauce"];
+
+  function autoGrow(ta){
+    try {
+      if (!ta || ta.tagName !== "TEXTAREA") return;
+      ta.style.height = "auto";
+      var h = ta.scrollHeight;
+      if (h < 28) h = 28;
+      if (h > 140) h = 140;
+      ta.style.height = h + "px";
+    } catch(e){}
+  }
+
+  function bindTA(ta){
+    if (ta._ajonBound) return;
+    ta._ajonBound = true;
+    ta.addEventListener("input", function(){ autoGrow(ta); });
+    ta.addEventListener("focus", function(){ autoGrow(ta); });
+    ta.addEventListener("keydown", function(ev){
+      if (ev.key === "Enter" && !ev.shiftKey){
+        ev.preventDefault();
+        try { if (typeof window.askExpert === "function") window.askExpert(); } catch(e){}
+      }
+    });
+    ta.addEventListener("input", function(){
+      try {
+        var pred = byId("helperKbPred");
+        if (!pred) return;
+        var parts = (ta.value || "").split(/\s+/);
+        var q = (parts[parts.length - 1] || "").toLowerCase();
+        var m = [];
+        if (q){
+          for (var i = 0; i < WORDS.length; i++){
+            if (WORDS[i].indexOf(q) === 0) m.push(WORDS[i]);
+            if (m.length >= 12) break;
+          }
+        }
+        if (!m.length) m = WORDS.slice(0, 12);
+        var h = "";
+        for (var k = 0; k < m.length; k++){
+          h += '<button class="kb-pred-btn" type="button" onclick="helperKbInsertWord(\'' + m[k] + '\')">' + m[k] + '</button>';
+        }
+        pred.innerHTML = h;
+      } catch(e){}
+    });
+  }
 
   function upgradeInput(){
     try {
       var inp = byId("aiInput");
-      if (!inp) return false;
-      if (inp.tagName === "TEXTAREA") return true;
-
+      if (!inp) return;
+      if (inp.tagName === "TEXTAREA"){ autoGrow(inp); return; }
       var ta = document.createElement("textarea");
       ta.id = "aiInput";
       ta.className = inp.className || "";
@@ -6902,84 +7026,63 @@ try {
       ta.autocomplete = "off";
       ta.rows = 1;
       ta.value = inp.value || "";
-      for (var i = 0; i < inp.attributes.length; i++){
-        var at = inp.attributes[i];
-        if (at.name.indexOf("data-") === 0) ta.setAttribute(at.name, at.value);
-      }
-
+      // inline styles as backup (CSS also applies)
+      ta.style.background = "transparent";
+      ta.style.color = "#e8fff4";
+      ta.style.border = "0";
+      ta.style.outline = "none";
+      ta.style.resize = "none";
+      ta.style.padding = "9px 4px";
+      ta.style.width = "auto";
+      ta.style.flex = "1 1 auto";
+      ta.style.minWidth = "0";
+      ta.style.maxHeight = "140px";
+      ta.style.minHeight = "28px";
+      ta.style.fontFamily = "inherit";
+      ta.style.fontSize = "14px";
+      ta.style.lineHeight = "1.4";
+      ta.style.boxSizing = "border-box";
       inp.parentNode.replaceChild(ta, inp);
-
-      function autoGrow(){
-        try {
-          ta.style.height = "auto";
-          var h = Math.min(ta.scrollHeight, 140);
-          ta.style.height = h + "px";
-        } catch(e){}
-      }
-      ta.addEventListener("input", autoGrow);
-      ta.addEventListener("focus", autoGrow);
-      setTimeout(autoGrow, 50);
-
-      // Enter sends, Shift+Enter newline
-      ta.addEventListener("keydown", function(ev){
-        if (ev.key === "Enter" && !ev.shiftKey && !ev.ctrlKey && !ev.metaKey){
-          ev.preventDefault();
-          try { if (typeof window.askExpert === "function") window.askExpert(); } catch(e){}
-        }
-      });
-
-      // Local word prediction (V7's listener was on the removed element)
-      ta.addEventListener("input", function(){
-        try {
-          var pred = byId("helperKbPred");
-          if (!pred) return;
-          var parts = (ta.value || "").split(/\s+/);
-          var q = (parts[parts.length - 1] || "").toLowerCase();
-          var matches = [];
-          if (q){
-            for (var m = 0; m < FALLBACK_WORDS.length; m++){
-              if (FALLBACK_WORDS[m].indexOf(q) === 0) matches.push(FALLBACK_WORDS[m]);
-              if (matches.length >= 12) break;
-            }
-          }
-          if (!matches.length) matches = FALLBACK_WORDS.slice(0, 12);
-          var html = "";
-          for (var k = 0; k < matches.length; k++){
-            html += '<button class="kb-pred-btn" type="button" onclick="helperKbInsertWord(\''
-              + matches[k] + '\')">' + matches[k] + '</button>';
-          }
-          pred.innerHTML = html;
-        } catch(e){}
-      });
-
-      return true;
-    } catch(e){ return false; }
+      bindTA(ta);
+      autoGrow(ta);
+      setTimeout(function(){ autoGrow(ta); }, 60);
+    } catch(e){}
   }
 
-  /* ---------- 3. RICH FORMATTING ---------- */
+  /* ========== 4. Rich formatting ========== */
+  function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+
   function formatText(raw){
-    var s = String(raw || "");
-    s = s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    var s = esc(raw);
     s = s.replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>");
     var lines = s.split("\n");
     var out = [];
+    var boldDone = false;
     for (var i = 0; i < lines.length; i++){
       var line = lines[i];
       var trimmed = line.replace(/^\s+|\s+$/g, "");
       if (!trimmed){ out.push(""); continue; }
-      var isBullet = /^\s*[-*•]\s+/.test(line);
-      if (isBullet) {
-        out.push("&nbsp;&nbsp;• " + trimmed.replace(/^\s*[-*•]\s+/, ""));
+      if (/^[-*•]\s+/.test(trimmed)){
+        out.push("&nbsp;&nbsp;&nbsp;• " + trimmed.replace(/^[-*•]\s+/, ""));
         continue;
       }
-      var isHeading = false;
+      var num = trimmed.match(/^(\d+)[.)]\s+(.*)$/);
+      if (num){
+        out.push("&nbsp;&nbsp;&nbsp;" + num[1] + ". " + num[2]);
+        continue;
+      }
+      var isHead = false;
       try {
-        if (/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/u.test(trimmed)) isHeading = true;
-        if (/:$/.test(trimmed)) isHeading = true;
-        if (/^\d+\.\s/.test(trimmed)) isHeading = false; /* keep numbered as-is */
-        if (/^(Step|Steps|Example|Tip|Warning):?/i.test(trimmed)) isHeading = true;
+        if (/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}]/u.test(trimmed)) isHead = true;
+        if (/^(Step|Steps|Example|Tip|Warning|Note|Ingredients|Overview|Summary|Materials|Tools|What you need|How to|Result|Benefits):?/i.test(trimmed)) isHead = true;
+        if (trimmed.length < 70 && /:$/.test(trimmed)) isHead = true;
       } catch(e){}
-      if (isHeading && trimmed.indexOf("<b>") !== 0){
+      if (!boldDone && trimmed.length < 140 && /[.!?]$/.test(trimmed) && trimmed.split(/\s+/).length <= 20){
+        out.push("<b>" + trimmed + "</b>");
+        boldDone = true;
+        continue;
+      }
+      if (isHead && trimmed.indexOf("<b>") !== 0){
         out.push("<b>" + trimmed + "</b>");
       } else {
         out.push(trimmed);
@@ -6990,191 +7093,238 @@ try {
 
   function formatBubble(bubble, originalText){
     try {
-      if (!bubble || bubble._ajonFormatted) return;
-      bubble._ajonFormatted = true;
+      if (!bubble || bubble._ajonFmt) return;
+      bubble._ajonFmt = true;
+      var imgs = bubble.querySelectorAll("img.ajon-thumb");
+      var saved = [];
+      for (var i = 0; i < imgs.length; i++) saved.push(imgs[i]);
       bubble.innerHTML = formatText(originalText);
+      for (var j = 0; j < saved.length; j++) bubble.appendChild(saved[j]);
     } catch(e){}
   }
 
-  /* ---------- 6. WIKI THUMBNAILS ---------- */
-  function installThumbInterceptor(){
-    try {
-      if (window.__ajonThumbFetch) return true;
-      window.__ajonThumbFetch = true;
-      window.__ajonLastWikiThumb = null;
-
-      var origFetch = window.fetch;
-      window.fetch = function(url, opts){
-        var u = String(url || "");
-        var isWikiSummary = u.indexOf("wikipedia.org/api/rest_v1/page/summary/") > -1;
-        if (isWikiSummary) window.__ajonLastWikiThumb = null;
-        var p = origFetch.apply(this, arguments);
-        if (isWikiSummary){
-          return p.then(function(r){
-            try {
-              r.clone().json().then(function(j){
-                if (j && j.thumbnail && j.thumbnail.source){
-                  var src = String(j.thumbnail.source);
-                  if (src.indexOf("//") === 0) src = "https:" + src;
-                  window.__ajonLastWikiThumb = { url: src, ts: Date.now() };
-                }
-              }).catch(function(){});
-            } catch(e){}
-            return r;
-          });
-        }
-        return p;
-      };
-
-      // Clear thumb at start of every new question
-      if (typeof window.askExpert === "function" && !window.askExpert._ajonThumbWrapped){
-        var origAsk = window.askExpert;
-        var w = function(){
-          window.__ajonLastWikiThumb = null;
-          return origAsk.apply(this, arguments);
-        };
-        w._ajonThumbWrapped = true;
-        window.askExpert = w;
-      }
-      return true;
-    } catch(e){ return false; }
-  }
-
-  function attachThumbToLastBubble(){
-    try {
-      var thumb = window.__ajonLastWikiThumb;
-      if (!thumb || (Date.now() - thumb.ts) > 15000) return;
-      var container = byId("expertMsgs") || document.querySelector(".expert-msgs");
-      if (!container) return;
-      var bubbles = container.querySelectorAll(".ex-bubble, .msg-ex, .bubble");
-      var last = bubbles.length ? bubbles[bubbles.length - 1] : null;
-      if (!last || last._ajonThumbAttached) return;
-      last._ajonThumbAttached = true;
-      var img = document.createElement("img");
-      img.className = "ajon-thumb";
-      img.src = thumb.url;
-      img.alt = "";
-      img.loading = "lazy";
-      last.appendChild(img);
-      window.__ajonLastWikiThumb = null;
-    } catch(e){}
-  }
-
-  /* ---------- HOOK exTypeInto ---------- */
   function hookTypeInto(){
     try {
-      if (typeof window.exTypeInto !== "function") return false;
-      if (window.exTypeInto._ajonEnh) return true;
+      if (typeof window.exTypeInto !== "function" || window.exTypeInto._ajonV3) return;
       var orig = window.exTypeInto;
-      var wrapped = function(bubble, text, done){
+      var w = function(bubble, text, done){
         var wrappedDone = function(){
           try { formatBubble(bubble, text); } catch(e){}
-          try { setTimeout(attachThumbToLastBubble, 200); } catch(e){}
           if (typeof done === "function") done();
         };
         return orig.call(this, bubble, text, wrappedDone);
       };
-      wrapped._ajonEnh = true;
-      window.exTypeInto = wrapped;
-      return true;
-    } catch(e){ return false; }
+      w._ajonV3 = true;
+      window.exTypeInto = w;
+    } catch(e){}
   }
 
-  /* ---------- 2. LONG-PRESS SAVE ---------- */
-  function saveBubbleToNotes(bubble){
+  /* ========== 5. Wiki thumbnails (reliable - own fetch) ========== */
+  var lastQuestion = "";
+
+  function hookAskToTrack(){
+    try {
+      if (typeof window.askExpert !== "function" || window.askExpert._ajonTrackQ) return;
+      var orig = window.askExpert;
+      var w = function(){
+        try {
+          var inp = byId("aiInput");
+          if (inp) lastQuestion = String(inp.value || "").trim();
+        } catch(e){}
+        return orig.apply(this, arguments);
+      };
+      w._ajonTrackQ = true;
+      window.askExpert = w;
+    } catch(e){}
+  }
+
+  function isFactual(q){
+    var s = String(q || "").toLowerCase().trim();
+    if (!s) return false;
+    var starters = ["what is","what are","what was","who is","who was","who are",
+      "where is","where was","where are","when was","when did","when is",
+      "history of","tell me about","explain","define","meaning of"];
+    for (var i = 0; i < starters.length; i++) if (s.indexOf(starters[i]) === 0) return true;
+    return false;
+  }
+
+  function attachImg(bubble, src){
+    try {
+      if (!bubble || bubble.querySelector("img.ajon-thumb")) return;
+      var img = document.createElement("img");
+      img.className = "ajon-thumb";
+      img.src = src;
+      img.alt = "";
+      img.loading = "lazy";
+      bubble.appendChild(img);
+    } catch(e){}
+  }
+
+  function fetchWikiThumb(question, bubble){
+    try {
+      if (!question || !bubble || bubble._thumbTry) return;
+      bubble._thumbTry = true;
+      var sUrl = "https://en.wikipedia.org/w/api.php?" + new URLSearchParams({
+        action: "query", list: "search", srsearch: question,
+        format: "json", origin: "*", srlimit: "1"
+      });
+      fetch(sUrl).then(function(r){ return r.json(); }).then(function(j){
+        var hits = j && j.query && j.query.search;
+        if (!hits || !hits.length) throw new Error("no hit");
+        var title = hits[0].title;
+        var sumUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(title);
+        return fetch(sumUrl).then(function(r){ return r.json(); }).then(function(s){
+          if (s && s.thumbnail && s.thumbnail.source){
+            var src = String(s.thumbnail.source);
+            if (src.indexOf("//") === 0) src = "https:" + src;
+            attachImg(bubble, src);
+          }
+        });
+      }).catch(function(){});
+    } catch(e){}
+  }
+
+  function watchForNewBubbles(){
+    try {
+      var c = byId("expertMsgs") || $(".expert-msgs");
+      if (!c || c._ajonObs) return;
+      c._ajonObs = true;
+      var obs = new MutationObserver(function(muts){
+        for (var i = 0; i < muts.length; i++){
+          for (var j = 0; j < muts[i].addedNodes.length; j++){
+            var n = muts[i].addedNodes[j];
+            if (n.nodeType !== 1) continue;
+            var cls = n.className || "";
+            if (cls.indexOf("ajon-thinking") > -1) continue;
+            if (!/bubble|msg|ex-/i.test(cls)) continue;
+            (function(node){
+              setTimeout(function(){
+                try {
+                  var txt = (node.innerText || node.textContent || "").trim();
+                  if (txt.length < 200) return;
+                  if (!isFactual(lastQuestion)) return;
+                  fetchWikiThumb(lastQuestion, node);
+                } catch(e){}
+              }, 1000);
+            })(n);
+          }
+        }
+      });
+      obs.observe(c, { childList: true, subtree: false });
+    } catch(e){}
+  }
+
+  /* ========== 6. Long-press save to notes ========== */
+  function tryAllNoteSavers(text){
+    var saved = false;
+    // try function signatures
+    if (typeof window.saveNote === "function"){
+      try { window.saveNote(text); saved = true; } catch(e){
+        try { window.saveNote({ text: text, body: text, content: text }); saved = true; } catch(e2){}
+      }
+    }
+    if (!saved && typeof window.addNote === "function"){
+      try { window.addNote(text); saved = true; } catch(e){}
+    }
+    if (!saved && typeof window.ajonSaveNote === "function"){
+      try { window.ajonSaveNote(text); saved = true; } catch(e){}
+    }
+    // always ALSO write to backup keys so it shows up somewhere
+    var keys = ["ajon_notes","ajonNotes","notes","ajon_saved_messages","ajon_expert_saved_notes"];
+    for (var i = 0; i < keys.length; i++){
+      try {
+        var raw = localStorage.getItem(keys[i]);
+        var arr = raw ? JSON.parse(raw) : [];
+        if (!Array.isArray(arr)) arr = [];
+        arr.push({ t: text, text: text, body: text, content: text, ts: Date.now(), date: new Date().toISOString() });
+        if (arr.length > 500) arr = arr.slice(-500);
+        localStorage.setItem(keys[i], JSON.stringify(arr));
+      } catch(e){}
+    }
+    return saved;
+  }
+
+  function saveBubble(bubble){
     try {
       var text = String(bubble.innerText || bubble.textContent || "").trim();
-      if (!text) return;
-      // Include thumbnail URL if present
+      if (!text){ toast("Nothing to save"); return; }
       var img = bubble.querySelector("img.ajon-thumb");
       if (img && img.src) text += "\n[image] " + img.src;
-
-      if (typeof window.saveNote === "function"){
-        try { window.saveNote(text); toast("Saved to notes"); return; } catch(e){}
-      }
-      var key = "ajon_saved_messages";
-      var arr = [];
-      try { arr = JSON.parse(localStorage.getItem(key)) || []; } catch(e){}
-      arr.push({ t: text, ts: Date.now() });
-      if (arr.length > 200) arr = arr.slice(-200);
-      try { localStorage.setItem(key, JSON.stringify(arr)); } catch(e){}
-      toast("Saved");
-    } catch(e){}
+      tryAllNoteSavers(text);
+      toast("Saved to notes \u2713");
+    } catch(e){
+      toast("Save failed");
+    }
   }
 
   function attachLongPress(){
     try {
-      var container = byId("expertMsgs") || document.querySelector(".expert-msgs");
-      if (!container || container._ajonLP) return false;
-      container._ajonLP = true;
-
-      var pressTimer = null;
-      var pressTarget = null;
-
+      var c = byId("expertMsgs") || $(".expert-msgs");
+      if (!c || c._ajonLP) return;
+      c._ajonLP = true;
+      var timer = null, target = null;
       function findBubble(el){
         var cur = el;
-        while (cur && cur !== container){
-          if (cur.parentNode === container) return cur;
+        while (cur && cur !== c){
+          if (cur.parentNode === c) return cur;
           cur = cur.parentNode;
         }
         return null;
       }
-
       function start(ev){
         var b = findBubble(ev.target);
         if (!b) return;
         if (b.classList && b.classList.contains("ajon-thinking")) return;
-        pressTarget = b;
-        clearTimeout(pressTimer);
-        pressTimer = setTimeout(function(){
-          saveBubbleToNotes(pressTarget);
-          pressTarget = null;
-        }, 650);
+        target = b;
+        try { b.classList.add("ajon-pressing"); } catch(e){}
+        clearTimeout(timer);
+        timer = setTimeout(function(){
+          try { if (target) target.classList.remove("ajon-pressing"); } catch(e){}
+          if (target) saveBubble(target);
+          target = null;
+        }, 600);
       }
-      function cancel(){ clearTimeout(pressTimer); pressTarget = null; }
-
-      container.addEventListener("touchstart", start, { passive: true });
-      container.addEventListener("touchend", cancel);
-      container.addEventListener("touchmove", cancel);
-      container.addEventListener("touchcancel", cancel);
-      container.addEventListener("mousedown", start);
-      container.addEventListener("mouseup", cancel);
-      container.addEventListener("mouseleave", cancel);
-      container.addEventListener("contextmenu", function(ev){
+      function cancel(){
+        clearTimeout(timer);
+        if (target){ try { target.classList.remove("ajon-pressing"); } catch(e){} }
+        target = null;
+      }
+      c.addEventListener("touchstart", start, { passive: true });
+      c.addEventListener("touchend", cancel);
+      c.addEventListener("touchmove", cancel);
+      c.addEventListener("touchcancel", cancel);
+      c.addEventListener("mousedown", start);
+      c.addEventListener("mouseup", cancel);
+      c.addEventListener("mouseleave", cancel);
+      c.addEventListener("contextmenu", function(ev){
         var b = findBubble(ev.target);
-        if (b){
-          ev.preventDefault();
-          saveBubbleToNotes(b);
-        }
+        if (b){ ev.preventDefault(); saveBubble(b); }
       });
-      return true;
-    } catch(e){ return false; }
+    } catch(e){}
   }
 
-  /* ---------- INIT + RETRY ---------- */
+  /* ========== INIT ========== */
   function init(){
-    installArrowButton();
-    installThinkingOverride();
+    installArrow();
+    installThinking();
     upgradeInput();
     hookTypeInto();
-    installThumbInterceptor();
+    hookAskToTrack();
+    watchForNewBubbles();
     attachLongPress();
   }
 
-  if (document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", init);
-  } else {
-    setTimeout(init, 500);
-  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else setTimeout(init, 500);
 
-  // Retry for DOM that renders late (tab switching, etc.)
   var tries = 0;
   var iv = setInterval(function(){
     tries++;
-    installArrowButton();
-    installThinkingOverride();
+    installArrow();
+    installThinking();
     hookTypeInto();
-    installThumbInterceptor();
+    hookAskToTrack();
+    watchForNewBubbles();
     try {
       var el = byId("aiInput");
       if (el && el.tagName === "INPUT") upgradeInput();
@@ -7183,7 +7333,7 @@ try {
     if (tries >= 15) clearInterval(iv);
   }, 900);
 
-  try { console.log("[Ajon Enhancements V1] loaded"); } catch(e){}
+  try { console.log("[Ajon Enhancements V3] loaded"); } catch(e){}
 })();
 
 </script>
