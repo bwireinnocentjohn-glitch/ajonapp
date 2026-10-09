@@ -284,7 +284,13 @@
       if (typeof window.askExpert !== "function" || window.askExpert._ajonTrackQ) return;
       var orig = window.askExpert;
       var w = function(){
-        try { var inp = byId("aiInput"); if (inp) lastQuestion = String(inp.value || "").trim(); } catch(e){}
+        try {
+          var inp = byId("aiInput");
+          if (inp) {
+            lastQuestion = String(inp.value || "").trim();
+            lastQuestionTime = Date.now();
+          }
+        } catch(e){}
         return orig.apply(this, arguments);
       };
       w._ajonTrackQ = true;
@@ -394,11 +400,11 @@
       if (!question || !bubble || bubble._thumbTry) return;
       bubble._thumbTry = true;
       var sources = [
+        function(){ return Promise.resolve(pollinationsUrl(question, "flux")); },
+        function(){ return Promise.resolve(pollinationsUrl(question, "turbo")); },
         function(){ return tryWikipediaImage(question); },
         function(){ return tryCommonsImage(question); },
-        function(){ return tryOpenverseImage(question); },
-        function(){ return Promise.resolve(pollinationsUrl(question, "flux")); },
-        function(){ return Promise.resolve(pollinationsUrl(question, "turbo")); }
+        function(){ return tryOpenverseImage(question); }
       ];
       var i = 0;
       function run(){
@@ -430,13 +436,7 @@
             if (/user|me\b|sent/i.test(cls)) continue;
             if (!/bubble|msg|ex-/i.test(cls)) continue;
             ensureCopyBtn(n);
-            if (!n._thumbTry && lastQuestion){
-              var txt = (n.innerText || n.textContent || "").trim();
-              if (txt.length > 40){
-                var q = lastQuestion;
-                setTimeout(function(){ fetchResponseImage(q, n); }, 700);
-              }
-            }
+            /* Image handled by dedicated scanner */
           }
         }
       });
@@ -444,26 +444,53 @@
     } catch(e){}
   }
 
-  /* Safety net: scan for last bubble without image every 6s */
-  function imageSafetyNet(){
+  /* Robust image scanner (works even if observer fires on empty bubble) */
+  var lastQuestionTime = 0;
+
+  function installImageScanner(){
+    if (window.__ajonImgScanner) return;
+    window.__ajonImgScanner = true;
+
+    /* Main poll: every 1.5s for 90s after each question */
     setInterval(function(){
       try {
+        if (!lastQuestion) return;
+        if (Date.now() - lastQuestionTime > 90000) return;
         var c = byId("expertMsgs") || $(".expert-msgs");
-        if (!c || !lastQuestion) return;
-        var bubbles = c.querySelectorAll("[class*='bubble'], [class*='msg']");
-        if (!bubbles.length) return;
-        for (var i = bubbles.length - 1; i >= 0; i--){
-          var b = bubbles[i];
-          if (b.classList && b.classList.contains("ajon-thinking")) continue;
-          if (/user|me\b|sent/i.test(b.className || "")) continue;
-          if (b._thumbTry) return;
+        if (!c) return;
+
+        var all = c.querySelectorAll(".bubble");
+        if (!all.length) return;
+
+        /* Look at most recent bubble with real content */
+        for (var i = all.length - 1; i >= 0; i--){
+          var b = all[i];
+
+          /* Skip typing placeholder */
+          if (b.classList && b.classList.contains("bubble-typing")) continue;
+
+          /* Already has image -> done */
+          if (b.querySelector("img.ajon-thumb")) return;
+
+          /* Already tried and failed -> try next older */
+          if (b._ajonImgDone) continue;
+
           var txt = (b.innerText || b.textContent || "").trim();
+
+          /* Too short -> maybe typing in progress, come back later */
           if (txt.length < 40) return;
+
+          /* Skip the user's echoed question bubble */
+          if (txt === lastQuestion) return;
+          if (txt.indexOf(lastQuestion) === 0 && txt.length < lastQuestion.length + 60) return;
+
+          /* This is the AI's answer — mark and fetch */
+          b._ajonImgDone = true;
           fetchResponseImage(lastQuestion, b);
           return;
         }
       } catch(e){}
-    }, 6000);
+    }, 1500);
   }
 
   function addCopyToExisting(){
@@ -881,7 +908,7 @@
     addCopyToExisting();
     attachLongPress();
     updateTierBadge();
-    imageSafetyNet();
+    installImageScanner();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else setTimeout(init, 300);
