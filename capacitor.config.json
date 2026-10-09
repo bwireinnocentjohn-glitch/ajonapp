@@ -12,7 +12,8 @@
       "*.groq.com",
       "en.wikipedia.org",
       "*.wikipedia.org",
-      "*.wikimedia.org"
+      "*.wikimedia.org",
+      "upload.wikimedia.org"
     ]
   },
   "android": {
