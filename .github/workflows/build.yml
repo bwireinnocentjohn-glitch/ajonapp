@@ -56,12 +56,34 @@ jobs:
           print('Groq placeholder found: %d' % g_before)
           print('Gemini placeholder found: %d' % m_before)
           if g_before == 0 or m_before == 0:
-              raise SystemExit('ERROR: placeholder missing - aborting')
+              raise SystemExit('ERROR: placeholder missing')
           print('Keys injected OK.')
           PY
 
       - name: Add Capacitor Android platform
         run: npx cap add android
+
+      - name: Inject microphone permissions
+        run: |
+          M=android/app/src/main/AndroidManifest.xml
+          python3 - << 'PY'
+          import io
+          p = 'android/app/src/main/AndroidManifest.xml'
+          s = io.open(p, encoding='utf-8').read()
+          add = ''
+          if 'android.permission.RECORD_AUDIO' not in s:
+              add += '    <uses-permission android:name="android.permission.RECORD_AUDIO" />\n'
+          if 'android.permission.MODIFY_AUDIO_SETTINGS' not in s:
+              add += '    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />\n'
+          if add:
+              s = s.replace('<application', add + '    <application', 1)
+              io.open(p, 'w', encoding='utf-8').write(s)
+              print('Permissions injected')
+          else:
+              print('Permissions already present')
+          PY
+          echo "--- manifest head ---"
+          head -20 android/app/src/main/AndroidManifest.xml
 
       - name: Sync web assets to Android
         run: npx cap sync android

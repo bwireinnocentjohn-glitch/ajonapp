@@ -6003,35 +6003,25 @@ function switchNotesView(view) {
 
 
 
+
 /* __EXPERT_ENHANCEMENTS_V1__ */
 
-/* ---------- INPUT PILL ---------- */
 .expert-input-row {
   display: flex !important;
-  align-items: flex-end !important;
-  gap: 2px !important;
-  background: linear-gradient(180deg, #071612 0%, #0a1c16 100%) !important;
-  border: 1px solid rgba(0,200,83,0.28) !important;
+  align-items: center !important;
+  gap: 3px !important;
+  background: #071612 !important;
+  border: 1px solid rgba(0,200,83,0.32) !important;
   border-radius: 24px !important;
-  padding: 4px 6px 4px 16px !important;
-  margin: 6px 10px !important;
+  padding: 4px 4px 4px 16px !important;
+  margin: 12px 12px 10px !important;
   position: relative !important;
-  min-height: 46px !important;
+  min-height: 48px !important;
   box-sizing: border-box !important;
-  box-shadow:
-    0 4px 16px rgba(0,0,0,0.45),
-    inset 0 1px 0 rgba(255,255,255,0.03) !important;
-  transition: border-color .18s, box-shadow .18s !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.35) !important;
 }
-.expert-input-row:focus-within {
-  border-color: rgba(110,231,183,0.7) !important;
-  box-shadow:
-    0 4px 20px rgba(0,0,0,0.5),
-    0 0 0 3px rgba(110,231,183,0.10),
-    inset 0 1px 0 rgba(255,255,255,0.05) !important;
-}
+.expert-input-row:focus-within { border-color: #00c853 !important; }
 
-/* ---------- TEXTAREA ---------- */
 #aiInput, textarea#aiInput, input#aiInput {
   order: 1 !important;
   flex: 1 1 auto !important;
@@ -6052,55 +6042,51 @@ function switchNotesView(view) {
   outline: none !important;
   box-shadow: none !important;
   -webkit-appearance: none !important;
-  appearance: none !important;
-  box-sizing: border-box !important;
 }
 #aiInput:focus { background: transparent !important; outline: none !important; }
-#aiInput::placeholder { color: rgba(0,230,118,0.42) !important; }
+#aiInput::placeholder { color: rgba(0,230,118,0.5) !important; }
 
-/* ---------- SMALL TRANSPARENT ACTION BUTTONS ---------- */
+/* --- Small action buttons: 30px, evenly spaced --- */
 .ajon-attach-btn,
 .ajon-mic-btn,
 .kb-toggle {
-  width: 28px !important;
-  height: 28px !important;
-  min-width: 28px !important;
-  max-width: 28px !important;
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  max-width: 30px !important;
   border-radius: 50% !important;
   background: transparent !important;
   border: 0 !important;
-  color: rgba(110,231,183,0.55) !important;
-  font-size: 14px !important;
+  color: rgba(110,231,183,0.78) !important;
+  font-size: 15px !important;
   padding: 0 !important;
-  margin: 0 0 8px 0 !important;
+  margin: 0 1px !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   flex: 0 0 auto !important;
   cursor: pointer !important;
-  transition: color .15s, transform .12s, background .15s !important;
+  opacity: 0.85 !important;
+  transition: transform .12s, opacity .15s !important;
 }
 .ajon-attach-btn { order: 2 !important; }
 .ajon-mic-btn    { order: 3 !important; }
 .kb-toggle       { order: 4 !important; }
-
 .ajon-attach-btn:active,
 .ajon-mic-btn:active,
-.kb-toggle:active {
-  transform: scale(0.85) !important;
-  color: #6ee7b7 !important;
-}
+.kb-toggle:active { transform: scale(0.88) !important; opacity: 1 !important; }
+
 .ajon-mic-btn.listening {
   color: #ff8a80 !important;
-  background: rgba(255,82,82,0.12) !important;
+  opacity: 1 !important;
   animation: ajonMicPulse 1.2s ease-in-out infinite !important;
 }
 @keyframes ajonMicPulse {
-  0%,100% { box-shadow: 0 0 0 0 rgba(255,82,82,.5); }
-  50%     { box-shadow: 0 0 0 6px rgba(255,82,82,0); }
+  0%,100% { box-shadow: 0 0 0 0 rgba(255,82,82,.45); }
+  50%     { box-shadow: 0 0 0 5px rgba(255,82,82,0); }
 }
 
-/* ---------- SEND ARROW (only strong colored element) ---------- */
+/* --- Send arrow: 34px, sits at far right --- */
 .expert-send-btn {
   order: 5 !important;
   width: 34px !important;
@@ -6108,119 +6094,98 @@ function switchNotesView(view) {
   min-width: 34px !important;
   max-width: 34px !important;
   border-radius: 50% !important;
-  background: linear-gradient(135deg, #d1fae5 0%, #6ee7b7 45%, #34d399 100%) !important;
+  background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 40%, #34d399 100%) !important;
   color: #052e16 !important;
   font-size: 18px !important;
   font-weight: 900 !important;
   padding: 0 !important;
-  margin: 0 0 6px 0 !important;
+  margin: 0 2px 0 2px !important;
   border: 0 !important;
   flex: 0 0 auto !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  box-shadow:
-    0 3px 12px rgba(110,231,183,0.5),
-    0 0 0 1px rgba(255,255,255,0.15) inset,
-    0 1px 2px rgba(255,255,255,0.4) inset !important;
-  transition: transform .12s !important;
+  box-shadow: 0 2px 8px rgba(110,231,183,.4) !important;
 }
-.expert-send-btn:active { transform: scale(0.88) !important; }
+.expert-send-btn:active { transform: scale(0.9) !important; }
 
-/* ---------- TRASH (small, above pill top-right) ---------- */
+/* --- Trash: 28px, before the send arrow --- */
 .ajon-clear-btn {
-  position: absolute !important;
-  top: -24px !important;
-  right: 4px !important;
-  width: 22px !important;
-  height: 22px !important;
+  position: static !important;
+  order: 6 !important;
+  width: 28px !important;
+  height: 28px !important;
+  min-width: 28px !important;
+  max-width: 28px !important;
   border-radius: 50% !important;
-  background: rgba(255,255,255,0.04) !important;
+  background: transparent !important;
   color: rgba(110,231,183,0.55) !important;
-  border: 1px solid rgba(0,200,83,0.18) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  font-size: 10px !important;
-  padding: 0 !important;
-  z-index: 6 !important;
-  transition: opacity .22s, transform .12s, color .15s !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.35) !important;
-}
-.ajon-clear-btn:active { transform: scale(0.82) !important; color: #6ee7b7 !important; }
-.ajon-clear-btn.hidden-by-quote { opacity: 0 !important; pointer-events: none !important; }
-
-/* ---------- TIER BADGE — small icon only ---------- */
-.ajon-tier-badge {
-  position: absolute !important;
-  top: -23px !important;
-  left: 6px !important;
-  height: 20px !important;
-  min-width: 20px !important;
-  padding: 0 6px !important;
-  border-radius: 10px !important;
+  border: 0 !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-size: 11px !important;
-  font-weight: 900 !important;
-  letter-spacing: 0 !important;
-  background: rgba(0,0,0,0.42) !important;
-  color: #6ee7b7 !important;
-  border: 1px solid rgba(0,200,83,0.28) !important;
-  backdrop-filter: blur(8px) !important;
-  -webkit-backdrop-filter: blur(8px) !important;
-  z-index: 6 !important;
-  white-space: nowrap !important;
+  font-size: 13px !important;
+  padding: 0 !important;
+  margin: 0 2px 0 0 !important;
+  flex: 0 0 auto !important;
+  opacity: 0.7 !important;
+  transition: opacity .2s, transform .12s !important;
 }
-.ajon-tier-badge.master {
-  background: linear-gradient(135deg, rgba(110,231,183,0.22), rgba(52,211,153,0.22)) !important;
-  color: #a7f3d0 !important;
-  border-color: rgba(110,231,183,0.55) !important;
-  box-shadow: 0 0 8px rgba(110,231,183,0.35) !important;
-}
-.ajon-tier-badge.low {
-  color: #ff8a80 !important;
-  border-color: rgba(255,82,82,0.4) !important;
-}
+.ajon-clear-btn:active { transform: scale(0.88) !important; opacity: 1 !important; }
+.ajon-clear-btn.hidden-by-quote { opacity: 0 !important; pointer-events: none !important; }
 
-/* ---------- IMAGE PREVIEW ---------- */
+/* --- Tier badge in header --- */
+.ajon-tier-badge-header {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 3px 8px !important;
+  border-radius: 999px !important;
+  font-size: 10px !important;
+  font-weight: 900 !important;
+  letter-spacing: .5px !important;
+  background: rgba(0,0,0,0.35) !important;
+  color: #6ee7b7 !important;
+  border: 1px solid rgba(0,200,83,0.30) !important;
+  white-space: nowrap !important;
+  margin: 0 6px !important;
+  flex: 0 0 auto !important;
+}
+.ajon-tier-badge-header.master { color: #a7f3d0 !important; border-color: rgba(110,231,183,0.55) !important; }
+.ajon-tier-badge-header.low { color: #ff8a80 !important; border-color: rgba(255,82,82,0.4) !important; }
+
+/* --- Image preview --- */
 .ajon-img-preview {
   position: absolute !important;
   top: -60px !important;
-  left: 10px !important;
-  width: 48px !important;
-  height: 48px !important;
+  left: 12px !important;
+  width: 52px !important;
+  height: 52px !important;
   border-radius: 10px !important;
   border: 2px solid #6ee7b7 !important;
   background: #0d1f1a !important;
   object-fit: cover !important;
   z-index: 6 !important;
-  box-shadow: 0 4px 14px rgba(110,231,183,0.35) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,.5) !important;
 }
 .ajon-img-clear {
   position: absolute !important;
   top: -64px !important;
-  left: 56px !important;
-  width: 20px !important;
-  height: 20px !important;
+  left: 58px !important;
+  width: 22px !important;
+  height: 22px !important;
   border-radius: 50% !important;
-  background: linear-gradient(135deg,#ff8a80,#ff5252) !important;
+  background: #ff5252 !important;
   color: #fff !important;
   border: 0 !important;
   font-size: 11px !important;
   font-weight: 900 !important;
-  line-height: 1 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   z-index: 7 !important;
-  box-shadow: 0 2px 8px rgba(255,82,82,0.5) !important;
 }
 
-/* ---------- COPY BUTTON ---------- */
 .ajon-copy-btn {
   position: absolute !important;
   top: 6px !important;
@@ -6228,22 +6193,20 @@ function switchNotesView(view) {
   width: 24px !important;
   height: 24px !important;
   border-radius: 50% !important;
-  background: rgba(0,0,0,0.30) !important;
-  color: rgba(110,231,183,0.65) !important;
-  border: 1px solid rgba(0,200,83,0.15) !important;
+  background: rgba(0,0,0,0.28) !important;
+  color: rgba(110,231,183,0.7) !important;
+  border: 1px solid rgba(0,200,83,0.18) !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   font-size: 11px !important;
   padding: 0 !important;
-  opacity: 0.5 !important;
-  transition: opacity .15s, transform .12s !important;
+  opacity: 0.55 !important;
   z-index: 4 !important;
 }
-.ajon-copy-btn:active { transform: scale(0.85) !important; opacity: 1 !important; }
+.ajon-copy-btn:active { opacity: 1 !important; }
 .ajon-bubble-rel { position: relative !important; }
 
-/* ---------- THINKING ---------- */
 .ajon-thinking {
   display: inline-flex !important;
   align-items: center !important;
@@ -6254,13 +6217,12 @@ function switchNotesView(view) {
   background: linear-gradient(90deg, #0d1f1a 0%, #122a23 25%, #1f4a3d 50%, #122a23 75%, #0d1f1a 100%) !important;
   background-size: 220% 100% !important;
   animation: ajonThinkShimmer 2.4s linear infinite !important;
-  border: 1px solid rgba(110,231,183,.30) !important;
-  box-shadow: 0 3px 12px rgba(110,231,183,0.12) !important;
+  border: 1px solid rgba(0,200,83,.35) !important;
   font-weight: 800 !important;
   font-size: 12px !important;
 }
 .ajon-think-text {
-  background: linear-gradient(90deg, #00c853 0%, #a7f3d0 50%, #00c853 100%);
+  background: linear-gradient(90deg, #00c853 0%, #69f0ae 50%, #00c853 100%);
   background-size: 220% 100% !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
@@ -6271,8 +6233,7 @@ function switchNotesView(view) {
   width: 5px !important;
   height: 5px !important;
   border-radius: 50% !important;
-  background: #6ee7b7 !important;
-  box-shadow: 0 0 6px rgba(110,231,183,0.8) !important;
+  background: #00e676 !important;
   animation: ajonThinkPulse 1.2s ease-in-out infinite !important;
 }
 .ajon-think-dot:nth-child(2){ animation-delay: .2s !important; }
@@ -6280,28 +6241,21 @@ function switchNotesView(view) {
 @keyframes ajonThinkShimmer { 0%{background-position:0% 50%} 100%{background-position:220% 50%} }
 @keyframes ajonThinkPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.4);opacity:.6} }
 
-/* ---------- WIKI THUMB ---------- */
 .ajon-thumb {
   display: block !important;
   margin-top: 10px !important;
   max-width: 100% !important;
   max-height: 200px !important;
   border-radius: 10px !important;
-  border: 1px solid rgba(110,231,183,0.30) !important;
+  border: 1px solid rgba(0,200,83,.3) !important;
   object-fit: cover !important;
   background: #0d1f1a !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.35) !important;
 }
 .ajon-thumb-fail { display: none !important; }
 
-.ajon-pressing { outline: 2px solid #6ee7b7 !important; outline-offset: 2px !important; }
+.ajon-pressing { outline: 2px solid #34d399 !important; outline-offset: 2px !important; }
 .ex-bubble b, .msg-ex b, .bubble b, [class*="bubble"] b, [class*="msg"] b {
   color: #6ee7b7 !important; font-weight: 800 !important;
-}
-
-/* ---------- KEYBOARD SAFE AREA (JS sets --ajon-kb) ---------- */
-body.ajon-kb-open .expert-main {
-  padding-bottom: var(--ajon-kb, 0px) !important;
 }
 
 </style>
@@ -7056,7 +7010,7 @@ try {
     if (!t){
       t = document.createElement("div");
       t.id = "ajonEnhToast";
-      t.style.cssText = "position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#a7f3d0,#34d399);color:#052e16;padding:9px 16px;border-radius:999px;font-size:12px;font-weight:900;z-index:99999;opacity:0;transition:opacity .2s;pointer-events:none;max-width:80vw;text-align:center;box-shadow:0 4px 14px rgba(110,231,183,.45);";
+      t.style.cssText = "position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#a7f3d0,#34d399);color:#052e16;padding:9px 16px;border-radius:999px;font-size:12px;font-weight:900;z-index:99999;opacity:0;transition:opacity .2s;pointer-events:none;max-width:80vw;text-align:center;box-shadow:0 4px 14px rgba(52,211,153,.45);";
       document.body.appendChild(t);
     }
     t.textContent = msg;
@@ -7065,7 +7019,6 @@ try {
     t._tid = setTimeout(function(){ t.style.opacity = "0"; }, ms || 2000);
   }
 
-  /* ================= KEYBOARD VIEWPORT FIX ================= */
   function installViewportFix(){
     try {
       if (!window.visualViewport) return;
@@ -7074,31 +7027,21 @@ try {
         try {
           var kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
           document.documentElement.style.setProperty("--ajon-kb", kb + "px");
-          var body = document.body;
-          if (!body) return;
-          if (kb > 60){
-            body.classList.add("ajon-kb-open");
-          } else {
-            body.classList.remove("ajon-kb-open");
+          var b = document.body;
+          if (b){
+            b.style.paddingBottom = kb > 20 ? (kb + 4) + "px" : "0px";
+            b.style.transition = "padding-bottom .15s ease-out";
           }
-          try {
-            var inp = byId("aiInput");
-            if (inp && document.activeElement === inp){
-              setTimeout(function(){
-                try { inp.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch(e){}
-              }, 50);
-            }
-          } catch(e){}
+          try { if (vv.height) window.scrollTo(0, 0); } catch(e){}
         } catch(e){}
       }
       vv.addEventListener("resize", apply);
       vv.addEventListener("scroll", apply);
-      window.addEventListener("orientationchange", function(){ setTimeout(apply, 250); });
+      window.addEventListener("orientationchange", function(){ setTimeout(apply, 200); });
       apply();
     } catch(e){}
   }
 
-  /* ================= TIER ================= */
   function detectTier(){
     try {
       var cands = ["ajon_plan","ajon_tier","ajon_sub_type","ajon_subscription","ajon_membership","ajon_sub_tier"];
@@ -7114,9 +7057,6 @@ try {
       try { amt = Number(localStorage.getItem("ajon_sub_amount") || localStorage.getItem("ajon_sub_price") || localStorage.getItem("ajon_sub_paid") || 0); } catch(e){}
       if (amt >= 15000) return "master";
       if (amt >= 5000) return "standard";
-      var title = "";
-      try { title = String(localStorage.getItem("ajon_sub_title") || "").toLowerCase(); } catch(e){}
-      if (/master|unlimited/.test(title)) return "master";
       var subEnd = 0;
       try { subEnd = Number(localStorage.getItem("ajon_sub_end_v12") || localStorage.getItem("ajon_sub_end_v11") || localStorage.getItem("ajon_sub_end_v10") || localStorage.getItem("ajon_sub_end_v9") || 0); } catch(e){}
       if (subEnd > now()) return "standard";
@@ -7172,32 +7112,37 @@ try {
     return Math.max(0, DAILY_LIMIT_STANDARD - dailyCount());
   }
 
-  /* ---------- Tier badge: small icon only ---------- */
   function updateTierBadge(){
     try {
-      var row = document.querySelector(".expert-input-row");
-      if (!row) return;
-      var old = row.querySelector(".ajon-tier-badge");
+      var hdr = document.querySelector(".expert-header");
+      if (!hdr) return;
+      var old = hdr.querySelector(".ajon-tier-badge-header");
       if (old) old.parentNode.removeChild(old);
       var tier = detectTier();
       if (tier === "none") return;
-      var b = document.createElement("span");
-      b.className = "ajon-tier-badge";
+      var badge = document.createElement("span");
+      badge.className = "ajon-tier-badge-header";
       if (tier === "master"){
-        b.classList.add("master");
-        b.textContent = "\u267E";           /* ♾ */
-        b.title = "Master \u2014 unlimited";
+        badge.classList.add("master");
+        badge.textContent = "\u267E\uFE0F";
+        badge.setAttribute("aria-label", "Master: unlimited");
       } else {
         var left = dailyRemaining();
-        if (left <= 3) b.classList.add("low");
-        b.textContent = String(left);
-        b.title = left + " of " + DAILY_LIMIT_STANDARD + " left today";
+        if (left <= 3) badge.classList.add("low");
+        badge.textContent = "\u23F1 " + left;
+        badge.setAttribute("aria-label", left + " of " + DAILY_LIMIT_STANDARD + " left");
       }
-      row.appendChild(b);
+      var badgeEl = hdr.querySelector(".expert-badge");
+      var earth   = hdr.querySelector(".expert-earth");
+      if (badgeEl && badgeEl.parentNode === hdr){
+        if (earth && earth.parentNode === hdr) hdr.insertBefore(badge, earth);
+        else badgeEl.parentNode.insertBefore(badge, badgeEl.nextSibling);
+      } else {
+        hdr.appendChild(badge);
+      }
     } catch(e){}
   }
 
-  /* ================= ARROW SEND ================= */
   function installArrow(){
     try {
       var btn = document.querySelector(".expert-send-btn");
@@ -7208,7 +7153,6 @@ try {
     } catch(e){}
   }
 
-  /* ================= THINKING ================= */
   function installThinking(){
     try {
       if (typeof window.exShowTyping !== "function" || window.exShowTyping._ajonEnh) return;
@@ -7230,7 +7174,6 @@ try {
     } catch(e){}
   }
 
-  /* ================= TEXTAREA ================= */
   function autoGrow(ta){
     try {
       if (!ta || ta.tagName !== "TEXTAREA") return;
@@ -7247,13 +7190,7 @@ try {
     ta.addEventListener("input", function(){ autoGrow(ta); });
     ta.addEventListener("focus", function(){
       autoGrow(ta);
-      setTimeout(function(){
-        try {
-          var kb = 0;
-          try { kb = Number(getComputedStyle(document.documentElement).getPropertyValue("--ajon-kb").replace("px","")) || 0; } catch(e){}
-          if (kb > 60){ try { ta.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch(e){} }
-        } catch(e){}
-      }, 300);
+      setTimeout(function(){ try { ta.scrollIntoView({block:"nearest"}); } catch(e){} }, 250);
     });
     ta.addEventListener("keydown", function(ev){
       if (ev.key === "Enter" && !ev.shiftKey){
@@ -7281,7 +7218,6 @@ try {
     } catch(e){}
   }
 
-  /* ================= FORMAT ================= */
   function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function formatText(raw){
     var s = esc(raw);
@@ -7319,7 +7255,6 @@ try {
     } catch(e){}
   }
 
-  /* ================= COPY ================= */
   function copyText(text){
     try {
       if (navigator.clipboard && navigator.clipboard.writeText){
@@ -7361,7 +7296,6 @@ try {
     } catch(e){}
   }
 
-  /* ================= WIKI THUMBS ================= */
   var lastQuestion = "";
   function hookAskTrack(){
     try {
@@ -7375,57 +7309,88 @@ try {
       window.askExpert = w;
     } catch(e){}
   }
+
+  function looksFactual(q){
+    var s = String(q||"").toLowerCase().trim();
+    if (!s) return false;
+    if (/^(how do i|how can i|how to)\s+(make|start|sell|grow|build|cook|prepare|open|run)/.test(s)) return false;
+    if (/\b(business idea|profit|capital|loan|price my|my business)\b/.test(s)) return false;
+    return true;
+  }
+
+  function loadImgAsBlob(imgEl, url, fallback){
+    try {
+      fetch(url, { mode: "cors" }).then(function(r){
+        if (!r.ok) throw new Error("img " + r.status);
+        return r.blob();
+      }).then(function(blob){
+        try { imgEl.src = URL.createObjectURL(blob); }
+        catch(e){ imgEl.src = url; }
+      }).catch(function(){
+        if (fallback && fallback !== url) imgEl.src = fallback;
+        else imgEl.src = url;
+      });
+    } catch(e){ imgEl.src = url; }
+  }
   function attachImg(bubble, src, fallbackSrc){
     try {
       if (!bubble || bubble.querySelector("img.ajon-thumb")) return;
       var img = document.createElement("img");
       img.className = "ajon-thumb";
       img.alt = "";
-      img.loading = "lazy";
       img.onerror = function(){
         try {
           if (fallbackSrc && img.src !== fallbackSrc){ img.src = fallbackSrc; fallbackSrc = null; return; }
           img.className = "ajon-thumb-fail";
         } catch(e){}
       };
-      img.src = src;
       bubble.appendChild(img);
+      loadImgAsBlob(img, src, fallbackSrc);
     } catch(e){}
   }
   function fetchWikiThumb(question, bubble){
     try {
       if (!question || !bubble || bubble._thumbTry) return;
+      if (!looksFactual(question)) return;
       bubble._thumbTry = true;
-      var sUrl = "https://en.wikipedia.org/w/api.php?" + new URLSearchParams({
-        action: "query", list: "search", srsearch: question,
-        format: "json", origin: "*", srlimit: "3"
+      var url = "https://en.wikipedia.org/w/api.php?" + new URLSearchParams({
+        action: "query", generator: "search", gsrsearch: question, gsrlimit: "3",
+        prop: "pageimages|info", piprop: "thumbnail|original", pithumbsize: "480",
+        format: "json", origin: "*"
       });
-      fetch(sUrl).then(function(r){ return r.json(); }).then(function(j){
-        var hits = j && j.query && j.query.search;
-        if (!hits || !hits.length) throw new Error("no hit");
-        var titles = hits.map(function(h){ return h.title; });
-        var chain = Promise.reject(new Error("start"));
-        titles.forEach(function(t){
-          chain = chain.catch(function(){
-            var sumUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(t);
-            return fetch(sumUrl).then(function(r){ return r.json(); }).then(function(s){
-              if (!s) throw new Error("no sum");
-              var thumb = s.thumbnail && s.thumbnail.source;
-              var orig  = s.originalimage && s.originalimage.source;
-              if (!thumb && !orig) throw new Error("no img");
-              var t1 = thumb ? String(thumb) : String(orig);
-              var t2 = orig ? String(orig) : null;
-              if (t1.indexOf("//") === 0) t1 = "https:" + t1;
-              if (t2 && t2.indexOf("//") === 0) t2 = "https:" + t2;
-              attachImg(bubble, t1, t2);
-              return true;
-            });
-          });
-        });
-        return chain;
+      fetch(url).then(function(r){ return r.json(); }).then(function(j){
+        var pages = j && j.query && j.query.pages;
+        if (!pages) throw new Error("no pages");
+        var arr = [];
+        for (var k in pages){ if (pages.hasOwnProperty(k)) arr.push(pages[k]); }
+        for (var i=0;i<arr.length;i++){
+          var p = arr[i];
+          if (p.thumbnail && p.thumbnail.source){
+            var t1 = String(p.thumbnail.source);
+            var t2 = p.original && p.original.source ? String(p.original.source) : null;
+            if (t1.indexOf("//") === 0) t1 = "https:" + t1;
+            if (t2 && t2.indexOf("//") === 0) t2 = "https:" + t2;
+            attachImg(bubble, t1, t2);
+            return;
+          }
+        }
+        if (arr[0] && arr[0].title){
+          var sumUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(arr[0].title);
+          fetch(sumUrl).then(function(r){ return r.json(); }).then(function(s){
+            var thumb = s && s.thumbnail && s.thumbnail.source;
+            var orig  = s && s.originalimage && s.originalimage.source;
+            if (!thumb && !orig) return;
+            var t1 = thumb ? String(thumb) : String(orig);
+            var t2 = orig ? String(orig) : null;
+            if (t1.indexOf("//") === 0) t1 = "https:" + t1;
+            if (t2 && t2.indexOf("//") === 0) t2 = "https:" + t2;
+            attachImg(bubble, t1, t2);
+          }).catch(function(){});
+        }
       }).catch(function(){});
     } catch(e){}
   }
+
   function watchNewBubbles(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
@@ -7443,7 +7408,7 @@ try {
             ensureCopyBtn(n);
             if (!n._thumbTry && lastQuestion){
               var txt = (n.innerText || n.textContent || "").trim();
-              if (txt.length > 40) {
+              if (txt.length > 40){
                 var q = lastQuestion;
                 setTimeout(function(){ fetchWikiThumb(q, n); }, 700);
               }
@@ -7469,7 +7434,6 @@ try {
     } catch(e){}
   }
 
-  /* ================= CLEAR ================= */
   function doClear(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
@@ -7528,7 +7492,6 @@ try {
     } catch(e){}
   }
 
-  /* ================= IMAGE VISION ================= */
   var currentImage = null;
   function installAttachBtn(){
     try {
@@ -7661,11 +7624,10 @@ try {
     } catch(e){ try { window.EXPERT.busy = false; } catch(e){} }
   }
 
-  /* ================= LIMIT ================= */
   function enforceLimit(){
     if (detectTier() === "master") return true;
     if (dailyCount() >= DAILY_LIMIT_STANDARD){
-      toast("Daily limit reached (" + DAILY_LIMIT_STANDARD + "/day). Tap 15,000/= Master in Unlock for unlimited.", 3500);
+      toast("Daily limit reached. Tap 15,000/= Master plan for unlimited.", 3500);
       return false;
     }
     return true;
@@ -7686,7 +7648,6 @@ try {
     } catch(e){}
   }
 
-  /* ================= VOICE ================= */
   var MIC = { listening: false, webRec: null };
   function setMic(on){
     MIC.listening = !!on;
@@ -7755,7 +7716,7 @@ try {
         pr.then(function(perm){
           var granted = perm && (perm.speechRecognition === "granted" || perm.recordAudio === "granted" || perm.microphone === "granted");
           if (!granted && perm && (perm.speechRecognition === "denied" || perm.recordAudio === "denied")){
-            toast("Microphone permission denied"); return;
+            toast("Microphone permission denied - check app settings"); return;
           }
           setMic(true);
           toast("Listening...");
@@ -7788,7 +7749,6 @@ try {
     } catch(e){}
   }
 
-  /* ================= LONG PRESS SAVE ================= */
   function trySave(text){
     if (typeof window.saveNote === "function"){
       try { window.saveNote(text); return true; } catch(e){
@@ -7868,7 +7828,6 @@ try {
     } catch(e){}
   }
 
-  /* ================= INIT ================= */
   function init(){
     installViewportFix();
     installTapDetector();

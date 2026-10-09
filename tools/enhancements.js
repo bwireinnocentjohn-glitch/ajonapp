@@ -14,7 +14,7 @@
     if (!t){
       t = document.createElement("div");
       t.id = "ajonEnhToast";
-      t.style.cssText = "position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#a7f3d0,#34d399);color:#052e16;padding:9px 16px;border-radius:999px;font-size:12px;font-weight:900;z-index:99999;opacity:0;transition:opacity .2s;pointer-events:none;max-width:80vw;text-align:center;box-shadow:0 4px 14px rgba(110,231,183,.45);";
+      t.style.cssText = "position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#a7f3d0,#34d399);color:#052e16;padding:9px 16px;border-radius:999px;font-size:12px;font-weight:900;z-index:99999;opacity:0;transition:opacity .2s;pointer-events:none;max-width:80vw;text-align:center;box-shadow:0 4px 14px rgba(52,211,153,.45);";
       document.body.appendChild(t);
     }
     t.textContent = msg;
@@ -23,7 +23,6 @@
     t._tid = setTimeout(function(){ t.style.opacity = "0"; }, ms || 2000);
   }
 
-  /* ================= KEYBOARD VIEWPORT FIX ================= */
   function installViewportFix(){
     try {
       if (!window.visualViewport) return;
@@ -32,31 +31,21 @@
         try {
           var kb = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
           document.documentElement.style.setProperty("--ajon-kb", kb + "px");
-          var body = document.body;
-          if (!body) return;
-          if (kb > 60){
-            body.classList.add("ajon-kb-open");
-          } else {
-            body.classList.remove("ajon-kb-open");
+          var b = document.body;
+          if (b){
+            b.style.paddingBottom = kb > 20 ? (kb + 4) + "px" : "0px";
+            b.style.transition = "padding-bottom .15s ease-out";
           }
-          try {
-            var inp = byId("aiInput");
-            if (inp && document.activeElement === inp){
-              setTimeout(function(){
-                try { inp.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch(e){}
-              }, 50);
-            }
-          } catch(e){}
+          try { if (vv.height) window.scrollTo(0, 0); } catch(e){}
         } catch(e){}
       }
       vv.addEventListener("resize", apply);
       vv.addEventListener("scroll", apply);
-      window.addEventListener("orientationchange", function(){ setTimeout(apply, 250); });
+      window.addEventListener("orientationchange", function(){ setTimeout(apply, 200); });
       apply();
     } catch(e){}
   }
 
-  /* ================= TIER ================= */
   function detectTier(){
     try {
       var cands = ["ajon_plan","ajon_tier","ajon_sub_type","ajon_subscription","ajon_membership","ajon_sub_tier"];
@@ -72,9 +61,6 @@
       try { amt = Number(localStorage.getItem("ajon_sub_amount") || localStorage.getItem("ajon_sub_price") || localStorage.getItem("ajon_sub_paid") || 0); } catch(e){}
       if (amt >= 15000) return "master";
       if (amt >= 5000) return "standard";
-      var title = "";
-      try { title = String(localStorage.getItem("ajon_sub_title") || "").toLowerCase(); } catch(e){}
-      if (/master|unlimited/.test(title)) return "master";
       var subEnd = 0;
       try { subEnd = Number(localStorage.getItem("ajon_sub_end_v12") || localStorage.getItem("ajon_sub_end_v11") || localStorage.getItem("ajon_sub_end_v10") || localStorage.getItem("ajon_sub_end_v9") || 0); } catch(e){}
       if (subEnd > now()) return "standard";
@@ -130,32 +116,37 @@
     return Math.max(0, DAILY_LIMIT_STANDARD - dailyCount());
   }
 
-  /* ---------- Tier badge: small icon only ---------- */
   function updateTierBadge(){
     try {
-      var row = document.querySelector(".expert-input-row");
-      if (!row) return;
-      var old = row.querySelector(".ajon-tier-badge");
+      var hdr = document.querySelector(".expert-header");
+      if (!hdr) return;
+      var old = hdr.querySelector(".ajon-tier-badge-header");
       if (old) old.parentNode.removeChild(old);
       var tier = detectTier();
       if (tier === "none") return;
-      var b = document.createElement("span");
-      b.className = "ajon-tier-badge";
+      var badge = document.createElement("span");
+      badge.className = "ajon-tier-badge-header";
       if (tier === "master"){
-        b.classList.add("master");
-        b.textContent = "\u267E";           /* ♾ */
-        b.title = "Master \u2014 unlimited";
+        badge.classList.add("master");
+        badge.textContent = "\u267E\uFE0F";
+        badge.setAttribute("aria-label", "Master: unlimited");
       } else {
         var left = dailyRemaining();
-        if (left <= 3) b.classList.add("low");
-        b.textContent = String(left);
-        b.title = left + " of " + DAILY_LIMIT_STANDARD + " left today";
+        if (left <= 3) badge.classList.add("low");
+        badge.textContent = "\u23F1 " + left;
+        badge.setAttribute("aria-label", left + " of " + DAILY_LIMIT_STANDARD + " left");
       }
-      row.appendChild(b);
+      var badgeEl = hdr.querySelector(".expert-badge");
+      var earth   = hdr.querySelector(".expert-earth");
+      if (badgeEl && badgeEl.parentNode === hdr){
+        if (earth && earth.parentNode === hdr) hdr.insertBefore(badge, earth);
+        else badgeEl.parentNode.insertBefore(badge, badgeEl.nextSibling);
+      } else {
+        hdr.appendChild(badge);
+      }
     } catch(e){}
   }
 
-  /* ================= ARROW SEND ================= */
   function installArrow(){
     try {
       var btn = document.querySelector(".expert-send-btn");
@@ -166,7 +157,6 @@
     } catch(e){}
   }
 
-  /* ================= THINKING ================= */
   function installThinking(){
     try {
       if (typeof window.exShowTyping !== "function" || window.exShowTyping._ajonEnh) return;
@@ -188,7 +178,6 @@
     } catch(e){}
   }
 
-  /* ================= TEXTAREA ================= */
   function autoGrow(ta){
     try {
       if (!ta || ta.tagName !== "TEXTAREA") return;
@@ -205,13 +194,7 @@
     ta.addEventListener("input", function(){ autoGrow(ta); });
     ta.addEventListener("focus", function(){
       autoGrow(ta);
-      setTimeout(function(){
-        try {
-          var kb = 0;
-          try { kb = Number(getComputedStyle(document.documentElement).getPropertyValue("--ajon-kb").replace("px","")) || 0; } catch(e){}
-          if (kb > 60){ try { ta.scrollIntoView({ block: "nearest", behavior: "smooth" }); } catch(e){} }
-        } catch(e){}
-      }, 300);
+      setTimeout(function(){ try { ta.scrollIntoView({block:"nearest"}); } catch(e){} }, 250);
     });
     ta.addEventListener("keydown", function(ev){
       if (ev.key === "Enter" && !ev.shiftKey){
@@ -239,7 +222,6 @@
     } catch(e){}
   }
 
-  /* ================= FORMAT ================= */
   function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
   function formatText(raw){
     var s = esc(raw);
@@ -277,7 +259,6 @@
     } catch(e){}
   }
 
-  /* ================= COPY ================= */
   function copyText(text){
     try {
       if (navigator.clipboard && navigator.clipboard.writeText){
@@ -319,7 +300,6 @@
     } catch(e){}
   }
 
-  /* ================= WIKI THUMBS ================= */
   var lastQuestion = "";
   function hookAskTrack(){
     try {
@@ -333,57 +313,88 @@
       window.askExpert = w;
     } catch(e){}
   }
+
+  function looksFactual(q){
+    var s = String(q||"").toLowerCase().trim();
+    if (!s) return false;
+    if (/^(how do i|how can i|how to)\s+(make|start|sell|grow|build|cook|prepare|open|run)/.test(s)) return false;
+    if (/\b(business idea|profit|capital|loan|price my|my business)\b/.test(s)) return false;
+    return true;
+  }
+
+  function loadImgAsBlob(imgEl, url, fallback){
+    try {
+      fetch(url, { mode: "cors" }).then(function(r){
+        if (!r.ok) throw new Error("img " + r.status);
+        return r.blob();
+      }).then(function(blob){
+        try { imgEl.src = URL.createObjectURL(blob); }
+        catch(e){ imgEl.src = url; }
+      }).catch(function(){
+        if (fallback && fallback !== url) imgEl.src = fallback;
+        else imgEl.src = url;
+      });
+    } catch(e){ imgEl.src = url; }
+  }
   function attachImg(bubble, src, fallbackSrc){
     try {
       if (!bubble || bubble.querySelector("img.ajon-thumb")) return;
       var img = document.createElement("img");
       img.className = "ajon-thumb";
       img.alt = "";
-      img.loading = "lazy";
       img.onerror = function(){
         try {
           if (fallbackSrc && img.src !== fallbackSrc){ img.src = fallbackSrc; fallbackSrc = null; return; }
           img.className = "ajon-thumb-fail";
         } catch(e){}
       };
-      img.src = src;
       bubble.appendChild(img);
+      loadImgAsBlob(img, src, fallbackSrc);
     } catch(e){}
   }
   function fetchWikiThumb(question, bubble){
     try {
       if (!question || !bubble || bubble._thumbTry) return;
+      if (!looksFactual(question)) return;
       bubble._thumbTry = true;
-      var sUrl = "https://en.wikipedia.org/w/api.php?" + new URLSearchParams({
-        action: "query", list: "search", srsearch: question,
-        format: "json", origin: "*", srlimit: "3"
+      var url = "https://en.wikipedia.org/w/api.php?" + new URLSearchParams({
+        action: "query", generator: "search", gsrsearch: question, gsrlimit: "3",
+        prop: "pageimages|info", piprop: "thumbnail|original", pithumbsize: "480",
+        format: "json", origin: "*"
       });
-      fetch(sUrl).then(function(r){ return r.json(); }).then(function(j){
-        var hits = j && j.query && j.query.search;
-        if (!hits || !hits.length) throw new Error("no hit");
-        var titles = hits.map(function(h){ return h.title; });
-        var chain = Promise.reject(new Error("start"));
-        titles.forEach(function(t){
-          chain = chain.catch(function(){
-            var sumUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(t);
-            return fetch(sumUrl).then(function(r){ return r.json(); }).then(function(s){
-              if (!s) throw new Error("no sum");
-              var thumb = s.thumbnail && s.thumbnail.source;
-              var orig  = s.originalimage && s.originalimage.source;
-              if (!thumb && !orig) throw new Error("no img");
-              var t1 = thumb ? String(thumb) : String(orig);
-              var t2 = orig ? String(orig) : null;
-              if (t1.indexOf("//") === 0) t1 = "https:" + t1;
-              if (t2 && t2.indexOf("//") === 0) t2 = "https:" + t2;
-              attachImg(bubble, t1, t2);
-              return true;
-            });
-          });
-        });
-        return chain;
+      fetch(url).then(function(r){ return r.json(); }).then(function(j){
+        var pages = j && j.query && j.query.pages;
+        if (!pages) throw new Error("no pages");
+        var arr = [];
+        for (var k in pages){ if (pages.hasOwnProperty(k)) arr.push(pages[k]); }
+        for (var i=0;i<arr.length;i++){
+          var p = arr[i];
+          if (p.thumbnail && p.thumbnail.source){
+            var t1 = String(p.thumbnail.source);
+            var t2 = p.original && p.original.source ? String(p.original.source) : null;
+            if (t1.indexOf("//") === 0) t1 = "https:" + t1;
+            if (t2 && t2.indexOf("//") === 0) t2 = "https:" + t2;
+            attachImg(bubble, t1, t2);
+            return;
+          }
+        }
+        if (arr[0] && arr[0].title){
+          var sumUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(arr[0].title);
+          fetch(sumUrl).then(function(r){ return r.json(); }).then(function(s){
+            var thumb = s && s.thumbnail && s.thumbnail.source;
+            var orig  = s && s.originalimage && s.originalimage.source;
+            if (!thumb && !orig) return;
+            var t1 = thumb ? String(thumb) : String(orig);
+            var t2 = orig ? String(orig) : null;
+            if (t1.indexOf("//") === 0) t1 = "https:" + t1;
+            if (t2 && t2.indexOf("//") === 0) t2 = "https:" + t2;
+            attachImg(bubble, t1, t2);
+          }).catch(function(){});
+        }
       }).catch(function(){});
     } catch(e){}
   }
+
   function watchNewBubbles(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
@@ -401,7 +412,7 @@
             ensureCopyBtn(n);
             if (!n._thumbTry && lastQuestion){
               var txt = (n.innerText || n.textContent || "").trim();
-              if (txt.length > 40) {
+              if (txt.length > 40){
                 var q = lastQuestion;
                 setTimeout(function(){ fetchWikiThumb(q, n); }, 700);
               }
@@ -427,7 +438,6 @@
     } catch(e){}
   }
 
-  /* ================= CLEAR ================= */
   function doClear(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
@@ -486,7 +496,6 @@
     } catch(e){}
   }
 
-  /* ================= IMAGE VISION ================= */
   var currentImage = null;
   function installAttachBtn(){
     try {
@@ -619,11 +628,10 @@
     } catch(e){ try { window.EXPERT.busy = false; } catch(e){} }
   }
 
-  /* ================= LIMIT ================= */
   function enforceLimit(){
     if (detectTier() === "master") return true;
     if (dailyCount() >= DAILY_LIMIT_STANDARD){
-      toast("Daily limit reached (" + DAILY_LIMIT_STANDARD + "/day). Tap 15,000/= Master in Unlock for unlimited.", 3500);
+      toast("Daily limit reached. Tap 15,000/= Master plan for unlimited.", 3500);
       return false;
     }
     return true;
@@ -644,7 +652,6 @@
     } catch(e){}
   }
 
-  /* ================= VOICE ================= */
   var MIC = { listening: false, webRec: null };
   function setMic(on){
     MIC.listening = !!on;
@@ -713,7 +720,7 @@
         pr.then(function(perm){
           var granted = perm && (perm.speechRecognition === "granted" || perm.recordAudio === "granted" || perm.microphone === "granted");
           if (!granted && perm && (perm.speechRecognition === "denied" || perm.recordAudio === "denied")){
-            toast("Microphone permission denied"); return;
+            toast("Microphone permission denied - check app settings"); return;
           }
           setMic(true);
           toast("Listening...");
@@ -746,7 +753,6 @@
     } catch(e){}
   }
 
-  /* ================= LONG PRESS SAVE ================= */
   function trySave(text){
     if (typeof window.saveNote === "function"){
       try { window.saveNote(text); return true; } catch(e){
@@ -826,7 +832,6 @@
     } catch(e){}
   }
 
-  /* ================= INIT ================= */
   function init(){
     installViewportFix();
     installTapDetector();

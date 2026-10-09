@@ -2,13 +2,14 @@
   "name": "ajon-makemoney",
   "version": "2.0.0",
   "private": true,
-  "description": "Ajon \u2014 500+ Ways To Make Money in Uganda and East Africa",
+  "description": "Ajon — 500+ Ways To Make Money in Uganda and East Africa",
   "author": "Ajon Inno",
   "license": "UNLICENSED",
   "dependencies": {
     "@capacitor/android": "6.2.0",
     "@capacitor/core": "6.2.0",
-    "@capacitor/app": "6.0.0"
+    "@capacitor/app": "6.0.0",
+    "@capacitor-community/speech-recognition": "^6.0.0"
   },
   "devDependencies": {
     "@capacitor/cli": "6.2.0",

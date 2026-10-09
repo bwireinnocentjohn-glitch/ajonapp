@@ -12,7 +12,7 @@ if ci != -1:
     ce = html.find("</style>", ci)
     if ce != -1:
         html = html[:ci] + html[ce:]
-        print("1. Removed old enhancement CSS")
+        print("1. Removed old CSS")
 
 js_marker = "<!-- __EXPERT_ENHANCEMENTS_V1__ -->"
 mi = html.find(js_marker)
@@ -22,18 +22,18 @@ if mi != -1:
         end = mi + len(js_marker)
         if end < len(html) and html[end] == '\n': end += 1
         html = html[:so] + html[end:]
-        print("2. Removed old enhancement JS")
+        print("2. Removed old JS")
 
 needle = "  /* ---------- CACHE ---------- */"
 expose  = "  window.__ajonGetKeys = function(){ return { groq: CONFIG.GROQ_KEY, gemini: CONFIG.GEMINI_KEY }; };\n\n  /* ---------- CACHE ---------- */"
 if "window.__ajonGetKeys" not in html and needle in html:
     html = html.replace(needle, expose, 1)
-    print("3. V7 key getter exposed")
+    print("3. Key getter exposed")
 
 for fn in ["function boot(", "hideSplash", "askExpert", "renderTutorials",
            "renderPayment", "__LIKES_MIN__", "__SAFE_LIVE_V4__", "__HYBRID_EXPERT_V7__"]:
     if fn not in html: print("ERROR: " + fn + " missing"); sys.exit(1)
-print("4. Required markers present")
+print("4. Markers OK")
 
 with io.open(CSS_F, 'r', encoding='utf-8') as f: css = f.read()
 with io.open(JS_F, 'r', encoding='utf-8') as f: js = f.read()
