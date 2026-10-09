@@ -276,7 +276,7 @@
     } catch(e){}
   }
 
-  /* ================= IMAGE CHAIN (4 sources) ================= */
+  /* ================= IMAGE CHAIN (Wikipedia -> Commons -> AI Horde) ================= */
   var lastQuestion = "";
 
   function hookAskTrack(){
@@ -286,9 +286,9 @@
       var w = function(){
         try {
           var inp = byId("aiInput");
-          if (inp) {
+          if (inp){
             lastQuestion = String(inp.value || "").trim();
-            lastQuestionTime = Date.now();
+            window.__ajonLastQTime = Date.now();
           }
         } catch(e){}
         return orig.apply(this, arguments);
@@ -307,11 +307,10 @@
       img.alt = "";
       img.referrerPolicy = "no-referrer";
       img.loading = "lazy";
-      img.onerror = function(){
-        try { img.className = "ajon-thumb-fail"; } catch(e){}
-      };
+      img.onerror = function(){ try { img.className = "ajon-thumb-fail"; } catch(e){} };
       img.src = src;
       bubble.appendChild(img);
+      try { bubble.scrollIntoView({block:"nearest"}); } catch(e){}
       return true;
     } catch(e){ return false; }
   }
@@ -355,8 +354,7 @@
         var arr = [];
         for (var k in pages){ if (pages.hasOwnProperty(k)) arr.push(pages[k]); }
         for (var i=0;i<arr.length;i++){
-          var p = arr[i];
-          var info = p.imageinfo && p.imageinfo[0];
+          var info = arr[i].imageinfo && arr[i].imageinfo[0];
           if (!info) continue;
           var u = info.thumburl || info.url;
           if (!u) continue;
@@ -371,28 +369,48 @@
     });
   }
 
-  function tryOpenverseImage(q){
+  /* AI Horde — free, no API key needed (anonymous key 0000000000) */
+  function tryAIHorde(q){
     return new Promise(function(resolve, reject){
-      var url = "https://api.openverse.org/v1/images/?q=" + encodeURIComponent(q) + "&page_size=3";
-      fetch(url).then(function(r){ return r.json(); }).then(function(j){
-        var results = j && j.results;
-        if (!results || !results.length) return reject("no results");
-        for (var i=0;i<results.length;i++){
-          var r = results[i];
-          var u = r.thumbnail || r.url;
-          if (u) return resolve(u);
-        }
-        reject("no url");
-      }).catch(reject);
+      var submitUrl = "https://aihorde.net/api/v2/generate/async";
+      var headers = {
+        "Content-Type": "application/json",
+        "apikey": "0000000000",
+        "Client-Agent": "AjonApp:1.0:ajon"
+      };
+      var body = {
+        prompt: q + ", detailed illustration",
+        params: { width: 512, height: 512, steps: 20, n: 1 },
+        nsfw: false,
+        censor_nsfw: true,
+        models: ["stable_diffusion"]
+      };
+      fetch(submitUrl, { method: "POST", headers: headers, body: JSON.stringify(body) })
+        .then(function(r){ return r.json(); })
+        .then(function(j){
+          if (!j || !j.id) return reject("horde submit failed");
+          var jobId = j.id;
+          var tries = 0;
+          var iv = setInterval(function(){
+            tries++;
+            if (tries > 30) { clearInterval(iv); return reject("horde timeout"); }
+            fetch("https://aihorde.net/api/v2/generate/check/" + jobId)
+              .then(function(r){ return r.json(); })
+              .then(function(chk){
+                if (!chk || !chk.done) return;
+                clearInterval(iv);
+                fetch("https://aihorde.net/api/v2/generate/status/" + jobId)
+                  .then(function(r){ return r.json(); })
+                  .then(function(st){
+                    if (st && st.generations && st.generations[0] && st.generations[0].img){
+                      return resolve(st.generations[0].img);
+                    }
+                    reject("horde empty");
+                  }).catch(reject);
+              }).catch(function(){});
+          }, 3000);
+        }).catch(reject);
     });
-  }
-
-  function pollinationsUrl(q, model){
-    var clean = String(q||"").replace(/[^\w\s]/g, " ").replace(/\s+/g, " ").trim().slice(0, 180);
-    var prompt = clean + ", illustration, high quality, detailed";
-    return "https://image.pollinations.ai/prompt/" + encodeURIComponent(prompt)
-      + "?width=480&height=320&nologo=true&model=" + (model || "flux")
-      + "&seed=" + Math.floor(Math.random() * 1000000);
   }
 
   function fetchResponseImage(question, bubble){
@@ -400,11 +418,9 @@
       if (!question || !bubble || bubble._thumbTry) return;
       bubble._thumbTry = true;
       var sources = [
-        function(){ return Promise.resolve(pollinationsUrl(question, "flux")); },
-        function(){ return Promise.resolve(pollinationsUrl(question, "turbo")); },
         function(){ return tryWikipediaImage(question); },
         function(){ return tryCommonsImage(question); },
-        function(){ return tryOpenverseImage(question); }
+        function(){ return tryAIHorde(question); }
       ];
       var i = 0;
       function run(){
@@ -423,9 +439,9 @@
 
   function watchNewBubbles(){
     try {
-      var c = byId("expertMsgs") || $(".expert-msgs");
-      if (!c || c._ajonObsV9) return;
-      c._ajonObsV9 = true;
+      var c = byId("expertMsgs") || document.querySelector(".expert-msgs");
+      if (!c || c._ajonObsImgFix) return;
+      c._ajonObsImgFix = true;
       var obs = new MutationObserver(function(muts){
         for (var i=0;i<muts.length;i++){
           for (var j=0;j<muts[i].addedNodes.length;j++){
@@ -436,7 +452,6 @@
             if (/user|me\b|sent/i.test(cls)) continue;
             if (!/bubble|msg|ex-/i.test(cls)) continue;
             ensureCopyBtn(n);
-            /* Image handled by dedicated scanner */
           }
         }
       });
@@ -444,68 +459,33 @@
     } catch(e){}
   }
 
-  /* Robust image scanner (works even if observer fires on empty bubble) */
-  var lastQuestionTime = 0;
-
+  /* Robust image scanner: every 1.5s for 90s after each question */
   function installImageScanner(){
-    if (window.__ajonImgScanner) return;
-    window.__ajonImgScanner = true;
-
-    /* Main poll: every 1.5s for 90s after each question */
+    if (window.__ajonImgScannerV2) return;
+    window.__ajonImgScannerV2 = true;
     setInterval(function(){
       try {
         if (!lastQuestion) return;
-        if (Date.now() - lastQuestionTime > 90000) return;
-        var c = byId("expertMsgs") || $(".expert-msgs");
+        var qt = window.__ajonLastQTime || 0;
+        if (Date.now() - qt > 90000) return;
+        var c = byId("expertMsgs") || document.querySelector(".expert-msgs");
         if (!c) return;
-
         var all = c.querySelectorAll(".bubble");
         if (!all.length) return;
-
-        /* Look at most recent bubble with real content */
         for (var i = all.length - 1; i >= 0; i--){
           var b = all[i];
-
-          /* Skip typing placeholder */
           if (b.classList && b.classList.contains("bubble-typing")) continue;
-
-          /* Already has image -> done */
           if (b.querySelector("img.ajon-thumb")) return;
-
-          /* Already tried and failed -> try next older */
           if (b._ajonImgDone) continue;
-
           var txt = (b.innerText || b.textContent || "").trim();
-
-          /* Too short -> maybe typing in progress, come back later */
           if (txt.length < 40) return;
-
-          /* Skip the user's echoed question bubble */
           if (txt === lastQuestion) return;
-          if (txt.indexOf(lastQuestion) === 0 && txt.length < lastQuestion.length + 60) return;
-
-          /* This is the AI's answer — mark and fetch */
           b._ajonImgDone = true;
           fetchResponseImage(lastQuestion, b);
           return;
         }
       } catch(e){}
     }, 1500);
-  }
-
-  function addCopyToExisting(){
-    try {
-      var c = byId("expertMsgs") || $(".expert-msgs");
-      if (!c) return;
-      var nodes = c.children;
-      for (var i=0;i<nodes.length;i++){
-        var n = nodes[i];
-        if (!n.classList) continue;
-        if (n.classList.contains("ajon-thinking")) continue;
-        if (/user|me\b|sent/i.test(n.className || "")) continue;
-        ensureCopyBtn(n);
-      }
-    } catch(e){}
   }
 
   /* ================= CLEAR CHAT ================= */

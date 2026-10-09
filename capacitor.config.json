@@ -17,7 +17,9 @@
       "commons.wikimedia.org",
       "api.openverse.org",
       "image.pollinations.ai",
-      "*.pollinations.ai"
+      "*.pollinations.ai",
+      "aihorde.net",
+      "*.aihorde.net"
     ]
   },
   "android": {
