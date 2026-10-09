@@ -9,7 +9,10 @@
       "api.groq.com",
       "generativelanguage.googleapis.com",
       "*.googleapis.com",
-      "*.groq.com"
+      "*.groq.com",
+      "en.wikipedia.org",
+      "*.wikipedia.org",
+      "*.wikimedia.org"
     ]
   },
   "android": {

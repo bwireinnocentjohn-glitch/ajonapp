@@ -6341,62 +6341,11 @@ try {
 </script>
 <!-- __SAFE_LIVE_V4__ -->
 <script>
-/* __API_DEBUG_V1__ */
+/* __HYBRID_EXPERT_V7__ */
 (function(){
   "use strict";
-  if (window.__ajonApiDebug) return;
-  window.__ajonApiDebug = true;
-
-  function pill(msg, ok){
-    var p = document.getElementById("ajonApiPill");
-    if (!p) {
-      p = document.createElement("div");
-      p.id = "ajonApiPill";
-      p.style.cssText = "position:fixed;bottom:8px;left:8px;right:8px;" +
-        "background:rgba(0,0,0,.85);color:#fff;padding:8px 12px;" +
-        "border-radius:10px;font-family:monospace;font-size:11px;" +
-        "font-weight:700;z-index:99999;pointer-events:none;" +
-        "text-align:center;line-height:1.4;white-space:pre-wrap;";
-      document.body.appendChild(p);
-    }
-    p.style.borderLeft = "4px solid " + (ok ? "#00c853" : "#ff5252");
-    p.textContent = msg;
-    clearTimeout(p._t);
-    p._t = setTimeout(function(){ if (p.parentNode) p.parentNode.removeChild(p); }, 20000);
-  }
-
-  var origFetch = window.fetch;
-  window.fetch = function(url, opts){
-    var u = String(url || "");
-    if (u.indexOf("api.groq.com") === -1 && u.indexOf("generativelanguage.googleapis.com") === -1) {
-      return origFetch.apply(this, arguments);
-    }
-    var tag = u.indexOf("groq") > -1 ? "GROQ" : "GEMINI";
-    pill("[" + tag + "] requesting...", true);
-    var started = Date.now();
-    return origFetch.apply(this, arguments).then(function(r){
-      var ms = Date.now() - started;
-      if (r.ok) pill("[" + tag + "] OK " + r.status + " (" + ms + "ms)", true);
-      else      pill("[" + tag + "] HTTP " + r.status + " (" + ms + "ms)", false);
-      return r;
-    }).catch(function(err){
-      var ms = Date.now() - started;
-      pill("[" + tag + "] FAILED (" + ms + "ms)\n" + (err && err.message ? err.message : String(err)), false);
-      throw err;
-    });
-  };
-
-  try { console.log("[API Debug] installed"); } catch(e){}
-})();
-
-</script>
-<!-- __API_DEBUG_V1__ -->
-<script>
-/* __HYBRID_EXPERT_V4__ */
-(function(){
-  "use strict";
-  if (window.__ajonHybridExpertV4) return;
-  window.__ajonHybridExpertV4 = true;
+  if (window.__ajonHybridExpertV7) return;
+  window.__ajonHybridExpertV7 = true;
 
   var CONFIG = {
     GROQ_KEY:   "PASTE_YOUR_GROQ_KEY_HERE",
@@ -6404,13 +6353,12 @@ try {
     GROQ_URL:   "https://api.groq.com/openai/v1/chat/completions",
     GROQ_MODEL: "openai/gpt-oss-120b",
     GEMINI_URL: "https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent",
-    CACHE_PREFIX: "ajon_qa_v2_",
-    CACHE_MAX: 500,
-    CACHE_TTL_MS: 30 * 24 * 60 * 60 * 1000,
+    CACHE_PREFIX: "ajon_qa_v5_",
+    CACHE_MAX: 800,
+    CACHE_TTL_MS: 60 * 24 * 60 * 60 * 1000,
     REQ_TIMEOUT_MS: 120000,
-    API_FIRST_WAIT_MS: 30000,
+    WIKI_TIMEOUT_MS: 12000,
     MAX_TOKENS: 600,
-    NOTICE: "\uD83D\uDCDA Here is what I know right now:",
     SYS: "You are Mr Expert, a wise African business and life mentor for the AJON app. Give a thorough practical answer in 3 to 5 sentences. Include specific steps or numbers when possible. Add one short real-life example if relevant. Be warm, direct, and avoid fluff."
   };
 
@@ -6425,18 +6373,14 @@ try {
     try {
       if (groq   != null) { CONFIG.GROQ_KEY   = String(groq);   localStorage.setItem("ajon_groq_key",   CONFIG.GROQ_KEY); }
       if (gemini != null) { CONFIG.GEMINI_KEY = String(gemini); localStorage.setItem("ajon_gemini_key", CONFIG.GEMINI_KEY); }
-      console.log("[Hybrid V4] Keys saved.");
+      console.log("[Hybrid V7] Keys saved.");
       return true;
     } catch(e){ return false; }
   };
 
-  function normKey(q){
-    return String(q||"").toLowerCase().replace(/[^a-z0-9 ]/g,"").trim().replace(/\s+/g," ").slice(0, 120);
-  }
-  function cacheKey(q){
-    try { return CONFIG.CACHE_PREFIX + btoa(normKey(q)).replace(/=/g,""); }
-    catch(e){ return CONFIG.CACHE_PREFIX + normKey(q); }
-  }
+  /* ---------- CACHE ---------- */
+  function normKey(q){ return String(q||"").toLowerCase().replace(/[^a-z0-9 ]/g,"").trim().replace(/\s+/g," ").slice(0,120); }
+  function cacheKey(q){ try { return CONFIG.CACHE_PREFIX + btoa(normKey(q)).replace(/=/g,""); } catch(e){ return CONFIG.CACHE_PREFIX + normKey(q); } }
   function cacheGet(q){
     try {
       var k = cacheKey(q);
@@ -6444,10 +6388,7 @@ try {
       if (!raw) return null;
       var o = JSON.parse(raw);
       if (!o || !o.t) return null;
-      if (o.ts && (Date.now() - o.ts) > CONFIG.CACHE_TTL_MS) {
-        try { localStorage.removeItem(k); } catch(e){}
-        return null;
-      }
+      if (o.ts && (Date.now() - o.ts) > CONFIG.CACHE_TTL_MS) { try { localStorage.removeItem(k); } catch(e){} return null; }
       o.hits = (o.hits||0) + 1;
       try { localStorage.setItem(k, JSON.stringify(o)); } catch(e){}
       return { text: o.t, src: o.src || "api" };
@@ -6483,6 +6424,7 @@ try {
     } catch(e){}
   }
 
+  /* ---------- FETCH WITH TIMEOUT ---------- */
   function fetchTO(url, opts, ms){
     return new Promise(function(resolve, reject){
       var ctl = null;
@@ -6506,24 +6448,97 @@ try {
     });
   }
 
+  /* ---------- WIKIPEDIA (only when suitable) ---------- */
+  function isWikiSuitable(q){
+    try {
+      var s = String(q||"").toLowerCase().trim();
+      if (!s) return false;
+      var starters = ["what is","what are","what was","who is","who was","who are",
+        "where is","where was","where are","when was","when did","when is",
+        "history of","tell me about","explain","define","meaning of",
+        "how does","how did","how do"];
+      for (var i=0; i<starters.length; i++){
+        if (s.indexOf(starters[i]) === 0) return true;
+      }
+      return false;
+    } catch(e){ return false; }
+  }
+
+  function wikiSearch(q){
+    var url = "https://en.wikipedia.org/w/api.php?" + new URLSearchParams({
+      action: "query", list: "search", srsearch: q, format: "json",
+      origin: "*", srlimit: "3"
+    });
+    return fetchTO(url, { method: "GET" }, CONFIG.WIKI_TIMEOUT_MS).then(function(r){
+      if (!r.ok) throw new Error("wiki search " + r.status);
+      return r.json();
+    }).then(function(j){
+      var hits = j && j.query && j.query.search;
+      if (!hits || !hits.length) throw new Error("wiki no results");
+      return hits;
+    });
+  }
+
+  function wikiSummary(title){
+    var url = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(title);
+    return fetchTO(url, { method: "GET" }, CONFIG.WIKI_TIMEOUT_MS).then(function(r){
+      if (!r.ok) throw new Error("wiki summary " + r.status);
+      return r.json();
+    }).then(function(j){
+      if (!j || !j.extract) throw new Error("wiki empty");
+      if (j.type === "disambiguation" || j.type === "no-extract") throw new Error("wiki thin");
+      var extract = String(j.extract).trim();
+      if (extract.length < 200) throw new Error("wiki short");
+      return { title: j.title || title, extract: extract };
+    });
+  }
+
+  function relevanceScore(question, title, extract){
+    try {
+      var qw = String(question||"").toLowerCase().match(/[a-z]{4,}/g) || [];
+      if (qw.length === 0) return 0;
+      var t = String(title||"").toLowerCase();
+      var e = String(extract||"").toLowerCase();
+      var hits = 0;
+      for (var i=0; i<qw.length; i++){
+        if (t.indexOf(qw[i]) > -1 || e.indexOf(qw[i]) > -1) hits++;
+      }
+      var score = hits / qw.length;
+      if (t.indexOf(qw[0]) > -1) score += 0.15;
+      return score;
+    } catch(e){ return 0; }
+  }
+
+  function callWikipedia(q){
+    return wikiSearch(q).then(function(hits){
+      var best = null;
+      var chain = Promise.resolve();
+      hits.slice(0,3).forEach(function(h){
+        chain = chain.then(function(){
+          if (best) return;
+          return wikiSummary(h.title).then(function(page){
+            var score = relevanceScore(q, page.title, page.extract);
+            if (score >= 0.5) best = { text: page.extract, score: score };
+          }).catch(function(){});
+        });
+      });
+      return chain.then(function(){
+        if (!best) throw new Error("wiki weak match");
+        return best.text;
+      });
+    });
+  }
+
+  /* ---------- GROQ ---------- */
   function callGroq(q){
-    if (!CONFIG.GROQ_KEY || CONFIG.GROQ_KEY.indexOf("PASTE_") === 0) {
-      return Promise.reject(new Error("no groq key"));
-    }
+    if (!CONFIG.GROQ_KEY || CONFIG.GROQ_KEY.indexOf("PASTE_") === 0) return Promise.reject(new Error("no groq"));
     return fetchTO(CONFIG.GROQ_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + CONFIG.GROQ_KEY
-      },
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + CONFIG.GROQ_KEY },
       body: JSON.stringify({
         model: CONFIG.GROQ_MODEL,
-        messages: [
-          { role: "system", content: CONFIG.SYS },
-          { role: "user", content: q }
-        ],
-        temperature: 0.6,
-        max_tokens: CONFIG.MAX_TOKENS
+        messages: [{ role: "system", content: CONFIG.SYS }, { role: "user", content: q }],
+        temperature: 0.6, max_tokens: CONFIG.MAX_TOKENS
       })
     }, CONFIG.REQ_TIMEOUT_MS).then(function(r){
       if (!r.ok) throw new Error("groq " + r.status);
@@ -6535,10 +6550,9 @@ try {
     });
   }
 
+  /* ---------- GEMINI ---------- */
   function callGemini(q){
-    if (!CONFIG.GEMINI_KEY || CONFIG.GEMINI_KEY.indexOf("PASTE_") === 0) {
-      return Promise.reject(new Error("no gemini key"));
-    }
+    if (!CONFIG.GEMINI_KEY || CONFIG.GEMINI_KEY.indexOf("PASTE_") === 0) return Promise.reject(new Error("no gemini"));
     var url = CONFIG.GEMINI_URL + "?key=" + encodeURIComponent(CONFIG.GEMINI_KEY);
     return fetchTO(url, {
       method: "POST",
@@ -6559,15 +6573,24 @@ try {
     });
   }
 
-  function hybridAskAPI(q){
-    return callGroq(q).then(function(t){
-      return { text: t, source: "groq" };
+  /* ---------- ONLINE CHAIN ---------- */
+  function onlineAnswer(q){
+    var start = Promise.reject(new Error("start"));
+    if (isWikiSuitable(q)) {
+      start = callWikipedia(q).then(function(t){
+        return { text: t, source: "wiki" };
+      });
+    }
+    return start.catch(function(){
+      return callGroq(q).then(function(t){
+        return { text: t, source: "groq" };
+      });
     }).catch(function(){
       return callGemini(q).then(function(t){
         return { text: t, source: "gemini" };
-      }).catch(function(){
-        return { text: null, source: "none" };
       });
+    }).catch(function(){
+      return { text: null, source: "none" };
     });
   }
 
@@ -6575,21 +6598,8 @@ try {
     try {
       if (!replies || !replies.length) return true;
       var blob = replies.join(" ").toLowerCase();
-      var signals = [
-        "i am here",
-        "let me help you",
-        "try asking:",
-        "try asking ",
-        "i don't know",
-        "i dont know",
-        "i'm not sure",
-        "not sure about",
-        "i have no answer",
-        "no information"
-      ];
-      for (var i=0; i<signals.length; i++){
-        if (blob.indexOf(signals[i]) > -1) return true;
-      }
+      var signals = ["i am here","let me help you","try asking:","try asking ","i don't know","i dont know","i'm not sure","not sure about","i have no answer","no information"];
+      for (var i=0; i<signals.length; i++) if (blob.indexOf(signals[i]) > -1) return true;
       if (blob.replace(/\s+/g,"").length < 60) return true;
       return false;
     } catch(e){ return false; }
@@ -6609,18 +6619,12 @@ try {
     } catch(e){}
   }
 
-  function sendLocalReplies(replies, myTurn, withNotice, onDone){
-    var list = replies.slice();
-    if (withNotice) list = [CONFIG.NOTICE + "\n\n" + list[0]].concat(list.slice(1));
+  function sendLocalReplies(replies, myTurn){
     var idx = 0;
     function next(){
       if (myTurn !== turnToken) return;
-      if (idx >= list.length) {
-        try { window.EXPERT.busy = false; } catch(e){}
-        if (typeof onDone === "function") onDone();
-        return;
-      }
-      var txt = list[idx];
+      if (idx >= replies.length) { try { window.EXPERT.busy = false; } catch(e){} return; }
+      var txt = replies[idx];
       var bb = exAddBubble("ex", "");
       window.EXPERT.msgs.push({ s: "ex", t: txt });
       exTypeInto(bb, txt, function(){ idx++; setTimeout(next, 120); });
@@ -6628,30 +6632,12 @@ try {
     next();
   }
 
-  function fireBackgroundAPI(q, myTurn, onDone){
-    hybridAskAPI(q).then(function(result){
-      if (result && result.text) {
-        cacheSet(q, result.text, "api");
-        if (myTurn === turnToken) appendBubble(result.text);
-      }
-      if (typeof onDone === "function") onDone();
-    }).catch(function(){
-      if (typeof onDone === "function") onDone();
-    });
-  }
-
   function install(){
     var helpers = ["byId","exAddBubble","exShowTyping","exTypeInto","exHideQuote"];
     for (var i=0; i<helpers.length; i++){
-      if (typeof window[helpers[i]] !== "function") {
-        try { console.warn("[Hybrid V4] missing helper:", helpers[i]); } catch(e){}
-        return false;
-      }
+      if (typeof window[helpers[i]] !== "function") { try { console.warn("[V7] missing:", helpers[i]); } catch(e){} return false; }
     }
-    if (typeof window.EXPERT === "undefined" || !window.EXPERT) {
-      try { console.warn("[Hybrid V4] EXPERT missing"); } catch(e){}
-      return false;
-    }
+    if (typeof window.EXPERT === "undefined" || !window.EXPERT) { try { console.warn("[V7] EXPERT missing"); } catch(e){} return false; }
 
     window.askExpert = function(){
       var myTurn = ++turnToken;
@@ -6668,18 +6654,18 @@ try {
         exAddBubble("me", q);
         window.EXPERT.msgs.push({ s: "me", t: q });
 
+        /* 1. CACHE HIT */
         var cached = cacheGet(q);
         if (cached && cached.text) {
           var b1 = exAddBubble("ex", "");
           window.EXPERT.msgs.push({ s: "ex", t: cached.text });
           exTypeInto(b1, cached.text, function(){ window.EXPERT.busy = false; });
-
           var isOnline0 = true;
           try { isOnline0 = navigator.onLine !== false; } catch(e){}
           if (cached.src === "local" && isOnline0) {
-            hybridAskAPI(q).then(function(result){
+            onlineAnswer(q).then(function(result){
               if (result && result.text) {
-                cacheSet(q, result.text, "api");
+                cacheSet(q, result.text, result.source);
                 if (myTurn === turnToken) appendBubble(result.text);
               }
             }).catch(function(){});
@@ -6687,12 +6673,9 @@ try {
           return;
         }
 
+        /* 2. Build local reply */
         var localReplies = null;
-        try {
-          if (typeof window.__ajonOriginalBuildExpertReply === "function") {
-            localReplies = window.__ajonOriginalBuildExpertReply(q);
-          }
-        } catch(e){}
+        try { if (typeof window.__ajonOriginalBuildExpertReply === "function") localReplies = window.__ajonOriginalBuildExpertReply(q); } catch(e){}
         if (!localReplies || !localReplies.length) {
           localReplies = [
             "I am here. \uD83D\uDE42 Let me help you.",
@@ -6704,94 +6687,50 @@ try {
         var isOnline = true;
         try { isOnline = navigator.onLine !== false; } catch(e){}
 
+        /* 3. OFFLINE -> local instantly, no notice */
         if (!isOnline) {
-          sendLocalReplies(localReplies, myTurn, true);
-          if (!isGenericFallback(localReplies)) {
-            cacheSet(q, localReplies.join("\n\n"), "local");
-          }
+          sendLocalReplies(localReplies, myTurn);
+          if (!isGenericFallback(localReplies)) cacheSet(q, localReplies.join("\n\n"), "local");
           return;
         }
 
-        var generic = isGenericFallback(localReplies);
-
-        if (!generic) {
-          cacheSet(q, localReplies.join("\n\n"), "local");
-          sendLocalReplies(localReplies, myTurn, true, function(){
-            fireBackgroundAPI(q, myTurn);
-          });
-          return;
-        }
-
+        /* 4. ONLINE -> Wikipedia (if suitable) -> Groq -> Gemini -> local. Silent. */
         var typing = exShowTyping();
-        var softFired = false;
-        var settled = false;
-
-        var softTimer = setTimeout(function(){
-          if (settled) return;
-          softFired = true;
+        onlineAnswer(q).then(function(result){
           if (myTurn !== turnToken) return;
           if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
-          sendLocalReplies(localReplies, myTurn, true);
-          cacheSet(q, localReplies.join("\n\n"), "local");
-        }, CONFIG.API_FIRST_WAIT_MS);
-
-        hybridAskAPI(q).then(function(result){
-          settled = true;
-          clearTimeout(softTimer);
           if (result && result.text) {
-            cacheSet(q, result.text, "api");
-            if (myTurn !== turnToken) return;
-            if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
-            if (softFired) {
-              appendBubble(result.text);
-            } else {
-              var bb = exAddBubble("ex", "");
-              window.EXPERT.msgs.push({ s: "ex", t: result.text });
-              exTypeInto(bb, result.text, function(){ try { window.EXPERT.busy = false; } catch(e){} });
-            }
+            cacheSet(q, result.text, result.source);
+            var bb = exAddBubble("ex", "");
+            window.EXPERT.msgs.push({ s: "ex", t: result.text });
+            exTypeInto(bb, result.text, function(){ try { window.EXPERT.busy = false; } catch(e){} });
           } else {
-            if (myTurn !== turnToken) return;
-            if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
-            if (!softFired) {
-              sendLocalReplies(localReplies, myTurn, true);
-              cacheSet(q, localReplies.join("\n\n"), "local");
-            }
+            sendLocalReplies(localReplies, myTurn);
+            if (!isGenericFallback(localReplies)) cacheSet(q, localReplies.join("\n\n"), "local");
           }
         }).catch(function(){
-          settled = true;
-          clearTimeout(softTimer);
           if (myTurn !== turnToken) return;
           if (typing && typing.parentNode) typing.parentNode.removeChild(typing);
-          if (!softFired) {
-            sendLocalReplies(localReplies, myTurn, true);
-            cacheSet(q, localReplies.join("\n\n"), "local");
-          }
+          sendLocalReplies(localReplies, myTurn);
+          if (!isGenericFallback(localReplies)) cacheSet(q, localReplies.join("\n\n"), "local");
         });
       } catch(err){
-        try { console.log("[Hybrid V4] sync error", err); } catch(e){}
+        try { console.log("[V7] err", err); } catch(e){}
         try { if (window.EXPERT) window.EXPERT.busy = false; } catch(e){}
       }
     };
 
-    try { console.log("[Ajon Hybrid V4] installed"); } catch(e){}
+    try { console.log("[Ajon Hybrid V7] Wikipedia-suitable -> Groq -> Gemini -> local. Silent."); } catch(e){}
     return true;
   }
 
   var tries = 0;
-  function attempt(){
-    if (install()) return;
-    tries++;
-    if (tries < 20) setTimeout(attempt, 500);
-  }
-
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", attempt);
-  } else {
-    setTimeout(attempt, 400);
-  }
+  function attempt(){ if (install()) return; tries++; if (tries < 20) setTimeout(attempt, 500); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", attempt);
+  else setTimeout(attempt, 400);
 })();
 
 </script>
-<!-- __HYBRID_EXPERT_V4__ -->
+<!-- __HYBRID_EXPERT_V7__ -->
 </body>
 </html>
