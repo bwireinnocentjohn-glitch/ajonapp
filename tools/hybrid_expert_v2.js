@@ -9,7 +9,7 @@
     GEMINI_KEY: "PASTE_YOUR_GEMINI_KEY_HERE",
     GROQ_URL:   "https://api.groq.com/openai/v1/chat/completions",
     GROQ_MODEL: "llama-3.3-70b-versatile",
-    GEMINI_URL: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+    GEMINI_URL: "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
     CACHE_PREFIX: "ajon_qa_v1_",
     CACHE_MAX: 500,
     CACHE_TTL_MS: 30 * 24 * 60 * 60 * 1000,
