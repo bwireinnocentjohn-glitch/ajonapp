@@ -1,10 +1,10 @@
 /* __EXPERT_ENHANCEMENTS_V1__ */
 (function(){
   "use strict";
-  if (window.__ajonEnhV9) return;
-  window.__ajonEnhV9 = true;
+  if (window.__ajonEnhV10) return;
+  window.__ajonEnhV10 = true;
 
-  var DAILY_LIMIT_STANDARD = Infinity;  /* UNLIMITED — no daily cap */
+  var DAILY_LIMIT_STANDARD = Infinity;
   function byId(id){ return document.getElementById(id); }
   function $(s){ return document.querySelector(s); }
   function now(){ return Date.now(); }
@@ -23,7 +23,7 @@
     t._tid = setTimeout(function(){ t.style.opacity = "0"; }, ms || 2000);
   }
 
-  /* ================= VIEWPORT ================= */
+  /* ================= VIEWPORT (keyboard) ================= */
   function installViewportFix(){
     try {
       if (!window.visualViewport) return;
@@ -36,7 +36,6 @@
             b.style.paddingBottom = kb > 20 ? (kb + 4) + "px" : "0px";
             b.style.transition = "padding-bottom .15s ease-out";
           }
-          try { if (vv.height) window.scrollTo(0, 0); } catch(e){}
         } catch(e){}
       }
       vv.addEventListener("resize", apply);
@@ -46,7 +45,7 @@
     } catch(e){}
   }
 
-  /* ================= TIER (unlimited now) ================= */
+  /* ================= TIER ================= */
   function detectTier(){
     try {
       var cands = ["ajon_plan","ajon_tier","ajon_sub_type","ajon_subscription","ajon_membership","ajon_sub_tier"];
@@ -276,24 +275,24 @@
     } catch(e){}
   }
 
-  /* ================= IMAGE CHAIN (Wikipedia -> Commons -> AI Horde) ================= */
+  /* ================= IMAGE CHAIN ================= */
   var lastQuestion = "";
 
   function hookAskTrack(){
     try {
-      if (typeof window.askExpert !== "function" || window.askExpert._ajonTrackQ) return;
+      if (typeof window.askExpert !== "function" || window.askExpert._ajonTrackQ2) return;
       var orig = window.askExpert;
       var w = function(){
         try {
           var inp = byId("aiInput");
           if (inp){
-            lastQuestion = String(inp.value || "").trim();
-            window.__ajonLastQTime = Date.now();
+            var v = String(inp.value || "").trim();
+            if (v) lastQuestion = v;
           }
         } catch(e){}
         return orig.apply(this, arguments);
       };
-      w._ajonTrackQ = true;
+      w._ajonTrackQ2 = true;
       window.askExpert = w;
     } catch(e){}
   }
@@ -369,7 +368,6 @@
     });
   }
 
-  /* AI Horde — free, no API key needed (anonymous key 0000000000) */
   function tryAIHorde(q){
     return new Promise(function(resolve, reject){
       var submitUrl = "https://aihorde.net/api/v2/generate/async";
@@ -379,11 +377,10 @@
         "Client-Agent": "AjonApp:1.0:ajon"
       };
       var body = {
-        prompt: q + ", detailed illustration",
+        prompt: q + ", detailed illustration, high quality",
         params: { width: 512, height: 512, steps: 20, n: 1 },
         nsfw: false,
-        censor_nsfw: true,
-        models: ["stable_diffusion"]
+        censor_nsfw: true
       };
       fetch(submitUrl, { method: "POST", headers: headers, body: JSON.stringify(body) })
         .then(function(r){ return r.json(); })
@@ -413,14 +410,14 @@
     });
   }
 
-  function fetchResponseImage(question, bubble){
+  function fetchImageForBubble(q, bubble){
     try {
-      if (!question || !bubble || bubble._thumbTry) return;
-      bubble._thumbTry = true;
+      if (!q || !bubble || bubble._ajonImgTried) return;
+      bubble._ajonImgTried = true;
       var sources = [
-        function(){ return tryWikipediaImage(question); },
-        function(){ return tryCommonsImage(question); },
-        function(){ return tryAIHorde(question); }
+        function(){ return tryWikipediaImage(q); },
+        function(){ return tryCommonsImage(q); },
+        function(){ return tryAIHorde(q); }
       ];
       var i = 0;
       function run(){
@@ -437,11 +434,68 @@
     } catch(e){}
   }
 
+  /* Hook exTypeInto — fires image exactly when a bubble finishes typing */
+  function hookTypeIntoImage(){
+    try {
+      if (typeof window.exTypeInto !== "function" || window.exTypeInto._ajonImgHook) return;
+      var orig = window.exTypeInto;
+      var w = function(bubble, text, done){
+        var wrappedDone = function(){
+          try { formatBubble(bubble, text); } catch(e){}
+          try { ensureCopyBtn(bubble); } catch(e){}
+          try {
+            if (bubble && !bubble._ajonImgTried && lastQuestion){
+              var clean = String(text || "").trim();
+              if (clean.length >= 30) {
+                (function(b, q){
+                  setTimeout(function(){ fetchImageForBubble(q, b); }, 600);
+                })(bubble, lastQuestion);
+              }
+            }
+          } catch(e){}
+          if (typeof done === "function") done();
+        };
+        return orig.call(this, bubble, text, wrappedDone);
+      };
+      w._ajonImgHook = true;
+      window.exTypeInto = w;
+    } catch(e){}
+  }
+
+  /* Safety net — every 2s, scan for the newest bubble without image */
+  function installScanner(){
+    if (window.__ajonImgScannerV3) return;
+    window.__ajonImgScannerV3 = true;
+    setInterval(function(){
+      try {
+        if (!lastQuestion) return;
+        var c = byId("expertMsgs") || document.querySelector(".expert-msgs");
+        if (!c) return;
+        var all = c.querySelectorAll(".bubble");
+        if (!all.length) return;
+        for (var i = all.length - 1; i >= 0; i--){
+          var b = all[i];
+          if (b.classList && b.classList.contains("bubble-typing")) continue;
+          if (b.classList && b.classList.contains("ajon-thinking")) continue;
+          if (/bubble-avatar|bubble-name/i.test(b.className || "")) continue;
+          if (b._ajonImgTried) continue;
+          if (b.querySelector("img.ajon-thumb")) continue;
+          var txt = (b.innerText || b.textContent || "").trim();
+          if (txt.length < 40) continue;
+          if (txt === lastQuestion) continue;
+          var q = lastQuestion;
+          fetchImageForBubble(q, b);
+          return;
+        }
+      } catch(e){}
+    }, 2000);
+  }
+
   function watchNewBubbles(){
     try {
-      var c = byId("expertMsgs") || document.querySelector(".expert-msgs");
-      if (!c || c._ajonObsImgFix) return;
-      c._ajonObsImgFix = true;
+      var c = byId("expertMsgs") || $(".expert-msgs");
+      if (!c || c._ajonObsNew) return;
+      c._ajonObsNew = true;
       var obs = new MutationObserver(function(muts){
         for (var i=0;i<muts.length;i++){
           for (var j=0;j<muts[i].addedNodes.length;j++){
@@ -459,42 +513,31 @@
     } catch(e){}
   }
 
-  /* Robust image scanner: every 1.5s for 90s after each question */
-  function installImageScanner(){
-    if (window.__ajonImgScannerV2) return;
-    window.__ajonImgScannerV2 = true;
-    setInterval(function(){
-      try {
-        if (!lastQuestion) return;
-        var qt = window.__ajonLastQTime || 0;
-        if (Date.now() - qt > 90000) return;
-        var c = byId("expertMsgs") || document.querySelector(".expert-msgs");
-        if (!c) return;
-        var all = c.querySelectorAll(".bubble");
-        if (!all.length) return;
-        for (var i = all.length - 1; i >= 0; i--){
-          var b = all[i];
-          if (b.classList && b.classList.contains("bubble-typing")) continue;
-          if (b.querySelector("img.ajon-thumb")) return;
-          if (b._ajonImgDone) continue;
-          var txt = (b.innerText || b.textContent || "").trim();
-          if (txt.length < 40) return;
-          if (txt === lastQuestion) return;
-          b._ajonImgDone = true;
-          fetchResponseImage(lastQuestion, b);
-          return;
-        }
-      } catch(e){}
-    }, 1500);
+  function addCopyToExisting(){
+    try {
+      var c = byId("expertMsgs") || $(".expert-msgs");
+      if (!c) return;
+      var nodes = c.children;
+      for (var i=0;i<nodes.length;i++){
+        var n = nodes[i];
+        if (!n.classList) continue;
+        if (n.classList.contains("ajon-thinking")) continue;
+        if (/user|me\b|sent/i.test(n.className || "")) continue;
+        ensureCopyBtn(n);
+      }
+    } catch(e){}
   }
 
-  /* ================= CLEAR CHAT ================= */
-  function doClear(){
+  /* ================= CLEAR CHAT (EXPERT TAB ONLY) ================= */
+  function doClearExpert(){
     try {
+      /* Only clear the EXPERT's DOM and state — never touch the Assist tab */
       var c = byId("expertMsgs") || $(".expert-msgs");
       if (c) c.innerHTML = "";
       try { if (window.EXPERT) window.EXPERT.msgs = []; } catch(e){}
-      try { if (typeof window.clearAssistantChat === "function") window.clearAssistantChat(); } catch(e){}
+      /* Reset image trackers */
+      lastQuestion = "";
+      /* Fresh welcome bubble */
       setTimeout(function(){
         try {
           if (typeof exAddBubble === "function"){
@@ -504,9 +547,10 @@
           }
         } catch(e){}
       }, 80);
-      toast("Chat cleared");
+      toast("Expert chat cleared");
     } catch(e){ toast("Clear failed"); }
   }
+
   function installClearBtn(){
     try {
       var row = document.querySelector(".expert-input-row");
@@ -515,15 +559,16 @@
       btn.className = "ajon-clear-btn";
       btn.type = "button";
       btn.textContent = "\uD83D\uDDD1";
-      btn.setAttribute("aria-label", "Clear chat");
+      btn.setAttribute("aria-label", "Clear expert chat");
       btn.onclick = function(ev){
         ev.stopPropagation();
-        if (!confirm("Clear this chat?")) return;
-        doClear();
+        if (!confirm("Clear this Expert chat?")) return;
+        doClearExpert();
       };
       row.appendChild(btn);
     } catch(e){}
   }
+
   function watchQuoteCard(){
     try {
       var qc = byId("expertQuoteCard");
@@ -676,16 +721,15 @@
     } catch(e){ try { window.EXPERT.busy = false; } catch(e){} }
   }
 
-  /* ================= LIMIT (UNLIMITED) ================= */
   function hookAskLimit(){
     try {
-      if (typeof window.askExpert !== "function" || window.askExpert._ajonLimitWrap) return;
+      if (typeof window.askExpert !== "function" || window.askExpert._ajonLimitWrap2) return;
       var orig = window.askExpert;
       var w = function(){
         if (currentImage) return sendImage();
         return orig.apply(this, arguments);
       };
-      w._ajonLimitWrap = true;
+      w._ajonLimitWrap2 = true;
       window.askExpert = w;
     } catch(e){}
   }
@@ -831,8 +875,8 @@
   function attachLongPress(){
     try {
       var c = byId("expertMsgs") || $(".expert-msgs");
-      if (!c || c._ajonLP) return;
-      c._ajonLP = true;
+      if (!c || c._ajonLP2) return;
+      c._ajonLP2 = true;
       var timer = null, target = null;
       function findBubble(el){
         var cur = el;
@@ -888,7 +932,8 @@
     addCopyToExisting();
     attachLongPress();
     updateTierBadge();
-    installImageScanner();
+    installScanner();
+    hookTypeIntoImage();
   }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else setTimeout(init, 300);
@@ -905,7 +950,9 @@
     watchNewBubbles();
     attachLongPress();
     updateTierBadge();
+    installScanner();
+    hookTypeIntoImage();
   }, 2500);
 
-  try { console.log("[Ajon Enhancements V9] loaded — unlimited, 5-source image chain"); } catch(e){}
+  try { console.log("[Ajon Enhancements V10] loaded"); } catch(e){}
 })();
