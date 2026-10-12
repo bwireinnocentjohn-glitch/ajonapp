@@ -8169,15 +8169,29 @@ try {
       return;
     }
 
-    if (typeof isSubscribed === "function" && isSubscribed()){
-      var end = (typeof subscriptionEndDate !== "undefined") ? subscriptionEndDate : 0;
-      var msLeft = end - Date.now();
-      var daysLeft = Math.ceil(msLeft / 86400000);
-      var hoursLeft = Math.ceil(msLeft / 3600000);
-      var human = daysLeft >= 1 ? daysLeft + " days" : hoursLeft + " hours";
-      var until = (typeof formatDateShort === "function") ? formatDateShort(end) : new Date(end).toLocaleDateString();
+    var _hasSub = has30Day();
+    var _hasTr  = has2Day();
+    if (_hasSub || _hasTr){
+      var end, msLeft, human, until, title;
+      if (_hasTr && !_hasSub){
+        end = Number(localStorage.getItem(LS_2D_EXPIRES) || 0);
+        msLeft = end - now();
+        var th = Math.floor(msLeft / 3600000);
+        var tm = Math.floor((msLeft % 3600000) / 60000);
+        human = th + "h " + tm + "m";
+        until = (typeof formatDateShort === "function") ? formatDateShort(end) : new Date(end).toLocaleString();
+        title = "\u23F1 2-Day Trial Active";
+      } else {
+        end = (typeof subscriptionEndDate !== "undefined") ? subscriptionEndDate : 0;
+        msLeft = end - now();
+        var dL = Math.floor(msLeft / 86400000);
+        var hL = Math.floor((msLeft % 86400000) / 3600000);
+        human = dL + "d " + hL + "h";
+        until = (typeof formatDateShort === "function") ? formatDateShort(end) : new Date(end).toLocaleDateString();
+        title = "\u2705 Unlocked";
+      }
       area.innerHTML = '<div class="paywall-wrap">' + coinsHtml +
-        '<div class="paywall-active-card"><h3>\u2705 Unlocked</h3>' +
+        '<div class="paywall-active-card"><h3>' + title + '</h3>' +
         '<div class="num">' + human + '</div><div class="lbl">REMAINING</div>' +
         '<div class="exp">Valid until <strong>' + until + '</strong></div></div></div>';
       return;
