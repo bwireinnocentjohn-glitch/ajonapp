@@ -266,6 +266,54 @@
     return true;
   }
 
+  /* ---------- TRIAL GATE OVERRIDES ---------- */
+  /* Makes isSubscribed / hasFullAccess / canAccess return true when 2-day trial is active */
+  function installTrialGates(){
+    var wrappedAny = false;
+
+    function wrapGate(name){
+      try {
+        if (typeof window[name] !== "function") return false;
+        if (window[name]._ajon2dGate) return true;
+        var orig = window[name];
+        var wrapped = function(){
+          try {
+            if (has2Day()) return true;
+          } catch(e){}
+          return orig.apply(this, arguments);
+        };
+        wrapped._ajon2dGate = true;
+        window[name] = wrapped;
+        return true;
+      } catch(e){ return false; }
+    }
+
+    wrappedAny = wrapGate("isSubscribed") || wrappedAny;
+    wrappedAny = wrapGate("hasFullAccess") || wrappedAny;
+    wrappedAny = wrapGate("canAccess")     || wrappedAny;
+
+    /* trialMinutesLeft: during active 2-day trial return real minutes left */
+    try {
+      if (typeof window.trialMinutesLeft === "function" && !window.trialMinutesLeft._ajon2dTrial){
+        var origML = window.trialMinutesLeft;
+        var wrappedML = function(){
+          try {
+            if (has2Day()){
+              var exp = Number(localStorage.getItem(LS_2D_EXPIRES) || 0);
+              return Math.max(0, Math.ceil((exp - Date.now()) / 60000));
+            }
+          } catch(e){}
+          return origML.apply(this, arguments);
+        };
+        wrappedML._ajon2dTrial = true;
+        window.trialMinutesLeft = wrappedML;
+        wrappedAny = true;
+      }
+    } catch(e){}
+
+    return wrappedAny;
+  }
+
   /* ---------- SHOWTAB HOOK ---------- */
   function installShowTab(){
     if (typeof window.showTab !== "function") return false;
@@ -326,6 +374,7 @@
     ok = installTrialBar()      && ok;
     ok = installShowTab()       && ok;
     ok = installRenderPayment() && ok;
+    ok = installTrialGates()    && ok;
     if (!ok && tries < 30){ setTimeout(attempt, 500); return; }
     try { if (typeof updateTrialBar === "function") updateTrialBar(); } catch(e){}
     try { if (typeof renderPayment === "function") renderPayment(); } catch(e){}
