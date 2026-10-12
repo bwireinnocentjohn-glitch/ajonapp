@@ -840,7 +840,7 @@ main{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:
       </div>
       <div class="cat-bar" id="catBar"></div>
       <div class="wa-share-bar">
-        <button class="wa-share-btn" onclick="shareWhatsApp()">📱 Share Ajon on WhatsApp</button>
+        <button class="wa-share-btn" onclick="shareWhatsApp()">📱 Share Ajon on WhatsApp to Access More</button>
       </div>
       <div id="tutList"></div>
       <div id="loadSentinel" class="load-sentinel" style="display:none;">Loading more...</div>
@@ -5665,7 +5665,7 @@ function switchNotesView(view) {
 
   /* WHATSAPP SHARE */
   window.shareWhatsApp = function(){
-    var msg = "Install The Ajon 1500+ Business App, With Free Data Buddle for 30 days, learn from Expert and Divorce From Poverty, At 5000/= 30 days Fully";
+    var msg = "Download Ajon 1500+ Businesses App from ajonapp.netlify.app only 7mbs and Access Lessons Without Data Cost, At only 2500/= Trial, And have Access to a Soft Business Loan After, Mastering The Business of Your Choice.";
     var url = "https://wa.me/?text=" + encodeURIComponent(msg);
     try { window.open(url, "_blank"); } catch(e) { try { location.href = url; } catch(x){} }
     var c = getCoins() + 1000;
@@ -6275,7 +6275,7 @@ try {
       var h = 0;
       for (var j = 0; j < t.length; j++){ h = ((h<<5)-h)+t.charCodeAt(j); h |= 0; }
       h = Math.abs(h);
-      var base = 10000 + (h % 10000);
+      var base = 800 + (h % 480000);
       var rate = 6000;
       var hours = (Date.now() - installTime) / 3600000;
       var likes = base + Math.floor(hours * rate);
