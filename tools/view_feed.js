@@ -4,11 +4,48 @@
   if (window.__ajonViewFeed) return;
   window.__ajonViewFeed = true;
 
-  var MAX_IMAGES = 200;
-  var STOP_AFTER_MISSES = 5;
+  var TOTAL_IMAGES = 89;
+  var BATCH_SIZE   = 5;
   var CURRENT_MODE = "view";
+  var LIKES_KEY    = "ajon_view_userlikes";
+  var FAVS_KEY     = "ajon_view_favs";
+  var INSTALL_KEY  = "ajon_view_install_t_v2";
+
+  var LIKE_MIN     = 2000;
+  var LIKE_MAX     = 59100;
+  var LIKE_RANGE   = LIKE_MAX - LIKE_MIN;
+  var GROWTH_PER_MIN = 500;
 
   function byId(id){ return document.getElementById(id); }
+
+  var installT = 0;
+  try { installT = Number(localStorage.getItem(INSTALL_KEY)) || 0; } catch(e){}
+  if (!installT){
+    installT = Date.now();
+    try { localStorage.setItem(INSTALL_KEY, String(installT)); } catch(e){}
+  }
+
+  function hashOf(n){
+    var x = ((n + 1) * 2654435761) >>> 0;
+    x = (x ^ (x >>> 16)) >>> 0;
+    x = Math.imul(x, 2246822519) >>> 0;
+    x = (x ^ (x >>> 13)) >>> 0;
+    return x;
+  }
+  function startLikes(idx){ return LIKE_MIN + (hashOf(idx) % (LIKE_RANGE + 1)); }
+  function computeLikes(idx){
+    var mins = Math.floor((Date.now() - installT) / 60000);
+    return startLikes(idx) + mins * GROWTH_PER_MIN;
+  }
+  function fmtLikes(n){
+    if (n >= 1000000) return (n/1000000).toFixed(1) + "M";
+    if (n >= 1000)    return (n/1000).toFixed(1) + "k";
+    return String(n);
+  }
+  function loadLiked(){ try { return JSON.parse(localStorage.getItem(LIKES_KEY)) || {}; } catch(e){ return {}; } }
+  function saveLiked(o){ try { localStorage.setItem(LIKES_KEY, JSON.stringify(o)); } catch(e){} }
+  function loadFavs(){ try { return JSON.parse(localStorage.getItem(FAVS_KEY)) || {}; } catch(e){ return {}; } }
+  function saveFavs(o){ try { localStorage.setItem(FAVS_KEY, JSON.stringify(o)); } catch(e){} }
 
   function installStyles(){
     try {
@@ -23,10 +60,24 @@
         ".ajon-subtab-btn.active{background:linear-gradient(135deg,#00c853,#00a844);color:#fff;border-color:#00a844;box-shadow:0 3px 12px rgba(0,200,83,.4);}" +
         "#ajonViewFeed{display:none;padding:8px 12px 24px;}" +
         "#ajonViewFeed.active{display:block;}" +
-        ".ajon-view-card{background:#000;border:0;border-radius:12px;overflow:hidden;margin-bottom:14px;box-shadow:0 4px 14px rgba(0,0,0,.7);position:relative;aspect-ratio:16/9;}" +
+        ".ajon-view-item{margin-bottom:12px;border-radius:12px;overflow:hidden;background:#000;box-shadow:0 2px 10px rgba(0,0,0,.5);}" +
+        ".ajon-view-card{background:#000;position:relative;aspect-ratio:16/9;overflow:hidden;}" +
         ".ajon-view-card img{width:100%;height:100%;object-fit:cover;display:block;background:#000;}" +
+        ".ajon-view-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;background:#0a0a0a;}" +
+        ".ajon-view-meta-left{display:flex;align-items:center;gap:8px;min-width:0;flex:1 1 auto;}" +
+        ".ajon-view-meta-right{display:flex;align-items:center;gap:6px;flex:0 0 auto;}" +
+        ".ajon-view-like{width:34px;height:34px;border-radius:50%;background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.28);color:#6ee7b7;font-size:16px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:transform .12s,background .15s;flex:0 0 auto;}" +
+        ".ajon-view-like:active{transform:scale(.88);}" +
+        ".ajon-view-like.liked{background:rgba(255,82,82,.18);color:#ff5252;border-color:rgba(255,82,82,.5);}" +
+        ".ajon-view-count{font-size:13px;font-weight:800;color:#a7f3d0;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}" +
+        ".ajon-view-count b{color:#fff;font-weight:900;}" +
+        ".ajon-view-fav{width:34px;height:34px;border-radius:50%;background:rgba(255,183,77,.08);border:1px solid rgba(255,183,77,.3);color:#ffb74d;font-size:15px;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:transform .12s,background .15s;flex:0 0 auto;}" +
+        ".ajon-view-fav:active{transform:scale(.88);}" +
+        ".ajon-view-fav.saved{background:rgba(255,183,77,.22);color:#fff;border-color:rgba(255,183,77,.6);}" +
         ".ajon-view-empty{text-align:center;padding:60px 20px;color:#8aa;font-size:13px;line-height:1.6;}" +
-        ".ajon-view-empty b{color:#a7f3d0;display:block;font-size:15px;margin-bottom:6px;}";
+        ".ajon-view-empty b{color:#a7f3d0;display:block;font-size:15px;margin-bottom:6px;}" +
+        ".ajon-view-sentinel{height:20px;}" +
+        ".ajon-view-badge{position:absolute;top:8px;left:8px;background:linear-gradient(135deg,#ff5252,#c62828);color:#fff;font-size:10px;font-weight:900;padding:3px 8px;border-radius:999px;letter-spacing:.5px;box-shadow:0 2px 8px rgba(255,82,82,.45);}";
       document.head.appendChild(s);
     } catch(e){}
   }
@@ -41,14 +92,13 @@
       bar.className = "ajon-subtab-bar";
       bar.id = "ajonSubTabBar";
       bar.innerHTML =
-        '<button class="ajon-subtab-btn active" data-mode="view" type="button">\uD83D\uDDBC See</button>' +
+        '<button class="ajon-subtab-btn active" data-mode="view" type="button">\uD83D\uDDBC View</button>' +
         '<button class="ajon-subtab-btn" data-mode="tutorials" type="button">\uD83D\uDCDA Tutorials</button>';
 
       panel.insertBefore(bar, panel.firstChild);
 
       var feed = document.createElement("div");
       feed.id = "ajonViewFeed";
-      feed.innerHTML = '<div class="ajon-view-empty"><b>Loading images...</b>They will appear here shortly.</div>';
       panel.insertBefore(feed, bar.nextSibling);
 
       var btns = bar.querySelectorAll(".ajon-subtab-btn");
@@ -69,15 +119,12 @@
       CURRENT_MODE = mode;
       var panel = byId("panel-tutorials");
       if (!panel) return;
-
       var btns = panel.querySelectorAll(".ajon-subtab-btn");
       for (var i=0; i<btns.length; i++){
         btns[i].classList.toggle("active", btns[i].getAttribute("data-mode") === mode);
       }
-
       var feed = byId("ajonViewFeed");
       if (feed) feed.classList.toggle("active", mode === "view");
-
       var kids = panel.children;
       for (var k=0; k<kids.length; k++){
         var el = kids[k];
@@ -93,7 +140,6 @@
           }
         }
       }
-
       if (mode === "view") buildFeed();
     } catch(e){}
   }
@@ -106,56 +152,127 @@
     return arr;
   }
 
-  function detectImages(){
-    return new Promise(function(resolve){
-      var found = [];
-      var misses = 0;
-      var i = 1;
-      function next(){
-        if (i > MAX_IMAGES || misses >= STOP_AFTER_MISSES) return resolve(found);
-        var url = "view/" + i + ".webp";
-        var img = new Image();
-        img.onload = function(){ found.push(url); misses = 0; i++; next(); };
-        img.onerror = function(){ misses++; i++; next(); };
-        img.src = url;
-      }
-      next();
-    });
-  }
+  var currentObserver = null;
 
-  var cachedList = null;
+  function makeCard(idx){
+    var wrap = document.createElement("div");
+    wrap.className = "ajon-view-item";
+
+    var card = document.createElement("div");
+    card.className = "ajon-view-card";
+
+    var img = document.createElement("img");
+    img.loading = "lazy";
+    img.decoding = "async";
+    img.alt = "";
+    img.onerror = function(){ try { wrap.style.display = "none"; } catch(e){} };
+    img.src = "view/" + idx + ".webp";
+    card.appendChild(img);
+
+    if (startLikes(idx) > 48000){
+      var badge = document.createElement("span");
+      badge.className = "ajon-view-badge";
+      badge.textContent = "\uD83D\uDD25 HOT";
+      card.appendChild(badge);
+    }
+
+    var meta = document.createElement("div");
+    meta.className = "ajon-view-meta";
+
+    var left = document.createElement("div");
+    left.className = "ajon-view-meta-left";
+
+    var likeBtn = document.createElement("button");
+    likeBtn.className = "ajon-view-like";
+    likeBtn.type = "button";
+    likeBtn.setAttribute("aria-label", "Like");
+    if (loadLiked()[idx]){ likeBtn.classList.add("liked"); likeBtn.textContent = "\u2764\uFE0F"; }
+    else                  { likeBtn.textContent = "\uD83E\uDD0D"; }
+
+    var count = document.createElement("span");
+    count.className = "ajon-view-count";
+    function refreshCount(){
+      var base = computeLikes(idx);
+      if (loadLiked()[idx]) base += 1;
+      count.innerHTML = "<b>" + fmtLikes(base) + "</b> likes";
+    }
+    refreshCount();
+
+    likeBtn.onclick = function(ev){
+      ev.stopPropagation(); ev.preventDefault();
+      var s = loadLiked();
+      if (s[idx]){ delete s[idx]; likeBtn.classList.remove("liked"); likeBtn.textContent = "\uD83E\uDD0D"; }
+      else       { s[idx] = 1;    likeBtn.classList.add("liked");    likeBtn.textContent = "\u2764\uFE0F"; }
+      saveLiked(s);
+      refreshCount();
+    };
+
+    var right = document.createElement("div");
+    right.className = "ajon-view-meta-right";
+
+    var favBtn = document.createElement("button");
+    favBtn.className = "ajon-view-fav";
+    favBtn.type = "button";
+    favBtn.setAttribute("aria-label", "Save");
+    favBtn.textContent = "\u2B50";
+    if (loadFavs()[idx]) favBtn.classList.add("saved");
+    favBtn.onclick = function(ev){
+      ev.stopPropagation(); ev.preventDefault();
+      var f = loadFavs();
+      if (f[idx]){ delete f[idx]; favBtn.classList.remove("saved"); }
+      else       { f[idx] = 1;    favBtn.classList.add("saved"); }
+      saveFavs(f);
+    };
+
+    left.appendChild(likeBtn);
+    left.appendChild(count);
+    right.appendChild(favBtn);
+    meta.appendChild(left);
+    meta.appendChild(right);
+    wrap.appendChild(card);
+    wrap.appendChild(meta);
+    return wrap;
+  }
 
   function buildFeed(){
     try {
       var feed = byId("ajonViewFeed");
       if (!feed) return;
-
-      if (cachedList && cachedList.length){
-        renderList(feed, cachedList);
+      if (TOTAL_IMAGES === 0){
+        feed.innerHTML = '<div class="ajon-view-empty"><b>No images yet</b></div>';
         return;
       }
+      var list = [];
+      for (var i = 1; i <= TOTAL_IMAGES; i++) list.push(i);
+      shuffle(list);
 
-      feed.innerHTML = '<div class="ajon-view-empty"><b>Loading images...</b>They will appear here shortly.</div>';
-      detectImages().then(function(list){
-        cachedList = list;
-        renderList(feed, list);
-      }).catch(function(){
-        feed.innerHTML = '<div class="ajon-view-empty"><b>No images found</b></div>';
-      });
+      if (currentObserver){ try { currentObserver.disconnect(); } catch(e){} currentObserver = null; }
+
+      feed.innerHTML = "";
+      var sentinel = document.createElement("div");
+      sentinel.className = "ajon-view-sentinel";
+      feed.appendChild(sentinel);
+
+      var idx = 0;
+      function loadBatch(){
+        var end = Math.min(idx + BATCH_SIZE, list.length);
+        for (var i = idx; i < end; i++) feed.insertBefore(makeCard(list[i]), sentinel);
+        idx = end;
+        if (idx >= list.length){
+          try { if (sentinel.parentNode) sentinel.parentNode.removeChild(sentinel); } catch(e){}
+          if (currentObserver){ try { currentObserver.disconnect(); } catch(e){} currentObserver = null; }
+        }
+      }
+      loadBatch();
+      try {
+        currentObserver = new IntersectionObserver(function(entries){
+          for (var i = 0; i < entries.length; i++) if (entries[i].isIntersecting) loadBatch();
+        }, { rootMargin: "300px" });
+        currentObserver.observe(sentinel);
+      } catch(e){
+        while (idx < list.length) loadBatch();
+      }
     } catch(e){}
-  }
-
-  function renderList(feed, list){
-    if (!list.length){
-      feed.innerHTML = '<div class="ajon-view-empty"><b>No images yet</b></div>';
-      return;
-    }
-    var ordered = shuffle(list.slice());
-    var html = "";
-    for (var i=0; i<ordered.length; i++){
-      html += '<div class="ajon-view-card"><img loading="lazy" decoding="async" src="' + ordered[i] + '" alt=""></div>';
-    }
-    feed.innerHTML = html;
   }
 
   var tries = 0;
@@ -164,7 +281,7 @@
     installStyles();
     if (installSubTabBar()){
       setTimeout(function(){ setMode("view"); }, 200);
-      try { console.log("[View Feed] installed"); } catch(e){}
+      try { console.log("[View Feed] installed - " + TOTAL_IMAGES + " images"); } catch(e){}
       return;
     }
     if (tries < 30) setTimeout(attempt, 500);
@@ -182,10 +299,7 @@
       var r = origShowTab.apply(this, arguments);
       try {
         if (name === "tutorials"){
-          setTimeout(function(){
-            installSubTabBar();
-            setMode(CURRENT_MODE);
-          }, 120);
+          setTimeout(function(){ installSubTabBar(); setMode(CURRENT_MODE); }, 120);
         }
       } catch(e){}
       return r;
